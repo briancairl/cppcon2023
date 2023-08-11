@@ -1,9 +1,25 @@
+#include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <cstdio>
 #include <functional>
 #include <limits>
 #include <vector>
 #include <queue>
+
+#include "arena_allocator.h"
+
+template<typename T>
+using Alloc =
+#ifdef USE_ARENA
+  arena_allocator<T>
+#else
+  std::allocator<T>
+#endif
+;
+
+template<typename T>
+using Vector = std::vector<T, Alloc<T>>;
 
 struct Adjacency
 {
@@ -24,14 +40,20 @@ struct EdgeProperties
 
 struct Graph
 {
-  std::vector<std::vector<Adjacency>> adjacencies;
-  std::vector<VertexProperties> vertices;
-  std::vector<EdgeProperties> edges;
+  Vector<Vector<Adjacency>> adjacencies;
+  Vector<VertexProperties> vertices;
+  Vector<EdgeProperties> edges;
 
   explicit Graph(std::size_t vertex_count)
   {
     vertices.resize(vertex_count);
     adjacencies.resize(vertex_count);
+  }
+
+  bool has_edge(std::size_t src_vertex_id, std::size_t dst_vertex_id) const
+  {
+    const auto& c = adjacencies[src_vertex_id];
+    return std::any_of(c.begin(), c.end(), [dst_vertex_id](const Adjacency& adj) { return adj.dst_vertex_id == dst_vertex_id; });
   }
 
   void add_edge(std::size_t src_vertex_id, std::size_t dst_vertex_id, const EdgeProperties& edge_props)
@@ -107,30 +129,56 @@ public:
   }
 
 private:
-  std::vector<Transition> visited_;
-  std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> transition_queue_;
+  Vector<Transition> visited_;
+  std::priority_queue<Transition, Vector<Transition>, std::greater<Transition>> transition_queue_;
 };
 
 int main(int argc, char** argv)
 {
-  const std::size_t kVertexCount = 123123;
+  const std::size_t kVertexCount = 1234;
 
   Graph graph{kVertexCount};
-  for (std::size_t v = 1; v < kVertexCount; ++v)
+
   {
-    graph.add_edge(v-1, v, EdgeProperties{1});
+    const auto t_start = std::chrono::steady_clock::now();
+    for (std::size_t src_vertex_id = 0; src_vertex_id < kVertexCount; ++src_vertex_id)
+    {
+      const std::size_t n = std::rand() % 50;
+      for (std::size_t i = 0; i < n; ++i)
+      {
+        const std::size_t dst_vertex_id = std::rand() % kVertexCount;
+        if (!graph.has_edge(src_vertex_id, dst_vertex_id))
+        {
+          graph.add_edge(src_vertex_id, dst_vertex_id, EdgeProperties{1});
+        }
+      }
+    }
+  #ifdef USE_ARENA
+    std::fprintf(stderr, "USE_ARENA:DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+  #else
+    std::fprintf(stderr, "DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+  #endif
   }
 
-  Dijkstras d;
-
-  if (d.search(graph, 0, 10))
+  int n = 0;
   {
-    std::fprintf(stderr, "%s\n", "found path to goal");
-  }
-  else
-  {
-    std::fprintf(stderr, "%s\n", "failed"); 
+    const auto t_start = std::chrono::steady_clock::now();
+    Dijkstras d;
+    for (std::size_t src_vertex_id = 0; src_vertex_id < kVertexCount; ++src_vertex_id)
+    {
+      for (std::size_t dst_vertex_id = src_vertex_id+1; dst_vertex_id < kVertexCount; ++dst_vertex_id)
+      {
+        n += d.search(graph, src_vertex_id, dst_vertex_id);
+        n += d.search(graph, dst_vertex_id, src_vertex_id);
+      }
+    }
+
+  #ifdef USE_ARENA
+    std::fprintf(stderr, "USE_ARENA:DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+  #else
+    std::fprintf(stderr, "DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+  #endif
   }
 
-  return 0;
+  return n > 0 ? 0 : 1;
 }

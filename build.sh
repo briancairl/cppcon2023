@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ main.cpp -std=c++23 -O3 -g -o main.out
+g++ main.cpp -std=c++23 -O0 -g -o main.out -I . $1
