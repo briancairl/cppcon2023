@@ -44,7 +44,7 @@ public:
   static constexpr void deallocate( T* p, std::size_t n ) {}
 };
 
-void reset_arena_memory()
+inline void reset_arena_memory()
 {
   sBigBlockOfMemoryIndex = 0;
 }

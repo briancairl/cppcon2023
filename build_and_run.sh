@@ -2,8 +2,11 @@
 
 echo
 echo
-echo "-------------------------------------------------"
 
-./build.sh -DDIJKSTRAS_VERSION_1 && ./run.sh \
-&& \
-./build.sh -DDIJKSTRAS_VERSION_2 && ./run.sh \
+for (( i = 0; i < 4; i++ )); do
+  echo
+  echo $i "-------------------------------------------------"
+  ./build.sh $i && ./run.sh
+  echo $i "-------------------------------------------------"
+  echo
+done

@@ -1,14 +1,15 @@
-#include <algorithm>
-#include <cctype>
 #include <chrono>
 #include <cstdio>
-#include <functional>
-#include <limits>
-#include <vector>
-#include <queue>
 
-#include "graph.h"
-#include "dijkstras.h"
+#if DIJKSTRAS == 0
+#include "dijkstras_0.h"
+#elif DIJKSTRAS == 1
+#include "dijkstras_1.h"
+#elif DIJKSTRAS == 2
+#include "dijkstras_2.h"
+#elif DIJKSTRAS == 3
+#include "dijkstras_3.h"
+#endif
 
 #include <sched.h>
 
@@ -23,8 +24,8 @@ int main(int argc, char** argv)
   }
 
 
-  const std::size_t kVertexCount = 123;
-  const std::size_t kEdgeCount = 5;
+  const std::size_t kVertexCount = 100;
+  const std::size_t kEdgeCount = 100;
 
   Graph graph{kVertexCount, kEdgeCount};
 

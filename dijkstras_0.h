@@ -1,0 +1,95 @@
+
+#include <functional>
+#include <queue>
+#include <limits>
+#include <vector>
+
+#include "allocator.h"
+
+template<typename T>
+using Vector = std::vector<T, Allocator<T>>;
+
+struct EdgeProperties
+{
+  std::size_t cost = 1;
+};
+
+struct VertexProperties
+{
+  float x = 0.f;
+  float y = 0.f;
+};
+
+struct Edge
+{
+  std::size_t dst_vertex_id = 0;
+  EdgeProperties props;
+};
+
+struct Vertex
+{
+  VertexProperties props;
+  Vector<Edge> edges;
+};
+
+struct Graph
+{
+  Vector<Vertex> vertices;
+
+  explicit Graph(std::size_t vertex_count, std::size_t edge_count)
+  {
+    vertices.resize(vertex_count);
+    for (auto& v : vertices)
+    {
+      v.edges.reserve(edge_count);
+    }
+  }
+
+  bool has_edge(std::size_t src_vertex_id, std::size_t dst_vertex_id) const
+  {
+    const auto& c = vertices[src_vertex_id];
+    return std::any_of(c.edges.begin(), c.edges.end(), [dst_vertex_id](const Edge& edge) { return edge.dst_vertex_id == dst_vertex_id; });
+  }
+
+  void add_edge(std::size_t src_vertex_id, std::size_t dst_vertex_id, const EdgeProperties& props)
+  {
+    vertices[src_vertex_id].edges.emplace_back(Edge{
+      .dst_vertex_id = dst_vertex_id,
+      .props = props
+    });
+  }
+};
+
+struct Transition
+{
+  std::size_t dst_vertex_id = 0;
+  std::size_t cost = std::numeric_limits<std::size_t>::max();
+};
+
+constexpr bool operator>(const Transition& lhs, const Transition& rhs)
+{
+  return lhs.cost > rhs.cost;
+}
+
+constexpr bool operator<(const Transition& lhs, const Transition& rhs)
+{
+  return lhs.cost < rhs.cost;
+}
+
+class Dijkstras
+{
+public:
+  bool search(const Graph& graph, const std::size_t src_vertex_id, const std::size_t dst_vertex_id);
+
+private:
+  bool is_unvisited(std::size_t vertex_id) const
+  {
+    return visited_[vertex_id].cost == std::numeric_limits<std::size_t>::max();
+  }
+
+  template<typename T>
+  using Vector = std::vector<T, Allocator<T>>;
+
+  Vector<Transition> visited_;
+  std::priority_queue<Transition, Vector<Transition>, std::greater<Transition>> transition_queue_;
+};
