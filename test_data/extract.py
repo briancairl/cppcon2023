@@ -1,35 +1,48 @@
 #!/bin/python3
-
 import argparse
-import cv2
 import numpy as np
-
-
+import os
+import pyrosm
+import matplotlib.pyplot as plt
+import json
 
 def main():
   parser = argparse.ArgumentParser(description='Creates a graph from a black/white map image')
-  parser.add_argument('source_map_image', help='Source image')
+  parser.add_argument('place', help='Place to download OSM data for', type=str)
+  parser.add_argument('--dir', help='Network data directory', type=str, default="/tmp/pyrosm/", required=False)
   args = parser.parse_args()
 
-  # Load the image
-  image = cv2.imread(args.source_map_image, cv2.IMREAD_GRAYSCALE)
+  json_file_path = os.path.join(args.dir, f"{args.place}.json");
+  if os.path.exists(json_file_path):
+    print(f"{json_file_path} exists")
+    return 0
 
-  cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+  osm_file_path = os.path.join(args.dir, f"{args.place}.osm.pbf");
+  if not os.path.exists(osm_file_path):
+    osm_file_path = pyrosm.get_data(args.place)
+  osm = pyrosm.OSM(osm_file_path)
 
-  dist, labels = cv2.distanceTransformWithLabels(image, cv2.DIST_L2, 3)
+  nodes, edges = osm.get_network(network_type='driving', nodes=True)
 
-  labels = labels.astype(np.uint8)
+  g_nodes = []
+  for id, lat, lon in zip(nodes.id, nodes.lat, nodes.lon):
+    g_nodes.append({
+      "n" : id,
+      "x" : lat,
+      "y" : lon,
+    })
 
-  canvas = cv2.Canny(labels,1,255)
+  g_edges = []
+  for u, v, length in zip(edges.u, edges.v, edges.length):
+    g_edges.append({
+      "u" : u,
+      "v" : v,
+    })
 
-  # Display the image
-  cv2.imshow("image", cv2.merge([image, image, canvas]))
-   
-  # Wait for the user to press a key
-  cv2.waitKey(0)
-   
-  # Close all windows
-  cv2.destroyAllWindows()
+  with open(json_file_path, 'w+', encoding='utf-8') as wf:
+    json.dump({"edges":g_edges, "nodes":g_nodes}, wf, indent=4)
+    return 0
+
 
 if __name__ == '__main__':
   main()
