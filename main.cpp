@@ -1,20 +1,55 @@
-#include <chrono>
-#include <cstdio>
+// C++ Standard Library
+#include <sstream>
+#include <fstream>
 
-#if DIJKSTRAS == 0
-#include "dijkstras_0.h"
-#elif DIJKSTRAS == 1
-#include "dijkstras_1.h"
-#elif DIJKSTRAS == 2
-#include "dijkstras_2.h"
-#elif DIJKSTRAS == 3
-#include "dijkstras_3.h"
-#endif
-
+// Unix
 #include <sched.h>
+
+// PicoJSON
+#include <picojson/picojson.h>
+
+// CPPCon
+#include "dijkstras.h"
+
+using namespace cppcon;
+
+vertex_id_t to_vertex_id(const char* const vertex_id_str)
+{
+  vertex_id_t vertex_id;
+  std::stringstream ss;
+  ss << vertex_id_str;
+  ss >> vertex_id;
+  return vertex_id;
+}
+
+void dump_path(const std::filesystem::path& path_file_name, const Vector<vertex_id_t>& path)
+{
+  std::ofstream ofs{path_file_name};
+
+  picojson::value path_array_json{picojson::array{}};
+  {
+    auto& path_array = path_array_json.get<picojson::array>();
+    for (const vertex_id_t vid : path)
+    {
+      path_array.push_back(picojson::value{static_cast<double>(vid)});
+    }
+  }
+
+  picojson::value root{picojson::object{}};
+  {
+    auto& root_object = root.get<picojson::object>();
+    root_object["path"] = std::move(path_array_json);
+  }
+  root.serialize(std::ostream_iterator<char>(ofs));
+}
 
 int main(int argc, char** argv)
 {
+  if (argc < 5)
+  {
+    return 1;
+  }
+
   cpu_set_t  mask;
   CPU_ZERO(&mask);
   CPU_SET(0, &mask);
@@ -24,44 +59,21 @@ int main(int argc, char** argv)
   }
 
 
-  const std::size_t kVertexCount = 100;
-  const std::size_t kEdgeCount = 100;
+  const auto graph = Graph::read(argv[1]);
 
-  Graph graph{kVertexCount, kEdgeCount};
+  Dijkstras opt{graph};
 
+  const auto start_vertex_id = to_vertex_id(argv[2]);
+
+  const auto goal_vertex_id = to_vertex_id(argv[3]);
+
+  if (opt.search(graph, start_vertex_id, goal_vertex_id))
   {
-    const auto t_start = std::chrono::steady_clock::now();
-    for (std::size_t src_vertex_id = 0; src_vertex_id < kVertexCount; ++src_vertex_id)
-    {
-      const std::size_t n = std::rand() % kEdgeCount;
-      for (std::size_t i = 0; i < n; ++i)
-      {
-        const std::size_t dst_vertex_id = std::rand() % kVertexCount;
-        if (!graph.has_edge(src_vertex_id, dst_vertex_id))
-        {
-          graph.add_edge(src_vertex_id, dst_vertex_id, EdgeProperties{1});
-        }
-      }
-    }
-    std::fprintf(stderr, "CREATE DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+    dump_path(argv[4], opt.get_path(goal_vertex_id));
+    return 0;
   }
-
-
-
-  int n = 0;
+  else
   {
-    const auto t_start = std::chrono::steady_clock::now();
-    Dijkstras d;
-    for (std::size_t src_vertex_id = 0; src_vertex_id < kVertexCount; ++src_vertex_id)
-    {
-      for (std::size_t dst_vertex_id = src_vertex_id+1; dst_vertex_id < kVertexCount; ++dst_vertex_id)
-      {
-        n += d.search(graph, src_vertex_id, dst_vertex_id);
-        n += d.search(graph, dst_vertex_id, src_vertex_id);
-      }
-    }
-    std::fprintf(stderr, "SEARCH DT =  %lu us\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_start).count());
+    return 1;
   }
-
-  return n > 0 ? 0 : 1;
 }
