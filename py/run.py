@@ -13,7 +13,7 @@ import sys
 
 BUILD_DIR = "build"
 WINDOW_NAME = "dijkstras"
-TMP_PATH_FILE_JSON = "/tmp/path.json"
+TMP_PATH_JSON_FILENAME = "/tmp/path.json"
 
 
 def render(graph_data: dict):
@@ -61,12 +61,19 @@ class InteractVertex(object):
         return f"({self.x_r}, {self.y_r})"
 
 
+PERF_STAT_CMD = [
+  "perf",
+  "stat", 
+  "-B",
+  "-e",
+  "cpu_core/cache-references/,cpu_core/cache-misses/,cpu_core/cycles/,cpu_core/instructions/,cpu_core/branches/,cpu_core/branch-misses/,page-faults,migrations"
+]
 
 class AppState(object):
     def __init__(self, path:str, search_exec:str):
       with open(path, 'r') as json_file_handle:
           graph = json.load(json_file_handle)
-      self.path = path
+      self.graph_path = path
       self.nodes = graph['nodes']
       self.edges = graph['edges']
       self.resolution = graph['bin_size']
@@ -79,6 +86,8 @@ class AppState(object):
       self.goal_vertex_id = None
       self.path_vertex_ids = []
       self.search_exec = search_exec
+      self.iterations = 100
+      self.version = 0
 
       for vertex_id, node in enumerate(self.nodes):
           x = int(node['x'])
@@ -98,8 +107,17 @@ class AppState(object):
         node = self.to_vertex(x=x, y=y, id=id)
         return (int(node['x']), int(node['y'])) if node != None else None
 
+    def run_search(self):
+        cmd = PERF_STAT_CMD + [f"./{APP.search_exec}", APP.graph_path, TMP_PATH_JSON_FILENAME, f"{APP.start_vertex_id}", f"{APP.goal_vertex_id}", f"{APP.iterations}", f"{APP.version}"]
+        if sp.call(cmd) == 0:
+            print("success")
+            return 0
+        else:
+            print("failure")
+            return 1
 
 APP = None
+
 
 
 def mouse_event(event,x,y,flags,param):
@@ -107,30 +125,33 @@ def mouse_event(event,x,y,flags,param):
     APP.mouse_x = y
     APP.mouse_y = x
     vertex_id = APP.to_vertex_id(x=APP.mouse_x, y=APP.mouse_y)
-    if vertex_id and event == cv2.EVENT_LBUTTONDBLCLK:
+    if event == cv2.EVENT_RBUTTONDBLCLK:
+        APP.start_vertex_id = None
+        APP.goal_vertex_id = None
+        APP.image_render = copy.deepcopy(APP.image_bg)
+        cv2.imshow(WINDOW_NAME, APP.image_render)
+    elif event == cv2.EVENT_LBUTTONDBLCLK and vertex_id:
         # Set clicked start ID
         if APP.start_vertex_id == None:
             APP.start_vertex_id = vertex_id
             pt = APP.to_vertex_position(id=vertex_id)
-
-            APP.image_render = copy.deepcopy(APP.image_bg)
             cv2.circle(APP.image_render, (pt[1], pt[0]), APP.resolution//2, (50, 200, 100), -1)
             cv2.circle(APP.image_render, (pt[1], pt[0]), APP.resolution//2, (10, 255, 255), 2)
             cv2.imshow(WINDOW_NAME, APP.image_render)
 
-        # Run the search program
-        elif APP.goal_vertex_id == None:
-            if (sp.call([f"./{APP.search_exec}", APP.path, f"{APP.start_vertex_id}", f"{vertex_id}", TMP_PATH_FILE_JSON]) == 0):
-                with open(TMP_PATH_FILE_JSON, 'r') as json_file_handle:
-                    path = json.load(json_file_handle)
+        else:
+            APP.goal_vertex_id = vertex_id
+            if APP.run_search() != 0:
+                return
+            with open(TMP_PATH_JSON_FILENAME, 'r') as path_json_file_handle:
+                path_json = json.load(path_json_file_handle)
 
-                nodes = path["path"]
-                for i in range(1, len(nodes)):
-                    s_pt = APP.to_vertex_position(id=nodes[i-1])
-                    e_pt = APP.to_vertex_position(id=nodes[i])
-                    cv2.line(APP.image_render, (s_pt[1], s_pt[0]), (e_pt[1], e_pt[0]), (20, 255, 50), 15)
-                APP.start_vertex_id = None
-                cv2.imshow(WINDOW_NAME, APP.image_render)
+            path_vertex_ids = path_json["path"]
+            for i in range(1, len(path_vertex_ids)):
+                s_pt = APP.to_vertex_position(id=path_vertex_ids[i-1])
+                e_pt = APP.to_vertex_position(id=path_vertex_ids[i])
+                cv2.line(APP.image_render, (s_pt[1], s_pt[0]), (e_pt[1], e_pt[0]), (20, 255, 50), 15)
+            cv2.imshow(WINDOW_NAME, APP.image_render)
 
 
 def compute_file_hash(path:str):
@@ -182,6 +203,22 @@ def build(main:str = 'main.cpp', srcs=[], copts=['-std=c++23', '-O3', '-g'], for
     return out_main_exec
 
 
+def rerun(a, b):
+  global APP
+  APP.run_search()
+
+def update_iterations(value):
+  global APP
+  APP.iterations = value
+
+def select_v0(a, b):
+  global APP
+  APP.version = 0
+
+def select_v1(a, b):
+  global APP
+  APP.version = 1
+
 
 def main():
   global APP
@@ -192,12 +229,18 @@ def main():
   args = parser.parse_args()
 
   search_exec = build(srcs=[
-    "dijkstras.cpp"
+    "dijkstras_v0.cpp",
+    "dijkstras_v1.cpp"
   ], force=args.force_rebuild)
 
   APP = AppState(path=args.graph_json, search_exec=search_exec)
 
   cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
+
+  cv2.createTrackbar('iterations', WINDOW_NAME, 1, 1000, update_iterations)
+  cv2.createButton("rerun",rerun, None, cv2.QT_PUSH_BUTTON,1)
+  cv2.createButton("dijkstras v0",select_v0, None, cv2.QT_PUSH_BUTTON,1)
+  cv2.createButton("dijkstras v1",select_v1, None, cv2.QT_PUSH_BUTTON,1)
   cv2.setMouseCallback(WINDOW_NAME, mouse_event)
   cv2.imshow(WINDOW_NAME, APP.image_bg)
   cv2.waitKey(0)
@@ -205,5 +248,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-
-# perf stat -B -e cpu_core/cache-references/,cpu_core/cache-misses/,cpu_core/cycles/,cpu_core/instructions/,cpu_core/branches/,cpu_core/branch-misses/,page-faults,migrations ./main.out

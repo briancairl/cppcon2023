@@ -1,6 +1,9 @@
 // C++ Standard Library
+#include <chrono>
+#include <iostream>
 #include <sstream>
 #include <fstream>
+#include <string_view>
 
 // Unix
 #include <sched.h>
@@ -9,18 +12,14 @@
 #include <picojson/picojson.h>
 
 // CPPCon
-#include "dijkstras.h"
+#include "cppcon/v0/dijkstras.h"
+#include "cppcon/v1/dijkstras.h"
+#include "cppcon/v2/dijkstras.h"
+#include "cppcon/v3/dijkstras.h"
+#include "cppcon/v4/dijkstras.h"
 
 using namespace cppcon;
 
-vertex_id_t to_vertex_id(const char* const vertex_id_str)
-{
-  vertex_id_t vertex_id;
-  std::stringstream ss;
-  ss << vertex_id_str;
-  ss >> vertex_id;
-  return vertex_id;
-}
 
 void dump_path(const std::filesystem::path& path_file_name, const Vector<vertex_id_t>& path)
 {
@@ -43,10 +42,55 @@ void dump_path(const std::filesystem::path& path_file_name, const Vector<vertex_
   root.serialize(std::ostream_iterator<char>(ofs));
 }
 
+template<typename T>
+T to(const char* const value_str)
+{
+  T value;
+  std::stringstream ss;
+  ss << value_str;
+  ss >> value;
+  return value;
+}
+
+template<typename GraphT, typename SearchT>
+int run(const char* label,
+        const std::filesystem::path& graph_json,
+        vertex_id_t start_vertex_id,
+        vertex_id_t goal_vertex_id,
+        int iterations)
+{
+  const auto graph = GraphT::read(graph_json);
+
+  SearchT opt{graph};
+
+  const auto t_start = std::chrono::high_resolution_clock::now() ;
+
+  for (int i = 0; i < iterations; ++i)
+  {
+    if (!opt.search(graph, start_vertex_id, goal_vertex_id))
+    {
+      return 1;
+    }
+  }
+
+  {
+    std::ostringstream oss;
+    oss << label << "_" << graph_json.stem().string() << "_" << start_vertex_id << "_" << goal_vertex_id << ".json";
+    dump_path(oss.str(), opt.get_path(goal_vertex_id));
+    std::cerr << oss.str() << std::endl;
+  }
+
+  std::cerr << "Time elapsed: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - t_start).count() << " us" << std::endl;
+
+  return 0;
+}
+
+
 int main(int argc, char** argv)
 {
-  if (argc < 5)
+  if (argc != 6)
   {
+    std::fprintf(stderr, "failure; expected: %s <version> <in_graph_json> <start_vertex_id> <goal_vertex_id> <search count>\n", argv[0]);
     return 1;
   }
 
@@ -58,22 +102,37 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  const std::string_view version{argv[1]};
+  const auto* graph_json_path = argv[2];
+  const auto start_vertex_id = to<vertex_id_t>(argv[3]);
+  const auto goal_vertex_id = to<vertex_id_t>(argv[4]);
+  const auto iterations = to<int>(argv[5]);
 
-  const auto graph = Graph::read(argv[1]);
-
-  Dijkstras opt{graph};
-
-  const auto start_vertex_id = to_vertex_id(argv[2]);
-
-  const auto goal_vertex_id = to_vertex_id(argv[3]);
-
-  if (opt.search(graph, start_vertex_id, goal_vertex_id))
+  int retval = 1;
+  if (version == "v0")
   {
-    dump_path(argv[4], opt.get_path(goal_vertex_id));
-    return 0;
+    return run<v0::Graph, v0::Dijkstras>("dijkstras_v0", graph_json_path, start_vertex_id, goal_vertex_id, iterations);
+  }
+  else if (version == "v1")
+  {
+    return run<v1::Graph, v1::Dijkstras>("dijkstras_v1", graph_json_path, start_vertex_id, goal_vertex_id, iterations);
+  }
+  else if (version == "v2")
+  {
+    return run<v2::Graph, v2::Dijkstras>("dijkstras_v2", graph_json_path, start_vertex_id, goal_vertex_id, iterations);
+  }
+  else if (version == "v3")
+  {
+    return run<v3::Graph, v3::Dijkstras>("dijkstras_v3", graph_json_path, start_vertex_id, goal_vertex_id, iterations);
+  }
+  else if (version == "v4")
+  {
+    return run<v4::Graph, v4::Dijkstras>("dijkstras_v4", graph_json_path, start_vertex_id, goal_vertex_id, iterations);
   }
   else
   {
-    return 1;
+    std::cerr << "Invalid version: " << version << std::endl;
   }
+
+  return retval;
 }

@@ -1,3 +1,6 @@
+build
+devel
+install
 *.out
 *.data
 *.data.old
