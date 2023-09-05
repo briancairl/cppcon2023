@@ -24,13 +24,13 @@ void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) co
 Dijkstras::Dijkstras([[maybe_unused]] const Graph& graph)
 {}
 
-bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_t dst_vertex_id)
+bool Dijkstras::search(const Graph& graph, const vertex_id_t source_vertex_id, const vertex_id_t goal_vertex_id)
 {
   visited_.clear();
 
   while (!queue_.empty()) { queue_.pop(); }
 
-  queue_.push(Transition{src_vertex_id, src_vertex_id, 0});
+  queue_.push(Transition{source_vertex_id, source_vertex_id, 0});
   while (!queue_.empty())
   {
     const auto [parent_vertex_id, child_vertex_id, prev_total_weight] = queue_.top();
@@ -41,7 +41,7 @@ bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_
     {
       continue;
     }
-    else if (child_vertex_id == dst_vertex_id)
+    else if (child_vertex_id == goal_vertex_id)
     {
       return true;
     }
@@ -60,10 +60,10 @@ bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_
   return false;
 }
 
-Vector<vertex_id_t> Dijkstras::get_path(vertex_id_t dst_vertex_id) const
+Vector<vertex_id_t> Dijkstras::get_path(vertex_id_t goal_vertex_id) const
 {
   Vector<vertex_id_t> path;
-  path.emplace_back(dst_vertex_id);
+  path.emplace_back(goal_vertex_id);
   while (true)
   {
     if (const auto parent_id = visited_.at(path.back()); parent_id == path.back())
