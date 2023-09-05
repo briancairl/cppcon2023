@@ -50,7 +50,7 @@ bool Dijkstras::search(const Graph& graph, const vertex_id_t source_vertex_id, c
       child_vertex_id,
       [this, prev_total_weight](const vertex_id_t p_id, const vertex_id_t c_id, const edge_weight_t edge_weight)
       {
-        if (edge_weight != std::numeric_limits<edge_weight_t>::max())
+        if (edge_weight != std::numeric_limits<edge_weight_t>::max() && !visited_.count(c_id))
         {
           queue_.push(Transition{p_id, c_id, edge_weight + prev_total_weight});
         }

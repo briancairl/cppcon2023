@@ -46,7 +46,6 @@ Graph Graph::read(const std::filesystem::path& graph_file_name)
     const vertex_id_t src_vertex_id = edge_object.at("u").get<double>();
     const vertex_id_t dst_vertex_id = edge_object.at("v").get<double>();
     const edge_weight_t weight = std::max<edge_weight_t>(1, edge_object.at("w").get<double>());
-
     g.adjacencies_[src_vertex_id].emplace_back(dst_vertex_id, weight);
   }
 
