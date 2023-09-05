@@ -28,7 +28,7 @@ public:
 
   bool search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_t dst_vertex_id);
 
-  std::vector<vertex_id_t> get_path(vertex_id_t dst_vertex_id) const;
+  Vector<vertex_id_t> get_path(vertex_id_t dst_vertex_id) const;
 
 private:
   UnorderedMap<vertex_id_t, vertex_id_t> visited_;

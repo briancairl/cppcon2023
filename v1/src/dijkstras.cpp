@@ -59,9 +59,9 @@ bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_
   return false;
 }
 
-std::vector<vertex_id_t> Dijkstras::get_path(vertex_id_t dst_vertex_id) const
+Vector<vertex_id_t> Dijkstras::get_path(vertex_id_t dst_vertex_id) const
 {
-  std::vector<vertex_id_t> path;
+  Vector<vertex_id_t> path;
   path.emplace_back(dst_vertex_id);
   while (true)
   {
