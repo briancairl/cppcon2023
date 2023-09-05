@@ -4,4 +4,4 @@ install
 *.out
 *.data
 *.data.old
-*cache.json
+*.cachegrind*
