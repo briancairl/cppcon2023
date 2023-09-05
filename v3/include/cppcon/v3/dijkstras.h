@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "common.h"
+#include "cppcon/common.h"
 
 namespace cppcon::v3
 {
@@ -31,8 +31,12 @@ public:
   std::vector<vertex_id_t> get_path(vertex_id_t dst_vertex_id) const;
 
 private:
-  Vector<bool> visited_;
-  Vector<vertex_id_t> parents_;
+  bool is_visited(vertex_id_t query_vertex_id) const
+  {
+    return visited_[query_vertex_id] != visited_.size();
+  }
+
+  Vector<vertex_id_t> visited_;
   Vector<Transition> queue_;
 };
 

@@ -1,8 +1,7 @@
 #include <algorithm>
 #include <fstream>
 
-#include <picojson/picojson.h>
-
+#include "cppcon/json.h"
 #include "cppcon/v3/dijkstras.h"
 
 namespace cppcon::v3

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "common.h"
+#include "cppcon/common.h"
 
 namespace cppcon::v0
 {
@@ -31,8 +31,7 @@ public:
   std::vector<vertex_id_t> get_path(vertex_id_t dst_vertex_id) const;
 
 private:
-  Set<vertex_id_t> visited_;
-  Map<vertex_id_t, vertex_id_t> parents_;
+  Map<vertex_id_t, vertex_id_t> visited_;
   MinSortedQueue<Transition> queue_;
 };
 

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "common.h"
+#include "cppcon/common.h"
 
 namespace cppcon::v4
 {
@@ -33,10 +33,10 @@ public:
 private:
   bool is_visited(vertex_id_t query_vertex_id) const
   {
-    return parents_[query_vertex_id] != parents_.size();
+    return visited_[query_vertex_id] != visited_.size();
   }
 
-  Vector<vertex_id_t> parents_;
+  Vector<vertex_id_t> visited_;
   Vector<Transition> queue_;
 };
 

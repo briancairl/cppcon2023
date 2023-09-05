@@ -38,17 +38,11 @@ void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) co
 Dijkstras::Dijkstras( const Graph& graph)
 {
   visited_.resize(graph.vertex_count());
-  parents_.resize(graph.vertex_count());
 }
 
 bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_t dst_vertex_id)
 {
-  visited_.assign(visited_.size(), false);
-
-  for (vertex_id_t vertex_id = 0; vertex_id != graph.vertex_count(); ++vertex_id)
-  {
-    parents_[vertex_id] = vertex_id;
-  }
+  visited_.assign(visited_.size(), visited_.size());
 
   queue_.clear(); 
   queue_.push_back(Transition{src_vertex_id, src_vertex_id, 0});
@@ -62,20 +56,17 @@ bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_
 
     queue_.pop_back();
 
-    if (visited_[child_vertex_id])
+    if (is_visited(child_vertex_id))
     {
       continue;
     }
 
-    visited_[child_vertex_id] = true;
-    parents_[child_vertex_id] = parent_vertex_id;
+    visited_[child_vertex_id] = parent_vertex_id;
 
     if (child_vertex_id == dst_vertex_id)
     {
       return true;
     }
-
-    const std::size_t previous_heap_size = queue_.size();
 
     graph.for_each_edge(
       child_vertex_id,
@@ -84,15 +75,9 @@ bool Dijkstras::search(const Graph& graph, vertex_id_t src_vertex_id, vertex_id_
         if (edge_weight != std::numeric_limits<edge_weight_t>::max())
         {
           queue_.push_back(Transition{p_id, c_id, edge_weight + prev_total_weight});
+          push(queue_, queue_.end());
         }
       });
-
-    auto last_itr = std::next(queue_.begin(), previous_heap_size);
-    while (last_itr != queue_.end())
-    {
-      ++last_itr;
-      push(queue_, last_itr);
-    }
   }
 
   return false;
@@ -104,7 +89,7 @@ std::vector<vertex_id_t> Dijkstras::get_path(vertex_id_t dst_vertex_id) const
   path.emplace_back(dst_vertex_id);
   while (true)
   {
-    if (const auto parent_id = parents_.at(path.back()); parent_id == path.back())
+    if (const auto parent_id = visited_[path.back()]; parent_id == path.back())
     {
       break;
     }

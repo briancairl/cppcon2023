@@ -1,8 +1,7 @@
 #include <algorithm>
 #include <fstream>
 
-#include <picojson/picojson.h>
-
+#include "cppcon/json.h"
 #include "cppcon/v0/dijkstras.h"
 
 namespace cppcon::v0
@@ -18,14 +17,7 @@ Graph Graph::read(const std::filesystem::path& graph_file_name)
     throw std::invalid_argument{graph_file_name};
   }
 
-  picojson::value v;
-  std::string err;
-  picojson::parse(v, std::istream_iterator<char>{ifs}, std::istream_iterator<char>{}, &err);
-  if (!err.empty())
-  {
-    throw std::runtime_error{std::move(err)};
-  }
-
+  const auto v = load_json(graph_file_name);
   const auto& root = v.get<picojson::object>();
   const auto& nodes = root.at("nodes").get<picojson::array>();
 
