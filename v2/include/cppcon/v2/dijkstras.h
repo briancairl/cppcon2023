@@ -33,6 +33,7 @@ public:
 private:
   UnorderedMap<vertex_id_t, vertex_id_t> visited_;
   MinSortedQueue<Transition> queue_;
+  Vector<Transition> queue_back_buffer_;
 };
 
 }  // namespace cppcon::v2

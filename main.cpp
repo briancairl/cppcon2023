@@ -13,10 +13,21 @@
 #include "cppcon/v3/dijkstras.h"
 #include "cppcon/v4/dijkstras.h"
 #include "cppcon/v5/dijkstras.h"
+#include "cppcon/v6/dijkstras.h"
 
 using namespace cppcon;
 
 static constexpr std::size_t kRepeats = 1000;
+
+template<typename T>
+T as(std::string_view str)
+{
+  T value;
+  std::stringstream ss;
+  ss << str;
+  ss >> value;
+  return value;
+}
 
 struct Problem
 {
@@ -127,19 +138,22 @@ int run(const std::filesystem::path& graph_json,
 
 template<typename GraphT, typename SearchT>
 int run_all(const std::filesystem::path& graph_json,
-            const std::filesystem::path& results_json)
+            const std::filesystem::path& results_json,
+            const float percentage_of_problems)
 {
   const auto graph = GraphT::read(graph_json);
 
-  std::cerr << "Running all possible problems." << std::endl;
+  const std::size_t vertex_step = std::max<vertex_id_t>(1, 1.f / std::sqrt(percentage_of_problems));
+
+  std::cerr << "Running " << (percentage_of_problems*100.f) << "% of all possible problems (step size = " << vertex_step << " over " << graph.vertex_count() << ')' << std::endl;
 
   SearchT opt{graph};
   Vector<Vector<vertex_id_t>> results;
   {
     const auto t_start = std::chrono::high_resolution_clock::now() ;
-    for (vertex_id_t start_vertex_id = 0; start_vertex_id < graph.vertex_count(); start_vertex_id += 10)
+    for (vertex_id_t start_vertex_id = 0; start_vertex_id < graph.vertex_count(); start_vertex_id += vertex_step)
     {
-      for (vertex_id_t goal_vertex_id = 0; goal_vertex_id < graph.vertex_count(); goal_vertex_id += 10)
+      for (vertex_id_t goal_vertex_id = 0; goal_vertex_id < graph.vertex_count(); goal_vertex_id += vertex_step)
       {
         if (opt.search(graph, start_vertex_id, goal_vertex_id))
         {
@@ -162,9 +176,9 @@ int run_all(const std::filesystem::path& graph_json,
 
 int main(int argc, char** argv)
 {
-  if (argc != 5)
+  if (argc < 5)
   {
-    std::cerr << "failure; expected: " << argv[0] << " <version> <in_graph_json> <in_problems_json> <out_results_json>\n" << std::endl;
+    std::cerr << "failure; expected: " << argv[0] << " <version> <in_graph_json> <in_problems_json> <out_results_json> [%% problems]\n" << std::endl;
     return 1;
   }
 
@@ -173,30 +187,35 @@ int main(int argc, char** argv)
     const std::string_view version{argv[1]};
     const auto* graph_json_path = argv[2];
     const auto* out_results_json = argv[4];
+    const float perc_problems = (argc > 5) ? (as<float>(argv[5]) / 100.f) : 0.1f;
 
     if (version == "v0")
     {
-      return run_all<v0::Graph, v0::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v0::Graph, v0::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else if (version == "v1")
     {
-      return run_all<v1::Graph, v1::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v1::Graph, v1::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else if (version == "v2")
     {
-      return run_all<v2::Graph, v2::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v2::Graph, v2::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else if (version == "v3")
     {
-      return run_all<v3::Graph, v3::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v3::Graph, v3::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else if (version == "v4")
     {
-      return run_all<v4::Graph, v4::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v4::Graph, v4::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else if (version == "v5")
     {
-      return run_all<v5::Graph, v5::Dijkstras>(graph_json_path, out_results_json);
+      return run_all<v5::Graph, v5::Dijkstras>(graph_json_path, out_results_json, perc_problems);
+    }
+    else if (version == "v6")
+    {
+      return run_all<v6::Graph, v6::Dijkstras>(graph_json_path, out_results_json, perc_problems);
     }
     else
     {
@@ -233,6 +252,10 @@ int main(int argc, char** argv)
     else if (version == "v5")
     {
       return run<v5::Graph, v5::Dijkstras>(graph_json_path, in_problems_json, out_results_json);
+    }
+    else if (version == "v6")
+    {
+      return run<v6::Graph, v6::Dijkstras>(graph_json_path, in_problems_json, out_results_json);
     }
     else
     {

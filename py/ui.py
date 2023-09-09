@@ -81,6 +81,8 @@ class AppState(object):
       self.nodes = graph['nodes']
       self.edges = graph['edges']
       self.resolution = graph['bin_size']
+      self.path_line_width = int(self.resolution)
+      self.path_result_index = 0
 
       self.start_vertex_id = None
       self.goal_vertex_id = None
@@ -139,16 +141,27 @@ def mouse_event(event,x,y,flags,param):
             cv2.imshow(WINDOW_NAME, APP.image_render)
 
 
-
-def show_result(value:int):
+def render_path():
   global APP
   APP.image_render = copy.deepcopy(APP.image_original)
-  path = APP.results[int(value)]["path"]
+  path = APP.results[APP.path_result_index]["path"]
   for i in range(1, len(path)):
       l_pt = APP.to_vertex_position(id=path[i-1])
       r_pt = APP.to_vertex_position(id=path[i-0])
-      cv2.line(APP.image_render, (l_pt[1], l_pt[0]), (r_pt[1], r_pt[0]), (10, 255, 10), APP.resolution//2)
-      cv2.imshow(WINDOW_NAME, APP.image_render)
+      cv2.line(APP.image_render, (l_pt[1], l_pt[0]), (r_pt[1], r_pt[0]), (10, 255, 10), APP.path_line_width)
+  cv2.imshow(WINDOW_NAME, APP.image_render)
+
+
+def update_path_shown(index:int):
+  global APP
+  APP.path_result_index = index
+  render_path()
+
+
+def update_path_line_width(value:int):
+  global APP
+  APP.path_line_width = value
+  render_path()
 
 
 def main():
@@ -165,7 +178,8 @@ def main():
   cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
 
   if APP.results:
-      cv2.createTrackbar('result', WINDOW_NAME, 0, len(APP.results)-1, show_result)
+      cv2.createTrackbar('result', WINDOW_NAME, 0, len(APP.results)-1, update_path_shown)
+      cv2.createTrackbar('width', WINDOW_NAME, 1, 100, update_path_line_width)
 
   cv2.setMouseCallback(WINDOW_NAME, mouse_event)
   cv2.imshow(WINDOW_NAME, APP.image_original)

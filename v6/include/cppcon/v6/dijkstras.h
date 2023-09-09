@@ -1,9 +1,10 @@
 #include <algorithm>
+#include <ranges>
 #include <filesystem>
 
 #include "cppcon/common.h"
 
-namespace cppcon::v0
+namespace cppcon::v6
 {
 
 class Graph
@@ -18,7 +19,11 @@ public:
 
 private:
   Vector<VertexProperties> vertices_;
-  MultiMap<vertex_id_t, std::pair<vertex_id_t, edge_weight_t>> adjacencies_;
+
+  using Edge = std::pair<vertex_id_t, edge_weight_t>;
+
+  Vector<std::ranges::subrange<const Edge*>> adjacencies_;
+  Vector<Edge> edges_;
 };
 
 class Dijkstras
@@ -31,9 +36,14 @@ public:
   Vector<vertex_id_t> get_path(vertex_id_t dst_vertex_id) const;
 
 private:
-  Map<vertex_id_t, vertex_id_t> visited_;
+  bool is_visited(vertex_id_t query_vertex_id) const
+  {
+    return visited_[query_vertex_id] != visited_.size();
+  }
+
+  Vector<vertex_id_t> visited_;
   MinSortedQueue<Transition> queue_;
   Vector<Transition> queue_back_buffer_;
 };
 
-}  // namespace cppcon::v0
+}  // namespace cppcon::v6

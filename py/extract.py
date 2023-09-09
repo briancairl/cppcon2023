@@ -57,6 +57,7 @@ def main():
   parser = argparse.ArgumentParser(description='Creates a graph from a black/white map image')
   parser.add_argument('source_occupancy_map_image', type=str, help='Source occupancy image')
   parser.add_argument('output_graph_json', type=str, help='Output path to graph JSON')
+  parser.add_argument('--bin-size', '-b', type=int, default=None, help='Node binning size (used in places of --downsampling-rate)')
   parser.add_argument('--downsampling-rate', '-d', type=float, default=0.009, help='Downsamping rate used for graph node sparsification')
   parser.add_argument('--show', '-s', action='store_true', help='Render graph once processing is complete')
   args = parser.parse_args()
@@ -65,7 +66,7 @@ def main():
   input_image = cv2.imread(args.source_occupancy_map_image, cv2.IMREAD_GRAYSCALE)
 
   # Compute bin size
-  bin_size_px = max([1, int(input_image.shape[0] * args.downsampling_rate), int(input_image.shape[1] * args.downsampling_rate)])
+  bin_size_px = args.bin_size or max([1, int(input_image.shape[0] * args.downsampling_rate), int(input_image.shape[1] * args.downsampling_rate)])
 
   # Fill small gaps
   kernel_radius = bin_size_px

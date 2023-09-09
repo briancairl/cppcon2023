@@ -21,13 +21,15 @@ void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) co
 Dijkstras::Dijkstras(const Graph& graph)
 {
   visited_.resize(graph.vertex_count());
+  queue_back_buffer_.reserve(graph.vertex_count());
 }
 
 bool Dijkstras::search(const Graph& graph, const vertex_id_t start_vertex_id, const vertex_id_t goal_vertex_id)
 {
   visited_.assign(visited_.size(), visited_.size());
 
-  while (!queue_.empty()) { queue_.pop(); }
+  queue_back_buffer_.clear();
+  queue_back_buffer_.swap(queue_.underlying());
 
   queue_.push(Transition{start_vertex_id, start_vertex_id, 0});
 

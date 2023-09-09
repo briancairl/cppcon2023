@@ -37,7 +37,13 @@ template<typename Key, typename T>
 using UnorderedMultiMap = std::unordered_multimap<Key, T, std::hash<Key>, std::equal_to<Key>, Allocator<std::pair<const Key, T>>>;
 
 template<typename T>
-using MinSortedQueue = std::priority_queue<T, Vector<T>, std::greater<T>>;
+struct MinSortedQueue : std::priority_queue<T, Vector<T>, std::greater<T>>
+{
+  using Base = std::priority_queue<T, Vector<T>, std::greater<T>>;
+  using Base::Base;
+
+  Vector<T>& underlying() { return Base::c; }
+};
 
 using edge_id_t = std::uint32_t;
 

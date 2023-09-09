@@ -9,6 +9,10 @@ template<typename EdgeVisitorT>
 void Graph::for_each_edge(const vertex_id_t parent_vertex_id, EdgeVisitorT visitor) const
 {
   auto itr = adjacencies_.find(parent_vertex_id);
+  if (itr == adjacencies_.end())
+  {
+    std::abort();
+  }
   std::for_each(
     itr->second.begin(),
     itr->second.end(),
@@ -19,14 +23,17 @@ void Graph::for_each_edge(const vertex_id_t parent_vertex_id, EdgeVisitorT visit
     });
 }
 
-Dijkstras::Dijkstras([[maybe_unused]] const Graph& graph)
-{}
+Dijkstras::Dijkstras(const Graph& graph)
+{
+  queue_back_buffer_.reserve(graph.vertex_count());
+}
 
 bool Dijkstras::search(const Graph& graph, const vertex_id_t start_vertex_id, const vertex_id_t goal_vertex_id)
 {
   visited_.clear();
 
-  while (!queue_.empty()) { queue_.pop(); }
+  queue_back_buffer_.clear();
+  queue_back_buffer_.swap(queue_.underlying());
 
   queue_.push(Transition{start_vertex_id, start_vertex_id, 0});
 

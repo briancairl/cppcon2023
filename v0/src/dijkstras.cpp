@@ -21,14 +21,17 @@ void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) co
     });
 }
 
-Dijkstras::Dijkstras([[maybe_unused]] const Graph& graph)
-{}
+Dijkstras::Dijkstras(const Graph& graph)
+{
+  queue_back_buffer_.reserve(graph.vertex_count());
+}
 
 bool Dijkstras::search(const Graph& graph, const vertex_id_t source_vertex_id, const vertex_id_t goal_vertex_id)
 {
   visited_.clear();
 
-  while (!queue_.empty()) { queue_.pop(); }
+  queue_back_buffer_.clear();
+  queue_back_buffer_.swap(queue_.underlying());
 
   queue_.push(Transition{source_vertex_id, source_vertex_id, 0});
   while (!queue_.empty())
