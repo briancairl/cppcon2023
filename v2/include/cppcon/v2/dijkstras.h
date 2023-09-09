@@ -32,7 +32,7 @@ public:
 
 private:
   UnorderedMap<vertex_id_t, vertex_id_t> visited_;
-  Vector<Transition> queue_;
+  MinSortedQueue<Transition> queue_;
 };
 
 }  // namespace cppcon::v2

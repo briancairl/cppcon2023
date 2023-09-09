@@ -9,6 +9,7 @@ add_subdirectory(v1)
 add_subdirectory(v2)
 add_subdirectory(v3)
 add_subdirectory(v4)
+add_subdirectory(v5)
 
 add_executable (main main.cpp)
 target_link_libraries(main PUBLIC
@@ -17,4 +18,5 @@ target_link_libraries(main PUBLIC
   dijkstras_v2 dijkstras_v2_json
   dijkstras_v3 dijkstras_v3_json
   dijkstras_v4 dijkstras_v4_json
+  dijkstras_v5 dijkstras_v5_json
 )

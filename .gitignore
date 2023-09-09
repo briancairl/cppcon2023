@@ -5,3 +5,4 @@ install
 *.data
 *.data.old
 *.cachegrind*
+*.callgrind*

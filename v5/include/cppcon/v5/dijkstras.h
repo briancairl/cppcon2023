@@ -3,7 +3,7 @@
 
 #include "cppcon/common.h"
 
-namespace cppcon::v4
+namespace cppcon::v5
 {
 
 class Graph
@@ -33,11 +33,11 @@ public:
 private:
   bool is_visited(vertex_id_t query_vertex_id) const
   {
-    return visited_.count(query_vertex_id);
+    return visited_[query_vertex_id] != visited_.size();
   }
 
-  UnorderedMap<vertex_id_t, vertex_id_t> visited_;
+  Vector<vertex_id_t> visited_;
   MinSortedQueue<Transition> queue_;
 };
 
-}  // namespace cppcon::v4
+}  // namespace cppcon::v5

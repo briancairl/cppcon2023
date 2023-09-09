@@ -12,6 +12,7 @@
 #include "cppcon/v2/dijkstras.h"
 #include "cppcon/v3/dijkstras.h"
 #include "cppcon/v4/dijkstras.h"
+#include "cppcon/v5/dijkstras.h"
 
 using namespace cppcon;
 
@@ -193,6 +194,10 @@ int main(int argc, char** argv)
     {
       return run_all<v4::Graph, v4::Dijkstras>(graph_json_path, out_results_json);
     }
+    else if (version == "v5")
+    {
+      return run_all<v5::Graph, v5::Dijkstras>(graph_json_path, out_results_json);
+    }
     else
     {
       std::cerr << "Invalid version: " << version << std::endl;
@@ -224,6 +229,10 @@ int main(int argc, char** argv)
     else if (version == "v4")
     {
       return run<v4::Graph, v4::Dijkstras>(graph_json_path, in_problems_json, out_results_json);
+    }
+    else if (version == "v5")
+    {
+      return run<v5::Graph, v5::Dijkstras>(graph_json_path, in_problems_json, out_results_json);
     }
     else
     {

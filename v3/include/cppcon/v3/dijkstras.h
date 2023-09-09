@@ -18,7 +18,7 @@ public:
 
 private:
   Vector<VertexProperties> vertices_;
-  Vector<Vector<std::pair<vertex_id_t, edge_weight_t>>> adjacencies_;
+  UnorderedMap<vertex_id_t, Vector<std::pair<vertex_id_t, edge_weight_t>>> adjacencies_;
 };
 
 class Dijkstras
@@ -33,11 +33,11 @@ public:
 private:
   bool is_visited(vertex_id_t query_vertex_id) const
   {
-    return visited_[query_vertex_id] != visited_.size();
+    return visited_.count(query_vertex_id);
   }
 
-  Vector<vertex_id_t> visited_;
-  Vector<Transition> queue_;
+  UnorderedMap<vertex_id_t, vertex_id_t> visited_;
+  MinSortedQueue<Transition> queue_;
 };
 
 }  // namespace cppcon::v3

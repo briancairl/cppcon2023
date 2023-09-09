@@ -2,9 +2,9 @@
 #include <fstream>
 
 #include "cppcon/json.h"
-#include "cppcon/v3/dijkstras.h"
+#include "cppcon/v5/dijkstras.h"
 
-namespace cppcon::v3
+namespace cppcon::v5
 {
 
 Graph Graph::read(const std::filesystem::path& graph_file_name)
@@ -17,7 +17,14 @@ Graph Graph::read(const std::filesystem::path& graph_file_name)
     throw std::invalid_argument{graph_file_name};
   }
 
-  const auto v = load_json(graph_file_name);
+  picojson::value v;
+  std::string err;
+  picojson::parse(v, std::istream_iterator<char>{ifs}, std::istream_iterator<char>{}, &err);
+  if (!err.empty())
+  {
+    throw std::runtime_error{std::move(err)};
+  }
+
   const auto& root = v.get<picojson::object>();
   const auto& nodes = root.at("nodes").get<picojson::array>();
 
@@ -32,17 +39,17 @@ Graph Graph::read(const std::filesystem::path& graph_file_name)
   }
 
   const auto& edges = root.at("edges").get<picojson::array>();
+  g.adjacencies_.resize(g.vertices_.size());
   for (const auto& edge_value : edges)
   {
     const auto& edge_object = edge_value.get<picojson::object>();
     const vertex_id_t src_vertex_id = edge_object.at("u").get<double>();
     const vertex_id_t dst_vertex_id = edge_object.at("v").get<double>();
     const edge_weight_t weight = std::max<edge_weight_t>(1, edge_object.at("w").get<double>());
-
     g.adjacencies_[src_vertex_id].emplace_back(dst_vertex_id, weight);
   }
 
   return g;
 }
 
-}  // namespace cppcon::v3
+}  // namespace cppcon::v5

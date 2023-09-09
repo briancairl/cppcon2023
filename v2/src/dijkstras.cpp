@@ -5,23 +5,6 @@
 
 namespace cppcon::v2
 {
-
-namespace {
-
-template<typename T, typename IteratorT>
-void push(Vector<T>& heap, IteratorT last)
-{
-  std::push_heap(heap.begin(), last, std::greater<T>{});
-}
-
-template<typename T>
-void pop(Vector<T>& heap)
-{
-  std::pop_heap(heap.begin(), heap.end(), std::greater<T>{});
-}
-
-}  // namespace
-
 template<typename EdgeVisitorT>
 void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) const
 {
@@ -43,17 +26,15 @@ bool Dijkstras::search(const Graph& graph, const vertex_id_t start_vertex_id, co
 {
   visited_.clear();
 
-  queue_.clear();
-  queue_.push_back(Transition{start_vertex_id, start_vertex_id, 0});
-  push(queue_, queue_.end());
+  while (!queue_.empty()) { queue_.pop(); }
+
+  queue_.push(Transition{start_vertex_id, start_vertex_id, 0});
 
   while (!queue_.empty())
   {
-    pop(queue_);
+    const auto [parent_vertex_id, child_vertex_id, prev_total_weight] = queue_.top();
 
-    const auto [parent_vertex_id, child_vertex_id, prev_total_weight] = queue_.back();
-
-    queue_.pop_back();
+    queue_.pop();
 
     if (const auto [_, is_new] = visited_.try_emplace(child_vertex_id, parent_vertex_id); !is_new)
     {
@@ -64,24 +45,15 @@ bool Dijkstras::search(const Graph& graph, const vertex_id_t start_vertex_id, co
       return true;
     }
 
-    const std::size_t previous_heap_size = queue_.size();
-
     graph.for_each_edge(
       child_vertex_id,
       [this, prev_total_weight](const vertex_id_t p_id, const vertex_id_t c_id, const edge_weight_t edge_weight)
       {
         if (edge_weight != std::numeric_limits<edge_weight_t>::max() && !visited_.count(c_id))
         {
-          queue_.push_back(Transition{p_id, c_id, edge_weight + prev_total_weight});
+          queue_.push(Transition{p_id, c_id, edge_weight + prev_total_weight});
         }
       });
-
-    auto last_itr = std::next(queue_.begin(), previous_heap_size);
-    while (last_itr != queue_.end())
-    {
-      ++last_itr;
-      push(queue_, last_itr);
-    }
   }
   return false;
 }

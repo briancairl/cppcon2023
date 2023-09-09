@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "cppcon/v4/dijkstras.h"
+#include "cppcon/v5/dijkstras.h"
 
-namespace cppcon::v4
+namespace cppcon::v5
 {
 template<typename EdgeVisitorT>
 void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) const
@@ -18,11 +18,14 @@ void Graph::for_each_edge(vertex_id_t parent_vertex_id, EdgeVisitorT visitor) co
     });
 }
 
-Dijkstras::Dijkstras([[maybe_unused]] const Graph& graph) {}
+Dijkstras::Dijkstras(const Graph& graph)
+{
+  visited_.resize(graph.vertex_count());
+}
 
 bool Dijkstras::search(const Graph& graph, const vertex_id_t start_vertex_id, const vertex_id_t goal_vertex_id)
 {
-  visited_.clear();
+  visited_.assign(visited_.size(), visited_.size());
 
   while (!queue_.empty()) { queue_.pop(); }
 
@@ -66,7 +69,7 @@ Vector<vertex_id_t> Dijkstras::get_path(vertex_id_t goal_vertex_id) const
   path.emplace_back(goal_vertex_id);
   while (true)
   {
-    if (const auto parent_id = visited_.at(path.back()); parent_id == path.back())
+    if (const auto parent_id = visited_[path.back()]; parent_id == path.back())
     {
       break;
     }
@@ -79,4 +82,4 @@ Vector<vertex_id_t> Dijkstras::get_path(vertex_id_t goal_vertex_id) const
   return path;
 }
 
-}  // namespace cppcon::v4
+}  // namespace cppcon::v5
