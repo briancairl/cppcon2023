@@ -8,4 +8,4 @@ add_subdirectory(core)
 add_subdirectory(demo)
 
 add_executable (run_demo run_demo.cpp)
-target_link_libraries(run_demo PUBLIC core json v0 v1 vn)
+target_link_libraries(run_demo PUBLIC core json v0 v1 v2 vn)

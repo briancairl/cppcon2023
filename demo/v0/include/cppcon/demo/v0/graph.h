@@ -31,8 +31,7 @@ public:
       last,
       [visitor](const auto& parent_and_edge) mutable
       {
-        const auto& [succ, weight] = parent_and_edge.second;
-        visitor(succ, weight);
+        std::apply(visitor, parent_and_edge.second);
       });
   }
 

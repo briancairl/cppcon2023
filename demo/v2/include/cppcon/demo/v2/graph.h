@@ -10,7 +10,7 @@
 // CppCon
 #include <cppcon/dijkstras.h>
 
-namespace cppcon::demo::v1
+namespace cppcon::demo::v2
 {
 
 class Graph
@@ -25,19 +25,19 @@ public:
   template<typename EdgeVisitorT>
   void for_each_edge(vertex_id_t q, EdgeVisitorT&& visitor) const
   {
-    const auto [first, last] = adjacencies_.equal_range(q);
+    const auto itr = adjacencies_.find(q);
     std::for_each(
-      first,
-      last,
+      itr->second.begin(),
+      itr->second.end(),
       [visitor](const auto& parent_and_edge) mutable
       {
-        std::apply(visitor, parent_and_edge.second);
+        std::apply(visitor, parent_and_edge);
       });
   }
 
 private:
   std::vector<VertexProperties> vertices_;
-  std::unordered_multimap<vertex_id_t, std::pair<vertex_id_t, edge_weight_t>> adjacencies_;
+  std::unordered_map<vertex_id_t, std::vector<std::pair<vertex_id_t, edge_weight_t>>> adjacencies_;
 };
 
-}  // namespace cppcon::demo::v1
+}  // namespace cppcon::demo::v2
