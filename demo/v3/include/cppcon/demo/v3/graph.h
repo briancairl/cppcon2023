@@ -18,7 +18,7 @@ class Graph
 public:
   explicit Graph(const std::filesystem::path& json);
 
-  void shuffle(std::vector<std::size_t>& indices, std::size_t shuffle_seed = 0);
+  void shuffle(const std::vector<std::size_t>& indices);
 
   const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
 

@@ -1,6 +1,5 @@
 // C++ Standard Library
 #include <algorithm>
-#include <random>
 
 // CppCon
 #include <cppcon/demo/v1/graph.h>
@@ -41,10 +40,8 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
   }
 }
 
-void Graph::shuffle(std::vector<std::size_t>& indices, std::size_t shuffle_seed)
+void Graph::shuffle(const std::vector<std::size_t>& indices)
 {
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{shuffle_seed});
-
   {
     auto new_vertices = this->vertices_;
     for (std::size_t i = 0; i < new_vertices.size(); ++i)

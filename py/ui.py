@@ -14,7 +14,6 @@ from typing import Optional
 
 BUILD_DIR = "build"
 WINDOW_NAME = "dijkstras"
-TMP_PATH_JSON_FILENAME = "/tmp/path.json"
 
 
 def render(graph_data: dict):
@@ -86,7 +85,7 @@ class AppState(object):
       self.nodes = graph['nodes']
       self.edges = graph['edges']
       self.resolution = graph['bin_size']
-      self.path_line_width = int(self.resolution)
+      self.path_line_width = 50
       self.path_result_index = 0
 
       self.start_vertex_id = None
@@ -185,7 +184,7 @@ def main():
 
   if APP.results:
       cv2.createTrackbar('result', WINDOW_NAME, 0, len(APP.results)-1, update_path_shown)
-      cv2.createTrackbar('width', WINDOW_NAME, 1, 100, update_path_line_width)
+      cv2.createTrackbar('width', WINDOW_NAME, 50, 100, update_path_line_width)
 
   cv2.setMouseCallback(WINDOW_NAME, mouse_event)
   cv2.imshow(WINDOW_NAME, APP.image_original)

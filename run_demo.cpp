@@ -1,3 +1,7 @@
+#ifdef __linux__    // Linux only
+#include <sched.h>  // sched_setaffinity
+#endif
+
 // C++ Standard Library
 #include <iostream>
 #include <sstream>
@@ -7,6 +11,22 @@
 #include "auto_generated_commands.h"
 
 using namespace cppcon;
+
+void cpu_pin(int cpu)
+{
+  #ifdef __linux__
+    cpu_set_t mask;
+    int status;
+
+    CPU_ZERO(&mask);
+    CPU_SET(cpu, &mask);
+    status = sched_setaffinity(0, sizeof(mask), &mask);
+    if (status != 0)
+    {
+      perror("sched_setaffinity");
+    }
+  #endif
+}
 
 template<typename T>
 T to(std::string_view str)
@@ -27,6 +47,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  cpu_pin(1);
 
   const demo::Settings settings{
     .percentage_of_problems = (argc > 3) ? (to<float>(argv[3]) / 100.f) : 0.1f,

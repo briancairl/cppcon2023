@@ -4,15 +4,14 @@ project (cppcon2023)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -g")
 
-set(DEMO_COUNT 3)
-set(DEMO_LIST "")
+set(DEMO_LIST "v0;v1;v2;v3")
 
 # AUTO-GENERATE DEMOS TO INCLUDE
 file(WRITE auto_generated_includes.h "// --- AUTO-GENERATED ---\n")
-foreach(I RANGE 0 ${DEMO_COUNT})
-  list(APPEND DEMO_LIST v${I})
+foreach(VN IN LISTS DEMO_LIST)
+  message(${VN})
   file(APPEND auto_generated_includes.h
-       "#include \"cppcon/demo/v${I}/run.h\"\n"
+       "#include \"cppcon/demo/${VN}/run.h\"\n"
   )
 endforeach()
 file(APPEND auto_generated_includes.h "// --- AUTO-GENERATED ---\n")
@@ -20,10 +19,9 @@ file(APPEND auto_generated_includes.h "// --- AUTO-GENERATED ---\n")
 
 # AUTO-GENERATE COMMANDS TO RUN
 file(WRITE auto_generated_commands.h "// --- AUTO-GENERATED ---\n#include <filesystem>\n#define RUN_ALL_DEMOS(in, out, settings) \\\n")
-foreach(I RANGE 0 ${DEMO_COUNT})
-  list(APPEND DEMO_LIST v${I})
+foreach(VN IN LISTS DEMO_LIST)
   file(APPEND auto_generated_commands.h
-       "::cppcon::demo::v${I}::run(in, ::std::filesystem::path{out}.replace_extension(\".v${I}.json\"), settings);\\\n"
+       "::cppcon::demo::${VN}::run(in, ::std::filesystem::path{out}.replace_extension(\".${VN}.json\"), settings);\\\n"
   )
 endforeach()
 file(APPEND auto_generated_commands.h "// --- AUTO-GENERATED ---\n")

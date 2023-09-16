@@ -79,17 +79,17 @@ def main():
   input_filtered = cv2.erode(input_filtered, kernel, iterations=1)
   input_filtered = cv2.bitwise_not(input_filtered)
 
-  print("Running distanceTransformWithLabels...")
+  print("Running skeletonization...")
 
   # Run flood fill for voronoi cell location
   dist, labels = cv2.distanceTransformWithLabels(input_filtered, cv2.DIST_L2, 3)
 
-  print("Running Laplacian...")
+  print("Running laplacian...")
 
   # Detect voronoi edges
   voronoi = cv2.Laplacian(labels.astype(np.int16), ddepth=cv2.CV_16S, ksize=3).astype(np.uint8)
 
-  print("Running to_network...")
+  print("Creating network...")
 
   # Compute graph
   nodes, edges = to_network(voronoi=voronoi, bin_size_px=bin_size_px, n=args.neighbors)

@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <numeric>
+#include <random>
 
 // CppCon
 #include <cppcon/dijkstras.h>
@@ -41,10 +42,27 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
   shuffle_mapping.resize(graph.vertex_count());
   std::iota(shuffle_mapping.begin(), shuffle_mapping.end(), 0);
 
-  if (settings.shuffle_seed != 0)
+  if (settings.shuffle_seed == 0)
   {
-    graph.shuffle(shuffle_mapping, settings.shuffle_seed);
+    std::sort(
+      shuffle_mapping.begin(),
+      shuffle_mapping.end(),
+      [&graph](vertex_id_t lhs, vertex_id_t rhs) -> bool
+      {
+        const auto& lv = graph.vertex(lhs);
+        const auto& rv = graph.vertex(rhs);
+        return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
+      });
   }
+  else
+  {
+    std::shuffle(
+      shuffle_mapping.begin(),
+      shuffle_mapping.end(),
+      std::mt19937{settings.shuffle_seed});
+  }
+
+  graph.shuffle(shuffle_mapping);
 
   {
     std::cerr << "Running: " << (100.0f * settings.percentage_of_problems) <<
