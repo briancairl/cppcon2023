@@ -10,13 +10,15 @@
 // CppCon
 #include <cppcon/dijkstras.h>
 
-namespace cppcon::demo::vn
+namespace cppcon::demo::v3
 {
 
 class Graph
 {
 public:
   explicit Graph(const std::filesystem::path& json);
+
+  void shuffle(const std::vector<std::size_t>& indices);
 
   const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
 
@@ -36,11 +38,9 @@ public:
   }
 
 private:
-  using Edge = std::pair<vertex_id_t, edge_weight_t>;
-
   std::vector<VertexProperties> vertices_;
   std::vector<std::ranges::subrange<const Edge*>> adjacencies_;
   std::vector<Edge> edges_;
 };
 
-}  // namespace cppcon::demo::vn
+}  // namespace cppcon::demo::v3

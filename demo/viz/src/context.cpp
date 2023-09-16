@@ -3,25 +3,14 @@
 #include <fstream>
 
 // CppCon
-#include <cppcon/demo/run.h>
+#include <cppcon/demo/viz/context.h>
 #include <cppcon/demo/json.h>
 
-namespace cppcon::demo
+namespace cppcon::demo::viz
 {
 
-void save_results(const std::filesystem::path& results_out_json, const std::vector<std::size_t>& shuffle_indices, const std::vector<std::vector<vertex_id_t>>& results)
+void save_visited(const std::filesystem::path& results_out_json, const std::vector<std::vector<vertex_id_t>>& results)
 {
-  picojson::array shuffle_array;
-  shuffle_array.reserve(shuffle_indices.size());
-  std::transform(
-    shuffle_indices.begin(),
-    shuffle_indices.end(),
-    std::back_inserter(shuffle_array),
-    [](const std::size_t i) -> picojson::value
-    {
-      return picojson::value{static_cast<double>(i)}; 
-    });
-
   picojson::array results_array;
   results_array.reserve(results.size());
   for (const auto& path : results)
@@ -40,18 +29,17 @@ void save_results(const std::filesystem::path& results_out_json, const std::vect
             return picojson::value{static_cast<double>(vid)};
           });
         picojson::object path_object;
-        path_object["path"] = picojson::value{std::move(arr_json)};
+        path_object["order"] = picojson::value{std::move(arr_json)};
         return picojson::value{std::move(path_object)};
       }());
   }
 
   picojson::object root_object;
-  root_object["shuffle"] = picojson::value{std::move(shuffle_array)};
-  root_object["results"] = picojson::value{std::move(results_array)};
+  root_object["visited"] = picojson::value{std::move(results_array)};
   picojson::value root{std::move(root_object)};
 
   std::ofstream ofs{results_out_json};
   root.serialize(std::ostream_iterator<char>(ofs));
 }
 
-}  // namespace cppcon::demo
+}  // namespace cppcon::demo::viz

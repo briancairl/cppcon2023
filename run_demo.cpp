@@ -1,16 +1,32 @@
+#ifdef __linux__    // Linux only
+#include <sched.h>  // sched_setaffinity
+#endif
+
 // C++ Standard Library
-#include <filesystem>
-#include <chrono>
 #include <iostream>
 #include <sstream>
 
 // CPPCon
-#include "cppcon/demo/v0/run.h"
-#include "cppcon/demo/v1/run.h"
-#include "cppcon/demo/v2/run.h"
-#include "cppcon/demo/vn/run.h"
+#include "auto_generated_includes.h"
+#include "auto_generated_commands.h"
 
 using namespace cppcon;
+
+void cpu_pin(int cpu)
+{
+  #ifdef __linux__
+    cpu_set_t mask;
+    int status;
+
+    CPU_ZERO(&mask);
+    CPU_SET(cpu, &mask);
+    status = sched_setaffinity(0, sizeof(mask), &mask);
+    if (status != 0)
+    {
+      perror("sched_setaffinity");
+    }
+  #endif
+}
 
 template<typename T>
 T to(std::string_view str)
@@ -25,18 +41,20 @@ T to(std::string_view str)
 
 int main(int argc, char** argv)
 {
-  if (argc != 4)
+  if (argc < 3)
   {
-    std::cerr << argv[0] << " <graph_json> <output_json> <percentage or problems>" << std::endl;
+    std::cerr << argv[0] << " <graph_json> <output_json> [<percentage or problems>] [<shuffle_seed>]" << std::endl;
     return 1;
   }
 
-  const float percentage_of_problems = to<float>(argv[3]) / 100.0;
+  cpu_pin(1);
 
-  demo::v0::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v0.json"), percentage_of_problems);
-  demo::v1::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v1.json"), percentage_of_problems);
-  demo::v2::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v2.json"), percentage_of_problems);
-  demo::vn::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".vn.json"), percentage_of_problems);
+  const demo::Settings settings{
+    .percentage_of_problems = (argc > 3) ? (to<float>(argv[3]) / 100.f) : 0.1f,
+    .shuffle_seed = (argc > 4) ? to<std::size_t>(argv[4]) : 0
+  };
+
+  RUN_ALL_DEMOS(argv[1], argv[2], settings);
 
   return 0;
 }

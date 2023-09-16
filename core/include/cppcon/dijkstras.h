@@ -3,6 +3,7 @@
 // C++ Standard Library
 #include <type_traits>
 #include <limits>
+#include <utility>
 
 namespace cppcon
 {
@@ -13,6 +14,15 @@ using edge_weight_t = std::uint32_t;
 
 struct VertexProperties { double x; double y; /* ... */ };
 
+struct EdgeProperties
+{
+  bool valid;
+  edge_weight_t weight;
+  constexpr explicit EdgeProperties(edge_weight_t w) : valid{true}, weight{w} {}
+};
+
+using Edge = std::pair<vertex_id_t, EdgeProperties>;
+
 struct Transition
 {
   vertex_id_t pred;
@@ -22,14 +32,12 @@ struct Transition
 
 constexpr bool operator>(const Transition& lhs, const Transition& rhs) { return lhs.weight > rhs.weight; }
 
-constexpr bool is_weight_invalid(const edge_weight_t w) { return w == std::numeric_limits<edge_weight_t>::max(); }
-
 
 template <typename T>
 concept DijkstrasGraph = 
   requires(T&& g)
   {
-      { g.for_each_edge(vertex_id_t{}, [](vertex_id_t, edge_weight_t) {}) };
+      { g.for_each_edge(vertex_id_t{}, [](vertex_id_t, const EdgeProperties&) {}) };
       { g.vertex_count() };
       { g.vertex(vertex_id_t{}) };
   };
@@ -39,7 +47,7 @@ template <typename T>
 concept DijkstrasContext = 
   requires(T&& ctx)
   {
-      { ctx.is_searching() };
+      { ctx.is_queue_not_empty() };
       { ctx.is_visited(vertex_id_t{}) };
       { ctx.is_terminal(vertex_id_t{}) };
       { ctx.mark_visited(vertex_id_t{}, vertex_id_t{}) };
@@ -55,10 +63,10 @@ bool search(C& ctx, const G& graph, vertex_id_t start)
 {
   ctx.reset(graph, start);
 
-  while (ctx.is_searching())
+  while (ctx.is_queue_not_empty())
   {
     // De-queue successor vertex with the next smallest total weight
-    const auto [pred, succ, pred_weight] = ctx.dequeue();
+    const auto [pred, succ, total_weight] = ctx.dequeue();
 
     // Skip successor if it has been visited
     if (ctx.is_visited(succ))
@@ -81,15 +89,15 @@ bool search(C& ctx, const G& graph, vertex_id_t start)
       // Iterate over all edges from 'succ'
       graph.for_each_edge(
         succ,
-        [&ctx, pred_weight, parent=succ](vertex_id_t child, edge_weight_t edge_weight) mutable
+        [&ctx, total_weight, parent=succ](vertex_id_t child, const EdgeProperties& edge) mutable
         {
-          if (is_weight_invalid(edge_weight) or ctx.is_visited(child))
+          if (!edge.valid or ctx.is_visited(child))
           {
             return;
           }
           else
           {
-            ctx.enqueue(parent, child, edge_weight + pred_weight);
+            ctx.enqueue(parent, child, edge.weight + total_weight);
           }
         });
     }

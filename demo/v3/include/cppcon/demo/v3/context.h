@@ -10,7 +10,7 @@
 // CppCon
 #include <cppcon/dijkstras.h>
 
-namespace cppcon::demo::vn
+namespace cppcon::demo::v3
 {
 
 template<typename T>
@@ -38,7 +38,7 @@ public:
     enqueue(s, s, 0);
   }
 
-  bool is_searching() const { return !queue_.empty(); }
+  bool is_queue_not_empty() const { return !queue_.empty(); }
 
   bool is_visited(vertex_id_t q) const { return visited_[q] != visited_.size(); }
 
@@ -77,4 +77,4 @@ private:
 };
 
 
-}  // namespace cppcon::demo::vn
+}  // namespace cppcon::demo::v3

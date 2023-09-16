@@ -1,3 +1,6 @@
+// C++ Standard Library
+#include <algorithm>
+
 // CppCon
 #include <cppcon/demo/v0/graph.h>
 #include <cppcon/demo/json.h>
@@ -34,6 +37,33 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
       std::forward_as_tuple(pred),
       std::forward_as_tuple(succ, weight)
     );
+  }
+}
+
+void Graph::shuffle(const std::vector<std::size_t>& indices)
+{
+  {
+    auto new_vertices = this->vertices_;
+    for (std::size_t i = 0; i < new_vertices.size(); ++i)
+    {
+      new_vertices[indices[i]] = this->vertices_[i];
+    }
+    new_vertices.swap(this->vertices_);
+  }
+
+  {
+    using AdjacenciesType = decltype(this->adjacencies_);
+    AdjacenciesType new_adjacencies;
+    for (const auto& [pred, edge] : this->adjacencies_)
+    {
+      const auto& [succ, edge_props] = edge;
+      new_adjacencies.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(indices[pred]),
+        std::forward_as_tuple(indices[succ], edge_props)
+      );
+    }
+    new_adjacencies.swap(this->adjacencies_);
   }
 }
 

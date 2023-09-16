@@ -3,14 +3,14 @@
 // C++ Standard Library
 #include <algorithm>
 #include <filesystem>
-#include <map>
+#include <ranges>
 #include <utility>
 #include <vector>
 
 // CppCon
 #include <cppcon/dijkstras.h>
 
-namespace cppcon::demo::v0
+namespace cppcon::demo::viz
 {
 
 class Graph
@@ -27,19 +27,22 @@ public:
   template<typename EdgeVisitorT>
   void for_each_edge(vertex_id_t q, EdgeVisitorT&& visitor) const
   {
-    const auto [first, last] = adjacencies_.equal_range(q);
     std::for_each(
-      first,
-      last,
-      [visitor](const auto& parent_and_edge) mutable
+      adjacencies_[q].begin(),
+      adjacencies_[q].end(),
+      [q, visitor](const auto& child_and_edge_weight) mutable
       {
-        std::apply(visitor, parent_and_edge.second);
+        const auto& [succ, edge_weight] = child_and_edge_weight;
+        visitor(succ, edge_weight);
       });
   }
 
+  std::filesystem::path graph_file_name;
+
 private:
   std::vector<VertexProperties> vertices_;
-  std::multimap<vertex_id_t, Edge> adjacencies_;
+  std::vector<std::ranges::subrange<const Edge*>> adjacencies_;
+  std::vector<Edge> edges_;
 };
 
-}  // namespace cppcon::demo::v0
+}  // namespace cppcon::demo::viz
