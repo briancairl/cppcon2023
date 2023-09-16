@@ -69,16 +69,15 @@ class AppState(object):
           graph = json.load(graph_json_file_handle)
 
       self.results = None
-      self.unshuffle = []
+      self.shuffle_mapping = []
       if results_json_path:
           with open(results_json_path, 'r') as results_json_file_handle:
               data = json.load(results_json_file_handle)
               self.results = data["results"]
               shuffle = data["shuffle"]
-              self.unshuffle = [0]*len(shuffle)
+              self.shuffle_mapping = [0]*len(shuffle)
               for i, s in enumerate(shuffle):
-                  print(i, s)
-                  self.unshuffle[i] = s
+                  self.shuffle_mapping[s] = i
 
       self.image_original = render(graph_data=graph)
       self.image_render = copy.deepcopy(self.image_original)
@@ -106,7 +105,7 @@ class AppState(object):
         return self.to_vertex_id_mapping[iv] if iv in self.to_vertex_id_mapping else None
 
     def to_vertex(self, x:int=None, y:int=None, id:int=None) -> int:
-        id = (id or self.to_vertex_id(x=x, y=y))
+        id = id if (id != None) else self.to_vertex_id(x=x, y=y)
         return self.nodes[id] if (id != None) else None
 
     def to_vertex_position(self, x:int=None, y:int=None, id:int=None) -> tuple:
@@ -151,7 +150,7 @@ def render_path():
   global APP
   APP.image_render = copy.deepcopy(APP.image_original)
   path = APP.results[APP.path_result_index]["path"]
-  path = [APP.unshuffle[p] for p in path] if APP.unshuffle else path
+  path = [APP.shuffle_mapping[p] for p in path]
   for i in range(1, len(path)):
       l_pt = APP.to_vertex_position(id=path[i-1])
       r_pt = APP.to_vertex_position(id=path[i-0])

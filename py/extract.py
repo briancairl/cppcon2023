@@ -8,7 +8,7 @@ import json
 import math
 
 
-def to_network(voronoi: np.ndarray, bin_size_px:int) -> dict:
+def to_network(voronoi: np.ndarray, bin_size_px:int, n:int) -> dict:
     bins = np.zeros((int(voronoi.shape[0] / bin_size_px)+1, int(voronoi.shape[1] / bin_size_px)+1, 3), np.float32)
     for x in range(0, voronoi.shape[0]):
         xb = int(x / bin_size_px)
@@ -32,13 +32,13 @@ def to_network(voronoi: np.ndarray, bin_size_px:int) -> dict:
                 label += 1
 
     edges = []
-    for xb in range(1, bins.shape[0]-1):
-        for yb in range(1, bins.shape[1]-1):
+    for xb in range(n, bins.shape[0]-n):
+        for yb in range(n, bins.shape[1]-n):
             src = labels[xb, yb]
             if src < 0:
                 continue
-            for rx in [-1, 0, 1]:
-                for ry in [-1, 0, 1]:
+            for rx in range(-n, n+1):
+                for ry in range(-n, n+1):
                     if rx == 0 and ry == 0:
                         continue
                     dst = labels[xb+rx, yb+ry]
@@ -57,6 +57,7 @@ def main():
   parser = argparse.ArgumentParser(description='Creates a graph from a black/white map image')
   parser.add_argument('source_occupancy_map_image', type=str, help='Source occupancy image')
   parser.add_argument('output_graph_json', type=str, help='Output path to graph JSON')
+  parser.add_argument('--neighbors', '-n', type=int, default=1, help='Number of neighboring bins to connect')
   parser.add_argument('--bin-size', '-b', type=int, default=None, help='Node binning size (used in places of --downsampling-rate)')
   parser.add_argument('--downsampling-rate', '-d', type=float, default=0.009, help='Downsamping rate used for graph node sparsification')
   parser.add_argument('--show', '-s', action='store_true', help='Render graph once processing is complete')
@@ -68,6 +69,8 @@ def main():
   # Compute bin size
   bin_size_px = args.bin_size or max([1, int(input_image.shape[0] * args.downsampling_rate), int(input_image.shape[1] * args.downsampling_rate)])
 
+  print("Running morphological transforms...")
+
   # Fill small gaps
   kernel_radius = bin_size_px
   kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_radius, kernel_radius))
@@ -76,14 +79,22 @@ def main():
   input_filtered = cv2.erode(input_filtered, kernel, iterations=1)
   input_filtered = cv2.bitwise_not(input_filtered)
 
+  print("Running distanceTransformWithLabels...")
+
   # Run flood fill for voronoi cell location
   dist, labels = cv2.distanceTransformWithLabels(input_filtered, cv2.DIST_L2, 3)
+
+  print("Running Laplacian...")
 
   # Detect voronoi edges
   voronoi = cv2.Laplacian(labels.astype(np.int16), ddepth=cv2.CV_16S, ksize=3).astype(np.uint8)
 
+  print("Running to_network...")
+
   # Compute graph
-  nodes, edges = to_network(voronoi=voronoi, bin_size_px=bin_size_px)
+  nodes, edges = to_network(voronoi=voronoi, bin_size_px=bin_size_px, n=args.neighbors)
+
+  print("Saving...")
 
   # Save graph as JSON
   with open(args.output_graph_json, 'w+', encoding="utf-8") as out:
@@ -93,6 +104,8 @@ def main():
         "nodes" : nodes,
         "edges" : edges,
       }, out)
+
+  print("Done.")
 
   # Display the image
   if args.show:

@@ -3,6 +3,7 @@
 // C++ Standard Library
 #include <type_traits>
 #include <limits>
+#include <utility>
 
 namespace cppcon
 {
@@ -19,6 +20,8 @@ struct EdgeProperties
   edge_weight_t weight;
   constexpr explicit EdgeProperties(edge_weight_t w) : valid{true}, weight{w} {}
 };
+
+using Edge = std::pair<vertex_id_t, EdgeProperties>;
 
 struct Transition
 {

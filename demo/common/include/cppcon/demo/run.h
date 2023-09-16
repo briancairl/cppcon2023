@@ -16,8 +16,9 @@ void save_results(const std::filesystem::path& results_out_json, const std::vect
 
 struct Settings
 {
-  float percentage_of_problems;
-  int shuffles;
+  float percentage_of_problems = 1.f;
+
+  std::size_t shuffle_seed = 0;
 };
 
 template<DijkstrasContext C, DijkstrasGraph G>

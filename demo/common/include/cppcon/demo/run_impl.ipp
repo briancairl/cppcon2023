@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <vector>
 #include <iostream>
+#include <numeric>
 
 // CppCon
 #include <cppcon/dijkstras.h>
@@ -36,55 +37,39 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
   // Create context that we will reused
   C ctx;
 
-  std::vector<std::size_t> shuffle_indices;
+  std::vector<std::size_t> shuffle_mapping;
+  shuffle_mapping.resize(graph.vertex_count());
+  std::iota(shuffle_mapping.begin(), shuffle_mapping.end(), 0);
 
-  const auto Update = [&shuffle_indices, original=graph, n=settings.shuffles](G& graph, int shuffle_index) -> bool
+  if (settings.shuffle_seed != 0)
   {
-    if (shuffle_index > n)
-    {
-      return false;
-    }
-    else if (shuffle_index == 0)
-    {
-      return true;
-    }
-    else if (shuffle_index == n)
-    {
-      graph = original;
-      shuffle_indices.clear();
-    }
-    else
-    {
-      shuffle_indices = graph.shuffle();
-    }
-    return true;
-  };
+    graph.shuffle(shuffle_mapping, settings.shuffle_seed);
+  }
 
-  for (int shuffle_index = 0; Update(graph, shuffle_index); ++shuffle_index)
   {
-    std::cerr << "SHUFFLE[" << shuffle_index << "] -- " <<
-                 "Running: " << (100.0f * settings.percentage_of_problems) <<
+    std::cerr << "Running: " << (100.0f * settings.percentage_of_problems) <<
                  "% (" << selected_problems <<
                  ") of " << total_problems <<
                  " problems" << std::endl;
-    results.clear();
 
     const auto t_start = std::chrono::high_resolution_clock::now();
 
     // Iterate over all possible "goal" vertices
     for (vertex_id_t g = 0; g < graph.vertex_count(); g += step)
     {
-      ctx.set_goal(g);
+      const auto g_shuffled = shuffle_mapping[g];
+
+      ctx.set_goal(g_shuffled);
 
       // Iterate over all possible "start" vertices
       for (vertex_id_t s = 0; s < graph.vertex_count(); s += step)
       {
         // Run the search
-        if ((s != g) && search(ctx, graph, s))
+        if ((s != g) && search(ctx, graph, shuffle_mapping[s]))
         {
           // On success, store resulting path
           path.clear();
-          get_reverse_path(std::back_inserter(path), ctx, g);
+          get_reverse_path(std::back_inserter(path), ctx, g_shuffled);
           std::reverse(path.begin(), path.end());
           results.emplace_back(std::move(path));
         }
@@ -94,15 +79,12 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
     const auto t_duration_approx = (std::chrono::high_resolution_clock::now() - t_start);
     const auto t_duration_approx_secs = std::chrono::duration_cast<std::chrono::duration<double>>(t_duration_approx).count();
 
-    std::filesystem::path shuffle_path{"." + std::to_string(shuffle_index) + result_out_json.extension().string()};
-    shuffle_path = std::filesystem::path{result_out_json}.replace_extension(shuffle_path);
-
-    std::cerr << "SHUFFLE[" << shuffle_index << "] -- " <<
-                 "Solved: " << results.size() <<
+    std::cerr << "Solved: " << results.size() <<
                  " of " << selected_problems <<
                  " problems in: " << t_duration_approx_secs <<
-                 " seconds --> " << shuffle_path << std::endl;
-    save_results(shuffle_path, shuffle_indices, results);
+                 " seconds --> " << result_out_json << std::endl;
+
+    save_results(result_out_json, shuffle_mapping, results);
   }
 }
 

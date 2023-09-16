@@ -10,7 +10,7 @@
 // CppCon
 #include <cppcon/dijkstras.h>
 
-namespace cppcon::demo::vn
+namespace cppcon::demo::v3
 {
 
 template<typename T>
@@ -77,4 +77,4 @@ private:
 };
 
 
-}  // namespace cppcon::demo::vn
+}  // namespace cppcon::demo::v3

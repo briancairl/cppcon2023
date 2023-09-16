@@ -6,3 +6,4 @@ install
 *.data.old
 *.cachegrind*
 *.callgrind*
+*auto_generated_*
