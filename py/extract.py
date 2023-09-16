@@ -56,12 +56,15 @@ def to_network(voronoi: np.ndarray, bin_size_px:int, n:int) -> dict:
 def main():
   parser = argparse.ArgumentParser(description='Creates a graph from a black/white map image')
   parser.add_argument('source_occupancy_map_image', type=str, help='Source occupancy image')
-  parser.add_argument('output_graph_json', type=str, help='Output path to graph JSON')
+  parser.add_argument('--output-graph-json', type=str, default=None, help='Output path to graph JSON')
   parser.add_argument('--neighbors', '-n', type=int, default=1, help='Number of neighboring bins to connect')
   parser.add_argument('--bin-size', '-b', type=int, default=None, help='Node binning size (used in places of --downsampling-rate)')
   parser.add_argument('--downsampling-rate', '-d', type=float, default=0.009, help='Downsamping rate used for graph node sparsification')
   parser.add_argument('--show', '-s', action='store_true', help='Render graph once processing is complete')
   args = parser.parse_args()
+
+  args.output_graph_json = args.output_graph_json or f"{os.path.splitext(args.source_occupancy_map_image)[0]}.graph.json"
+  print(f"Transforming binary image ({args.source_occupancy_map_image}) to graph ({args.output_graph_json})")
 
   # Load the image
   input_image = cv2.imread(args.source_occupancy_map_image, cv2.IMREAD_GRAYSCALE)
@@ -77,7 +80,19 @@ def main():
   input_filtered = cv2.bitwise_not(input_image)
   input_filtered = cv2.dilate(input_filtered, kernel, iterations=1)
   input_filtered = cv2.erode(input_filtered, kernel, iterations=1)
+  input_filtered = cv2.dilate(input_filtered, kernel, iterations=1)
   input_filtered = cv2.bitwise_not(input_filtered)
+
+  # Display the image
+  if args.show:
+    canvas = np.zeros((input_image.shape[0], input_image.shape[1], 3), np.uint8)
+    canvas[:,:,0] = input_filtered
+    canvas[:,:,1] = input_image
+    canvas[:,:,2] = input_image
+    cv2.namedWindow("mask preview", cv2.WINDOW_NORMAL)
+    cv2.imshow("mask preview", canvas)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
   print("Running skeletonization...")
 

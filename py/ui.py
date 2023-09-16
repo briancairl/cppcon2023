@@ -31,7 +31,7 @@ def render(graph_data: dict):
   canvas[:,:,1] = input_image
   canvas[:,:,2] = input_image
 
-  circle_radius = max([1, int(bin_size_px / 4)])
+  circle_radius = max([1, int(bin_size_px / 8)])
   line_width = max([1, int(bin_size_px / 8)])
   for e in edges:
       u = int(e['u'])
@@ -42,6 +42,8 @@ def render(graph_data: dict):
 
   for v in nodes:
       cv2.circle(canvas, (int(v['y']), int(v['x'])), circle_radius, (0, 0, 255), -1)
+
+  canvas //= 3
 
   return canvas
 
@@ -132,7 +134,7 @@ def render_path():
 
   visited = APP.visited[APP.path_result_index]
   visited_end = min((len(visited), APP.path_visited_index+1))
-  visited_radius = int(APP.path_line_width / 4 + 1)
+  visited_radius = int(APP.path_line_width / 2 + 1)
   for i in range(0, visited_end):
       f = float(i) / float(len(visited))
       rmi = APP.shuffle_mapping[visited[i]]
@@ -152,6 +154,7 @@ def update_path_shown(index:int):
   global APP
   APP.path_result_index = index
   APP.path_visited_index = 0
+  cv2.setTrackbarMax('visited', WINDOW_NAME, len(APP.visited[index]))
   render_path()
 
 
