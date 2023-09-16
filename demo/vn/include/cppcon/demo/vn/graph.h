@@ -18,6 +18,8 @@ class Graph
 public:
   explicit Graph(const std::filesystem::path& json);
 
+  std::vector<std::size_t> shuffle();
+
   const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
 
   std::size_t vertex_count() const { return vertices_.size(); }
@@ -36,7 +38,7 @@ public:
   }
 
 private:
-  using Edge = std::pair<vertex_id_t, edge_weight_t>;
+  using Edge = std::pair<vertex_id_t, EdgeProperties>;
 
   std::vector<VertexProperties> vertices_;
   std::vector<std::ranges::subrange<const Edge*>> adjacencies_;

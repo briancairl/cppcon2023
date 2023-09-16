@@ -38,7 +38,7 @@ public:
     enqueue(s, s, 0);
   }
 
-  bool is_searching() const { return !queue_.empty(); }
+  bool is_queue_not_empty() const { return !queue_.empty(); }
 
   bool is_visited(vertex_id_t q) const { return visited_[q] != visited_.size(); }
 

@@ -1,3 +1,7 @@
+// C++ Standard Library
+#include <algorithm>
+#include <random>
+
 // CppCon
 #include <cppcon/demo/vn/graph.h>
 #include <cppcon/demo/json.h>
@@ -47,6 +51,59 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
     }
     this->adjacencies_.emplace_back(this->edges_.data() + idx_start, this->edges_.data() + idx);
   }
+}
+
+std::vector<std::size_t> Graph::shuffle()
+{
+  std::vector<std::size_t> shuffle_indices;
+  shuffle_indices.resize(vertex_count());
+  std::iota(shuffle_indices.begin(), shuffle_indices.end(), 0);
+  std::shuffle(shuffle_indices.begin(), shuffle_indices.end(), std::mt19937{std::random_device{}()});
+
+  {
+    auto new_vertices = this->vertices_;
+    for (std::size_t i = 0; i < new_vertices.size(); ++i)
+    {
+      new_vertices[i] = this->vertices_[shuffle_indices[i]];
+    }
+    new_vertices.swap(this->vertices_);
+  }
+
+  {
+    std::vector<std::vector<Graph::Edge>> collated_adjacencies;
+    collated_adjacencies.resize(this->vertices_.size());
+    for (vertex_id_t pred = 0; pred < this->adjacencies_.size(); ++pred)
+    {
+      const auto& edges = this->adjacencies_[pred];
+      collated_adjacencies[pred] = std::vector<Graph::Edge>{edges.begin(), edges.end()};
+    }
+
+    std::vector<std::vector<Graph::Edge>> shuffled_adjacencies;
+    shuffled_adjacencies.resize(this->vertices_.size());
+    for (vertex_id_t pred = 0; pred < this->adjacencies_.size(); ++pred)
+    {
+      shuffled_adjacencies[pred].swap(collated_adjacencies[shuffle_indices[pred]]);
+      for (auto& [succ, _] : shuffled_adjacencies[pred])
+      {
+        succ = shuffle_indices[succ];
+      }
+    }
+
+    this->edges_.clear();
+    this->adjacencies_.clear();
+    std::size_t idx = 0;
+    for (const auto& e : shuffled_adjacencies)
+    {
+      std::size_t idx_start = idx;
+      for (const auto& edge : e)
+      {
+        this->edges_.emplace_back(edge);
+        ++idx;
+      }
+      this->adjacencies_.emplace_back(this->edges_.data() + idx_start, this->edges_.data() + idx);
+    }
+  }
+  return shuffle_indices;
 }
 
 }  // namespace cppcon::demo::vn

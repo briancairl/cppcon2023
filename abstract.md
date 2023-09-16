@@ -11,3 +11,11 @@ Attendees can expect an overview of common search-based planning algorithms used
 
 # Note:
 - https://easyperf.net/blog/2019/08/02/Perf-measurement-environment-on-Linux#4-set-cpu-affinity
+
+
+# Hotspot
+
+/home/brian/dev/cppcon2023/build/run_demo
+/home/brian/Downloads/BeanCoDistributionFacilities.graph.json /home/brian/Downloads/BeanCoDistributionFacilities.results.json 0.00001 10
+/home/brian/dev/cppcon2023/build
+instructions,cpu-cycles,longest_lat_cache.miss,l1d.hwpf_miss,l2_request.miss

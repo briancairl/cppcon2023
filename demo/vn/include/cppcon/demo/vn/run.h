@@ -6,6 +6,6 @@
 namespace cppcon::demo::vn
 {
 
-void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, float percentage_of_problems);
+void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings);
 
 }  // namespace cppcon::demo::vn

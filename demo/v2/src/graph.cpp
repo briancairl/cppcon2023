@@ -1,3 +1,7 @@
+// C++ Standard Library
+#include <algorithm>
+#include <random>
+
 // CppCon
 #include <cppcon/demo/v2/graph.h>
 #include <cppcon/demo/json.h>
@@ -34,6 +38,49 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
     auto itr = this->adjacencies_.find(pred);
     itr->second.emplace_back(succ, weight);
   }
+}
+
+std::vector<std::size_t> Graph::shuffle()
+{
+  std::vector<std::size_t> shuffle_indices;
+  shuffle_indices.resize(vertex_count());
+  std::iota(shuffle_indices.begin(), shuffle_indices.end(), 0);
+  std::shuffle(shuffle_indices.begin(), shuffle_indices.end(), std::mt19937{std::random_device{}()});
+
+  {
+    auto new_vertices = this->vertices_;
+    for (std::size_t i = 0; i < new_vertices.size(); ++i)
+    {
+      new_vertices[i] = this->vertices_[shuffle_indices[i]];
+    }
+    new_vertices.swap(this->vertices_);
+  }
+
+  {
+    using AdjacenciesType = decltype(this->adjacencies_);
+    AdjacenciesType new_adjacencies;
+    for (const auto& [pred, edges] : this->adjacencies_)
+    {
+      std::vector<std::pair<vertex_id_t, EdgeProperties>> new_edges;
+      new_edges.reserve(edges.size());
+      std::transform(
+        edges.begin(),
+        edges.end(),
+        std::back_inserter(new_edges),
+        [&shuffle_indices](const auto& succ_and_edge) -> std::pair<vertex_id_t, EdgeProperties>
+        {
+          const auto& [succ, edge] = succ_and_edge;
+          return {shuffle_indices[succ], edge};
+        });
+      new_adjacencies.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(shuffle_indices[pred]),
+        std::forward_as_tuple(std::move(new_edges))
+      );
+    }
+    new_adjacencies.swap(this->adjacencies_);
+  }
+  return shuffle_indices;
 }
 
 }  // namespace cppcon::demo::v2

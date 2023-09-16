@@ -18,6 +18,8 @@ class Graph
 public:
   explicit Graph(const std::filesystem::path& json);
 
+  std::vector<std::size_t> shuffle();
+
   const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
 
   std::size_t vertex_count() const { return vertices_.size(); }
@@ -37,7 +39,7 @@ public:
 
 private:
   std::vector<VertexProperties> vertices_;
-  std::multimap<vertex_id_t, std::pair<vertex_id_t, edge_weight_t>> adjacencies_;
+  std::multimap<vertex_id_t, std::pair<vertex_id_t, EdgeProperties>> adjacencies_;
 };
 
 }  // namespace cppcon::demo::v0

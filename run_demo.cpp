@@ -25,18 +25,22 @@ T to(std::string_view str)
 
 int main(int argc, char** argv)
 {
-  if (argc != 4)
+  if (argc < 3)
   {
-    std::cerr << argv[0] << " <graph_json> <output_json> <percentage or problems>" << std::endl;
+    std::cerr << argv[0] << " <graph_json> <output_json> [<percentage or problems>] [<shuffles>]" << std::endl;
     return 1;
   }
 
-  const float percentage_of_problems = to<float>(argv[3]) / 100.0;
 
-  demo::v0::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v0.json"), percentage_of_problems);
-  demo::v1::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v1.json"), percentage_of_problems);
-  demo::v2::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v2.json"), percentage_of_problems);
-  demo::vn::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".vn.json"), percentage_of_problems);
+  const demo::Settings settings{
+    .percentage_of_problems = (argc > 3) ? (to<float>(argv[3]) / 100.f) : 0.1f,
+    .shuffles = (argc > 4) ? to<int>(argv[4]) : 1
+  };
+
+  demo::v0::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v0.json"), settings);
+  demo::v1::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v1.json"), settings);
+  demo::v2::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".v2.json"), settings);
+  demo::vn::run(argv[1], std::filesystem::path{argv[2]}.replace_extension(".vn.json"), settings);
 
   return 0;
 }

@@ -68,11 +68,17 @@ class AppState(object):
       with open(graph_json_path, 'r') as graph_json_file_handle:
           graph = json.load(graph_json_file_handle)
 
+      self.results = None
+      self.unshuffle = []
       if results_json_path:
           with open(results_json_path, 'r') as results_json_file_handle:
-              self.results = json.load(results_json_file_handle)["results"]
-      else:
-          self.results = None
+              data = json.load(results_json_file_handle)
+              self.results = data["results"]
+              shuffle = data["shuffle"]
+              self.unshuffle = [0]*len(shuffle)
+              for i, s in enumerate(shuffle):
+                  print(i, s)
+                  self.unshuffle[i] = s
 
       self.image_original = render(graph_data=graph)
       self.image_render = copy.deepcopy(self.image_original)
@@ -145,6 +151,7 @@ def render_path():
   global APP
   APP.image_render = copy.deepcopy(APP.image_original)
   path = APP.results[APP.path_result_index]["path"]
+  path = [APP.unshuffle[p] for p in path] if APP.unshuffle else path
   for i in range(1, len(path)):
       l_pt = APP.to_vertex_position(id=path[i-1])
       r_pt = APP.to_vertex_position(id=path[i-0])
