@@ -11,7 +11,7 @@ Attendees can expect an overview of common search-based planning algorithms used
 
 # Note:
 - https://easyperf.net/blog/2019/08/02/Perf-measurement-environment-on-Linux#4-set-cpu-affinity
-
+- https://developers.redhat.com/blog/2014/03/10/determining-whether-an-application-has-poor-cache-performance-2
 
 # Hotspot
 
@@ -19,3 +19,14 @@ Attendees can expect an overview of common search-based planning algorithms used
 /home/brian/Downloads/BeanCoDistributionFacilities.graph.json /home/brian/Downloads/BeanCoDistributionFacilities.results.json 0.00001 10
 /home/brian/dev/cppcon2023/build
 instructions,cpu-cycles,longest_lat_cache.miss,l1d.hwpf_miss,l2_request.miss
+
+
+# Running
+
+```
+./extract.py ~/Downloads/BeanCoDistributionFacilities.png ~/Downloads/BeanCoDistributionFacilities.graph.json -n 2 -s -b 20
+```
+
+```
+./ui.py ~/Downloads/BeanCoDistributionFacilities.graph.json -d v2
+```
