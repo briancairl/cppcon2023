@@ -4,12 +4,11 @@ project (cppcon2023)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -g")
 
-set(DEMO_LIST "v0;v1;v2;v3")
+set(DEMO_LIST "v0;v1;v2;v3;viz")
 
 # AUTO-GENERATE DEMOS TO INCLUDE
 file(WRITE auto_generated_includes.h "// --- AUTO-GENERATED ---\n")
 foreach(VN IN LISTS DEMO_LIST)
-  message(${VN})
   file(APPEND auto_generated_includes.h
        "#include \"cppcon/demo/${VN}/run.h\"\n"
   )

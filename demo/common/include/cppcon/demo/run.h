@@ -21,7 +21,7 @@ struct Settings
   std::size_t shuffle_seed = 0;
 };
 
-template<DijkstrasContext C, DijkstrasGraph G>
-void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings);
+template<DijkstrasContext C, DijkstrasGraph G, typename WithContext>
+void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings, WithContext with_ctx);
 
 }  // namespace cppcon::demo

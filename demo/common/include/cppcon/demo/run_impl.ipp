@@ -17,8 +17,8 @@ namespace cppcon::demo
 
 using Path = std::vector<vertex_id_t>;
 
-template<DijkstrasContext C, DijkstrasGraph G>
-void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings)
+template<DijkstrasContext C, DijkstrasGraph G, typename WithContext>
+void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings, WithContext with_ctx)
 {
   // Load graph from file
   G graph{graph_in_json};
@@ -90,6 +90,7 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
           get_reverse_path(std::back_inserter(path), ctx, g_shuffled);
           std::reverse(path.begin(), path.end());
           results.emplace_back(std::move(path));
+          with_ctx(ctx);
         }
       }
     }

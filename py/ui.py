@@ -62,7 +62,7 @@ class InteractVertex(object):
 
 
 class AppState(object):
-    def __init__(self, graph_json_path:str, results_json_path:Optional[str] = None):
+    def __init__(self, graph_json_path:str, results_json_path:Optional[str] = None, visited_json_path:Optional[str] = None):
 
       with open(graph_json_path, 'r') as graph_json_file_handle:
           graph = json.load(graph_json_file_handle)
@@ -78,6 +78,16 @@ class AppState(object):
               for i, s in enumerate(shuffle):
                   self.shuffle_mapping[s] = i
 
+      self.visited = []
+      if visited_json_path:
+          with open(visited_json_path, 'r') as visited_json_file_handle:
+              data = json.load(visited_json_file_handle)
+              for visited in data['visited']:
+                  self.visited.append(visited['order'])
+
+      assert(len(self.visited) == len(self.results)), (f"{len(self.visited)} != {len(self.results)}")
+
+
       self.image_original = render(graph_data=graph)
       self.image_render = copy.deepcopy(self.image_original)
 
@@ -87,6 +97,7 @@ class AppState(object):
       self.resolution = graph['bin_size']
       self.path_line_width = 50
       self.path_result_index = 0
+      self.path_visited_index = 0
 
       self.start_vertex_id = None
       self.goal_vertex_id = None
@@ -115,51 +126,38 @@ class AppState(object):
 APP = None
 
 
-def mouse_event(event,x,y,flags,param):
-    global APP
-
-    vertex_id = APP.to_vertex_id(x=y, y=x)
-
-    if (event == cv2.EVENT_RBUTTONDOWN) and (APP.start_vertex_id != None) and (APP.goal_vertex_id != None):
-        APP.collected_vertex_pairs.append({"start" : APP.start_vertex_id, "goal" : APP.goal_vertex_id})
-        APP.start_vertex_id = None
-        APP.goal_vertex_id = None
-        APP.image_render = copy.deepcopy(APP.image_original)
-        cv2.imshow(WINDOW_NAME, APP.image_render)
-
-    elif (event == cv2.EVENT_LBUTTONDBLCLK) and vertex_id:
-
-        if APP.start_vertex_id == None:
-            APP.start_vertex_id = vertex_id
-            start_pt = APP.to_vertex_position(id=APP.start_vertex_id)
-            cv2.circle(APP.image_render, (start_pt[1], start_pt[0]), APP.resolution//2, (50, 200, 100), -1)
-            cv2.circle(APP.image_render, (start_pt[1], start_pt[0]), APP.resolution//2, (10, 255, 255), 2)
-            cv2.imshow(WINDOW_NAME, APP.image_render)
-        elif APP.goal_vertex_id == None:
-            APP.goal_vertex_id = vertex_id
-            start_pt = APP.to_vertex_position(id=APP.start_vertex_id)
-            goal_pt = APP.to_vertex_position(id=APP.goal_vertex_id)
-            cv2.line(APP.image_render, (start_pt[1], start_pt[0]), (goal_pt[1], goal_pt[0]), (10, 255, 255), APP.resolution//3)
-            cv2.circle(APP.image_render, (goal_pt[1], goal_pt[0]), APP.resolution//2, (50, 200, 100), -1)
-            cv2.circle(APP.image_render, (goal_pt[1], goal_pt[0]), APP.resolution//2, (10, 255, 255), 2)
-            cv2.imshow(WINDOW_NAME, APP.image_render)
-
-
 def render_path():
   global APP
   APP.image_render = copy.deepcopy(APP.image_original)
+
+  visited = APP.visited[APP.path_result_index]
+  visited_end = min((len(visited), APP.path_visited_index+1))
+  visited_radius = int(APP.path_line_width / 4 + 1)
+  for i in range(0, visited_end):
+      f = float(i) / float(len(visited))
+      rmi = APP.shuffle_mapping[visited[i]]
+      c_pt = APP.to_vertex_position(id=rmi)
+      cv2.circle(APP.image_render, (c_pt[1], c_pt[0]), visited_radius, (0, int(255*(1-f)), int(255*f)), -1)
+
   path = APP.results[APP.path_result_index]["path"]
   path = [APP.shuffle_mapping[p] for p in path]
   for i in range(1, len(path)):
       l_pt = APP.to_vertex_position(id=path[i-1])
       r_pt = APP.to_vertex_position(id=path[i-0])
-      cv2.line(APP.image_render, (l_pt[1], l_pt[0]), (r_pt[1], r_pt[0]), (10, 255, 10), APP.path_line_width)
+      cv2.line(APP.image_render, (l_pt[1], l_pt[0]), (r_pt[1], r_pt[0]), (5, 255, 255), APP.path_line_width)
   cv2.imshow(WINDOW_NAME, APP.image_render)
 
 
 def update_path_shown(index:int):
   global APP
   APP.path_result_index = index
+  APP.path_visited_index = 0
+  render_path()
+
+
+def update_visited_shown(index:int):
+  global APP
+  APP.path_visited_index = index
   render_path()
 
 
@@ -170,37 +168,35 @@ def update_path_line_width(value:int):
 
 
 def main():
-  global APP
+  global APP, WINDOW_NAME
 
   parser = argparse.ArgumentParser(description='Runs search on graph interactively')
   parser.add_argument('graph_json', type=str, help='Graph JSON')
-  parser.add_argument('--problems-json', '-p', type=str, help='Problem JSON', required=False, default=None)
-  parser.add_argument('--results-json', '-r', type=str, help='Result JSON', required=False, default=None)
+  parser.add_argument('--demo-result', '-d', type=str, help='demo result', default="viz")
+  parser.add_argument('--results-json', type=str, help='Result JSON', default=None)
+  parser.add_argument('--visited-json', type=str, help='Visited order JSON', default=None)
   args = parser.parse_args()
 
-  APP = AppState(graph_json_path=args.graph_json, results_json_path=args.results_json)
+  GRAPH_DIR = os.path.dirname(args.graph_json)
+  GRAPH_NAME = os.path.basename(args.graph_json).split('.')[0]
+
+  args.results_json = args.results_json or f"{os.path.join(GRAPH_DIR, GRAPH_NAME)}.results.{args.demo_result}.json"
+  args.visited_json = args.visited_json or f"{os.path.join(GRAPH_DIR, GRAPH_NAME)}.graph.visited_order.json"
+
+  APP = AppState(graph_json_path=args.graph_json, results_json_path=args.results_json, visited_json_path=args.visited_json)
+
+  WINDOW_NAME = GRAPH_NAME
 
   cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
 
   if APP.results:
       cv2.createTrackbar('result', WINDOW_NAME, 0, len(APP.results)-1, update_path_shown)
+      cv2.createTrackbar('visited', WINDOW_NAME, 0, 100000, update_visited_shown)
       cv2.createTrackbar('width', WINDOW_NAME, 50, 100, update_path_line_width)
 
-  cv2.setMouseCallback(WINDOW_NAME, mouse_event)
   cv2.imshow(WINDOW_NAME, APP.image_original)
   cv2.waitKey(0)
   cv2.destroyAllWindows()
-
-  if not args.problems_json:
-      args.problems_json = f"{os.path.splitext(args.graph_json)[0]}.problems.json"
-
-  if os.path.exists(args.problems_json):
-      if input(f"{args.problems_json} exists. overwrite? [y/N]: ").lower() != 'y':
-          print(f"Not saving {args.problems_json}")
-          sys.exit(0)
-
-  with open(args.problems_json, 'w+') as problems_json_file_handle:
-      json.dump({"problems" : APP.collected_vertex_pairs}, problems_json_file_handle, indent=4)
 
 if __name__ == '__main__':
   main()
