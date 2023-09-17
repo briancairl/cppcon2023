@@ -85,14 +85,13 @@ def main():
 
   # Display the image
   if args.show:
-    canvas = np.zeros((input_image.shape[0], input_image.shape[1], 3), np.uint8)
-    canvas[:,:,0] = input_filtered
-    canvas[:,:,1] = input_image
-    canvas[:,:,2] = input_image
-    cv2.namedWindow("mask preview", cv2.WINDOW_NORMAL)
-    cv2.imshow("mask preview", canvas)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+      canvas = np.zeros((input_image.shape[0], input_image.shape[1], 3), np.uint8)
+      canvas[:,:,0] = input_filtered
+      canvas[:,:,1] = input_image
+      canvas[:,:,2] = input_image
+      cv2.namedWindow("preview", cv2.WINDOW_NORMAL)
+      cv2.imshow("preview", canvas)
+      cv2.waitKey(0)
 
   print("Running skeletonization...")
 
@@ -103,6 +102,12 @@ def main():
 
   # Detect voronoi edges
   voronoi = cv2.Laplacian(labels.astype(np.int16), ddepth=cv2.CV_16S, ksize=3).astype(np.uint8)
+
+  # Display the image
+  if args.show:
+      canvas = (0.25 * cv2.bitwise_not(input_image).astype(np.float32) + 0.75 * cv2.bitwise_and(input_image, cv2.dilate(voronoi, kernel, iterations=1)).astype(np.float32)).astype(np.uint8)
+      cv2.imshow("preview", canvas)
+      cv2.waitKey(0)
 
   print("Creating network...")
 
@@ -125,7 +130,7 @@ def main():
   # Display the image
   if args.show:
       canvas = np.zeros((input_image.shape[0], input_image.shape[1], 3), np.uint8)
-      canvas[:,:,0] = input_filtered
+      canvas[:,:,0] = input_image
       canvas[:,:,1] = (0.75 * input_image.astype(np.float32) + 0.25 * cv2.bitwise_and(input_image, cv2.bitwise_not(cv2.dilate(voronoi, kernel, iterations=1))).astype(np.float32)).astype(np.uint8)
       canvas[:,:,2] = input_image
 
@@ -141,8 +146,8 @@ def main():
       for v in nodes:
           cv2.circle(canvas, (int(v['y']), int(v['x'])), circle_radius, (0, 0, 255), -1)
 
-      cv2.namedWindow("graph preview", cv2.WINDOW_NORMAL)
-      cv2.imshow("graph preview", canvas)
+      cv2.namedWindow("preview", cv2.WINDOW_NORMAL)
+      cv2.imshow("preview", canvas)
       cv2.waitKey(0)
       cv2.destroyAllWindows()
 

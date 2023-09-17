@@ -4,7 +4,7 @@ project (cppcon2023)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -g")
 
-set(DEMO_LIST "v3;viz;a3;a_viz")
+set(DEMO_LIST "v0;v3;a0;a3;viz")
 
 # AUTO-GENERATE DEMOS TO INCLUDE
 file(WRITE auto_generated_includes.h "// --- AUTO-GENERATED ---\n")
