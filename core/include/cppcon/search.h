@@ -34,7 +34,7 @@ constexpr bool operator>(const Transition& lhs, const Transition& rhs) { return 
 
 
 template <typename T>
-concept DijkstrasGraph = 
+concept SearchGraph = 
   requires(T&& g)
   {
       { g.for_each_edge(vertex_id_t{}, [](vertex_id_t, const EdgeProperties&) {}) };
@@ -44,7 +44,7 @@ concept DijkstrasGraph =
 
 
 template <typename T>
-concept DijkstrasContext = 
+concept SearchContext = 
   requires(T&& ctx)
   {
       { ctx.is_queue_not_empty() };
@@ -58,7 +58,7 @@ concept DijkstrasContext =
 
 
 
-template<DijkstrasContext C, DijkstrasGraph G>
+template<SearchContext C, SearchGraph G>
 bool search(C& ctx, const G& graph, vertex_id_t start)
 {
   ctx.reset(graph, start);
@@ -108,7 +108,7 @@ bool search(C& ctx, const G& graph, vertex_id_t start)
 }
 
 
-template<typename OutputIteratorT, DijkstrasContext C>
+template<typename OutputIteratorT, SearchContext C>
 OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, vertex_id_t succ)
 {
   (*out) = succ;

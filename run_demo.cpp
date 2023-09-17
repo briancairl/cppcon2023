@@ -51,7 +51,8 @@ int main(int argc, char** argv)
 
   const demo::Settings settings{
     .percentage_of_problems = (argc > 3) ? (to<float>(argv[3]) / 100.f) : 0.1f,
-    .shuffle_seed = (argc > 4) ? to<std::size_t>(argv[4]) : 0
+    .shuffle_seed = (argc > 4) ? to<std::size_t>(argv[4]) : 0,
+    .run_search = (argc < 6) or (to<std::string>(argv[5]) == "yes")
   };
 
   RUN_ALL_DEMOS(argv[1], argv[2], settings);

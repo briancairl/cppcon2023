@@ -9,7 +9,7 @@
 #include <random>
 
 // CppCon
-#include <cppcon/dijkstras.h>
+#include <cppcon/search.h>
 #include <cppcon/demo/run.h>
 
 namespace cppcon::demo
@@ -17,7 +17,7 @@ namespace cppcon::demo
 
 using Path = std::vector<vertex_id_t>;
 
-template<DijkstrasContext C, DijkstrasGraph G, typename WithContext>
+template<SearchContext C, SearchGraph G, typename WithContext>
 void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings, WithContext with_ctx)
 {
   // Load graph from file
@@ -44,15 +44,15 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
 
   if (settings.shuffle_seed == 0)
   {
-    std::sort(
-      shuffle_mapping.begin(),
-      shuffle_mapping.end(),
-      [&graph](vertex_id_t lhs, vertex_id_t rhs) -> bool
-      {
-        const auto& lv = graph.vertex(lhs);
-        const auto& rv = graph.vertex(rhs);
-        return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
-      });
+    // std::sort(
+    //   shuffle_mapping.begin(),
+    //   shuffle_mapping.end(),
+    //   [&graph](vertex_id_t lhs, vertex_id_t rhs) -> bool
+    //   {
+    //     const auto& lv = graph.vertex(lhs);
+    //     const auto& rv = graph.vertex(rhs);
+    //     return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
+    //   });
   }
   else
   {
@@ -64,6 +64,7 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
 
   graph.shuffle(shuffle_mapping);
 
+  if (settings.run_search)
   {
     std::cerr << "Running: " << (100.0f * settings.percentage_of_problems) <<
                  "% (" << selected_problems <<

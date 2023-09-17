@@ -10,7 +10,7 @@
 #include <vector>
 
 // CppCon
-#include <cppcon/dijkstras.h>
+#include <cppcon/search.h>
 
 namespace cppcon::demo::a_viz
 {
@@ -37,7 +37,7 @@ public:
 
   void set_goal(vertex_id_t g) { goal_ = g; }
 
-  template<DijkstrasGraph G>
+  template<SearchGraph G>
   void reset(G&& graph, vertex_id_t s)
   {
     if (result_file_name.empty())

@@ -5,7 +5,7 @@
 #include <vector>
 
 // CppCon
-#include <cppcon/dijkstras.h>
+#include <cppcon/search.h>
 
 namespace cppcon::demo
 {
@@ -19,9 +19,11 @@ struct Settings
   float percentage_of_problems = 1.f;
 
   std::size_t shuffle_seed = 0;
+
+  bool run_search = true;
 };
 
-template<DijkstrasContext C, DijkstrasGraph G, typename WithContext>
+template<SearchContext C, SearchGraph G, typename WithContext>
 void run(const std::filesystem::path& graph_in_json, const std::filesystem::path& result_out_json, const Settings& settings, WithContext with_ctx);
 
 }  // namespace cppcon::demo

@@ -8,7 +8,7 @@
 #include <vector>
 
 // CppCon
-#include <cppcon/dijkstras.h>
+#include <cppcon/search.h>
 
 namespace cppcon::demo::v2
 {
