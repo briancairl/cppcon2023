@@ -44,15 +44,15 @@ void run(const std::filesystem::path& graph_in_json, const std::filesystem::path
 
   if (settings.shuffle_seed == 0)
   {
-    // std::sort(
-    //   shuffle_mapping.begin(),
-    //   shuffle_mapping.end(),
-    //   [&graph](vertex_id_t lhs, vertex_id_t rhs) -> bool
-    //   {
-    //     const auto& lv = graph.vertex(lhs);
-    //     const auto& rv = graph.vertex(rhs);
-    //     return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
-    //   });
+    std::sort(
+      shuffle_mapping.begin(),
+      shuffle_mapping.end(),
+      [&graph](vertex_id_t lhs, vertex_id_t rhs) -> bool
+      {
+        const auto& lv = graph.vertex(lhs);
+        const auto& rv = graph.vertex(rhs);
+        return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
+      });
   }
   else
   {
