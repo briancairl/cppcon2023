@@ -19,23 +19,22 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
   {
     const auto& node_object = node_value.get<picojson::object>();
 
-    this->adjacencies_.try_emplace(this->vertices_.size());
     this->vertices_.push_back(VertexProperties{
       .x = node_object.at("x").get<double>(),
       .y = node_object.at("y").get<double>(),
     });
   }
 
+  this->adjacencies_.resize(this->vertices_.size());
   const auto& edges = root.at("edges").get<picojson::array>();
   for (const auto& edge_value : edges)
   {
     const auto& edge_object = edge_value.get<picojson::object>();
-    const vertex_id_t pred = edge_object.at("u").get<double>();
-    const vertex_id_t succ = edge_object.at("v").get<double>();
+    const vertex_id_t from = edge_object.at("u").get<double>();
+    const vertex_id_t to = edge_object.at("v").get<double>();
     const edge_weight_t weight = std::max<edge_weight_t>(1, edge_object.at("w").get<double>());
 
-    auto itr = this->adjacencies_.find(pred);
-    itr->second.emplace_back(succ, weight);
+    this->adjacencies_[from].emplace_back(to, weight);
   }
 }
 
@@ -53,24 +52,22 @@ void Graph::shuffle(const std::vector<std::size_t>& indices)
   {
     using AdjacenciesType = decltype(this->adjacencies_);
     AdjacenciesType new_adjacencies;
-    for (const auto& [pred, edges] : this->adjacencies_)
+    new_adjacencies.resize(this->adjacencies_.size());
+    for (vertex_id_t from = 0; from < new_adjacencies.size(); ++from)
     {
-      std::vector<std::pair<vertex_id_t, EdgeProperties>> new_edges;
+      const auto& edges = this->adjacencies_[from];
+      std::vector<Edge> new_edges;
       new_edges.reserve(edges.size());
       std::transform(
         edges.begin(),
         edges.end(),
         std::back_inserter(new_edges),
-        [&indices](const auto& succ_and_edge) -> std::pair<vertex_id_t, EdgeProperties>
+        [&indices](const auto& to_and_edge) -> Edge
         {
-          const auto& [succ, edge] = succ_and_edge;
-          return {indices[succ], edge};
+          const auto& [to, edge] = to_and_edge;
+          return {indices[to], edge};
         });
-      new_adjacencies.emplace(
-        std::piecewise_construct,
-        std::forward_as_tuple(indices[pred]),
-        std::forward_as_tuple(std::move(new_edges))
-      );
+      new_adjacencies[indices[from]]= std::move(new_edges);
     }
     new_adjacencies.swap(this->adjacencies_);
   }

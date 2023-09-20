@@ -21,29 +21,24 @@ public:
   template<SearchGraph G>
   void reset([[maybe_unused]] G&& graph, vertex_id_t s)
   {
-    visited_.clear();
+    visited_.resize(graph.vertex_count());
+    visited_.assign(graph.vertex_count(), graph.vertex_count());
+
     while (!queue_.empty()) { queue_.pop(); }
     enqueue(s, s, 0);
   }
 
   bool is_queue_not_empty() const { return !queue_.empty(); }
 
-  bool is_visited(vertex_id_t q) const { return visited_.count(q); }
+  bool is_visited(vertex_id_t q) const { return visited_[q] != visited_.size(); }
 
   bool is_terminal(vertex_id_t q) const { return goal_ == q; }
 
-  void mark_visited(vertex_id_t p, vertex_id_t s) { visited_.emplace(s, p); }
+  void mark_visited(vertex_id_t p, vertex_id_t s) { visited_[s] = p; }
 
   vertex_id_t predecessor(vertex_id_t q) const
   {
-    if (const auto itr = visited_.find(q); itr == visited_.end())
-    {
-      return q;
-    }
-    else
-    {
-      return itr->second;
-    }
+    return visited_[q];
   }
 
   Transition dequeue()
@@ -67,7 +62,7 @@ private:
 
   std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> queue_;
 
-  std::unordered_map<vertex_id_t, vertex_id_t> visited_;
+  std::vector<vertex_id_t> visited_;
 };
 
 

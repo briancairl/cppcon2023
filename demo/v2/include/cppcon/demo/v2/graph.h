@@ -3,7 +3,6 @@
 // C++ Standard Library
 #include <algorithm>
 #include <filesystem>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -27,10 +26,10 @@ public:
   template<typename EdgeVisitorT>
   void for_each_edge(vertex_id_t q, EdgeVisitorT&& visitor) const
   {
-    const auto itr = adjacencies_.find(q);
+    const auto& adj = adjacencies_[q];
     std::for_each(
-      itr->second.begin(),
-      itr->second.end(),
+      adj.begin(),
+      adj.end(),
       [visitor](const auto& parent_and_edge) mutable
       {
         std::apply(visitor, parent_and_edge);
@@ -39,7 +38,7 @@ public:
 
 private:
   std::vector<VertexProperties> vertices_;
-  std::unordered_map<vertex_id_t, std::vector<Edge>> adjacencies_;
+  std::vector<std::vector<Edge>> adjacencies_;
 };
 
 }  // namespace cppcon::demo::v2
