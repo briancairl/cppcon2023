@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>CppCon 2023</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/custom.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Cache-friendly Design in Robot Path Planning</h1>
+					<p>Brian Cairl</p>
+				</section>
+
+
+
+				<section>
+					<div class="row">
+						<div class="column">
+							<ul>
+							  <li>This is my first time at CppCon!</li>
+							  <li>Regularly program in C++ for robotics</li>
+							  <li>Worked at a few robotics startups
+							  	<ul>
+							  		<li>Fetch Robotics (2016-2022)</li>
+							  		<li>Thirdwave.ai (2022-2023)</li>
+							  		<li>Tortuga AgTech (2023-present)</li>
+							  	</ul>
+							  </li>
+							  <li>Mostly working on:
+							  	<ul>
+							  		<li>General architecture and frameworks around robot systems</li>
+							  		<li>Navigation and perception systems</li>
+							  	</ul>
+							  </li>
+							  <li>Other interests:
+							  	<ul>
+							  		<li>Game engines</li>
+							  		<li>Meta-programming</li>
+							  	</ul>
+							  </li>
+							</ul>
+						</div>
+						<div class="column">
+							<div class="r-stack">
+								<img src="../../slides/me.jpeg">
+							</div>
+						</div>
+					</div>
+				</section>
+
+
+
+				<section>
+					<blockquote>Modern memory pipelines are so complex you are basically optimizing for the cache</blockquote>
+					- Random person on StackOverflow
+				</section>
+
+
+				<section>
+					<h2>Robot path planning</h2>
+					<ul>
+					How a robot figures out how to get from one location to another before moving
+					</ul>
+				</section>
+
+
+
+				<section>
+					<h2>Cache-friendly design</h2>
+					<ul>
+					Program design focused on preventing performance degradation caused by organizing how data is accessed through the memory caching structure of a target computer system.
+					</ul>
+				</section>
+
+
+
+				<section>
+					<section>
+						<h2>So what do we really mean by cache-friendliness?</h2>
+						<ul>
+							<li>Accessing data and running instructions means accessing memory through the cache</li>	
+							<li>If some data or instruction is not in the cache, this is a <em>cache-miss</em></li>	
+						</ul>
+					</section>
+					<section>
+						<ul>
+							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
+							<li>Every level is slower to access data</li>	
+							<li>More instructions == slower programs</li>	
+						</ul>
+					</section>
+					<section>
+						Cache-friendly code minimizes cache misses!
+					</section>
+				</section>
+
+
+
+				<section>
+					<section data-auto-animate>
+						<h2>High level goals of this talk</h2>
+						<ul>
+							Implement cache-friendly path planning code in C++
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>High level goals of this talk</h2>
+						<ul>
+							Do so using the STL
+						</ul>
+					</section>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				slideNumber: 'c/t',
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
