@@ -4,6 +4,13 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script>
+			$(function() {
+				$("$slide_0000").load("slides/slide.0000.html");
+		  });
+		</script>
+
 		<title>CppCon 2023</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
@@ -24,38 +31,74 @@
 
 
 				<section>
-					<div class="row">
-						<div class="column">
-							<ul>
-							  <li>This is my first time at CppCon!</li>
-							  <li>Regularly program in C++ for robotics</li>
-							  <li>Worked at a few robotics startups
-							  	<ul>
-							  		<li>Fetch Robotics (2016-2022)</li>
-							  		<li>Thirdwave.ai (2022-2023)</li>
-							  		<li>Tortuga AgTech (2023-present)</li>
-							  	</ul>
-							  </li>
-							  <li>Mostly working on:
-							  	<ul>
-							  		<li>General architecture and frameworks around robot systems</li>
-							  		<li>Navigation and perception systems</li>
-							  	</ul>
-							  </li>
-							  <li>Other interests:
-							  	<ul>
-							  		<li>Game engines</li>
-							  		<li>Meta-programming</li>
-							  	</ul>
-							  </li>
-							</ul>
-						</div>
-						<div class="column">
-							<div class="r-stack">
-								<img src="../../slides/me.jpeg">
+					<section data-auto-animate>
+						<div class="row">
+							<div class="column">
+								<h2>About Me</h2>
+								<ul>
+								  <li>This is my first time at CppCon!</li>
+								  <li>Regularly program in C++ for robotics</li>
+								</ul>
+							</div>
+							<div class="column">
+								<div class="r-stack">
+									<img src="slides/me.jpeg">
+								</div>
 							</div>
 						</div>
-					</div>
+					</section>
+					<section data-auto-animate>
+						<div class="row">
+							<div class="column">
+								<h2>About Me</h2>
+								<ul>I've worked at a few robotics startups</ul>
+								<ul>
+									<li>Fetch Robotics (2016-2022)</li>
+									<li>Thirdwave.ai (2022-2023)</li>
+									<li>Tortuga AgTech (2023-present)</li>
+								</ul>
+							</div>
+							<div class="column">
+								<div class="r-stack">
+									<img src="slides/me.jpeg">
+								</div>
+							</div>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<div class="row">
+							<div class="column">
+								<h2>About Me</h2>
+								<ul>Mostly doing</ul>
+								<ul>
+									<li>General architecture and frameworks around robot systems</li>
+									<li>Navigation and perception systems</li>
+								</ul>
+							</div>
+							<div class="column">
+								<div class="r-stack">
+									<img src="slides/me.jpeg">
+								</div>
+							</div>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<div class="row">
+							<div class="column">
+								<h2>About Me</h2>
+								<ul>Other interests</ul>
+								<ul>
+									<li>Game engines</li>
+									<li>Meta-programming</li>
+								</ul>
+							</div>
+							<div class="column">
+								<div class="r-stack">
+									<img src="slides/me.jpeg">
+								</div>
+							</div>
+						</div>
+					</section>
 				</section>
 
 
@@ -85,22 +128,23 @@
 
 
 				<section>
-					<section>
+					<section data-auto-animate>
 						<h2>So what do we really mean by cache-friendliness?</h2>
 						<ul>
 							<li>Accessing data and running instructions means accessing memory through the cache</li>	
 							<li>If some data or instruction is not in the cache, this is a <em>cache-miss</em></li>	
 						</ul>
 					</section>
-					<section>
+					<section data-auto-animate>
+						<h2>So what do we really mean by cache-friendliness?</h2>
 						<ul>
 							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
 							<li>Every level is slower to access data</li>	
 							<li>More instructions == slower programs</li>	
 						</ul>
 					</section>
-					<section>
-						Cache-friendly code minimizes cache misses!
+					<section data-auto-animate>
+						<h2>Cache-friendly code minimizes cache misses!</h2>
 					</section>
 				</section>
 
@@ -110,13 +154,14 @@
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<ul>
-							Implement cache-friendly path planning code in C++
+							<li>Implement cache-friendly path planning code in C++</li>
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<ul>
-							Do so using the STL
+							<li>Do so using the STL</li>
+							<li>Do so without writing custom allocators</li>
 						</ul>
 					</section>
 				</section>
