@@ -21,6 +21,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
   --r-heading-font: Roboto Mono, monospace;
   --r-heading-color-1: #aaa;
   --r-heading-color-2: #888;
+  --r-heading-color-3: #777;
   --r-heading-color: #fff;
   --r-heading-line-height: 1.2;
   --r-heading-letter-spacing: normal;
@@ -101,6 +102,7 @@ section.has-light-background, section.has-light-background h1, section.has-light
 }
 
 .reveal h3 {
+  color: var(--r-heading-color-3);
   font-size: var(--r-heading3-size);
 }
 

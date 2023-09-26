@@ -20,7 +20,7 @@ public:
 
   void shuffle(const std::vector<std::size_t>& indices);
 
-  const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
+  const VertexProperties& vertex(vertex_id_t q) const { return vertices_.at(q); }
 
   std::size_t vertex_count() const { return vertices_.size(); }
 
@@ -38,7 +38,7 @@ public:
   }
 
 private:
-  std::vector<VertexProperties> vertices_;
+  std::unordered_map<vertex_id_t, VertexProperties> vertices_;
   std::unordered_multimap<vertex_id_t, Edge> adjacencies_;
 };
 

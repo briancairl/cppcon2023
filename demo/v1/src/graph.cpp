@@ -14,11 +14,12 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
   const auto& root = v.get<picojson::object>();
   const auto& nodes = root.at("nodes").get<picojson::array>();
 
-  this->vertices_.reserve(nodes.size());
   for (const auto& node_value : nodes)
   {
     const auto& node_object = node_value.get<picojson::object>();
-    this->vertices_.push_back(VertexProperties{
+    this->vertices_.emplace(
+      this->vertices_.size(),
+      VertexProperties{
       .x = node_object.at("x").get<double>(),
       .y = node_object.at("y").get<double>(),
     });
@@ -43,10 +44,11 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
 void Graph::shuffle(const std::vector<std::size_t>& indices)
 {
   {
-    auto new_vertices = this->vertices_;
-    for (std::size_t i = 0; i < new_vertices.size(); ++i)
+    using VerticesType = decltype(this->vertices_);
+    VerticesType new_vertices;
+    for (const auto& [i, prop] : this->vertices_)
     {
-      new_vertices[i] = this->vertices_[indices[i]];
+      new_vertices[indices[i]] = prop;
     }
     new_vertices.swap(this->vertices_);
   }

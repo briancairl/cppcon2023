@@ -4,13 +4,6 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-		<script>
-			$(function() {
-				$("$slide_0000").load("slides/slide.0000.html");
-		  });
-		</script>
-
 		<title>CppCon 2023</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
@@ -23,19 +16,21 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
+
+				<!-- slide -->
 				<section>
 					<h1>Cache-friendly Design in Robot Path Planning</h1>
 					<p>Brian Cairl</p>
 				</section>
 
 
-
+				<!-- slide -->
 				<section>
 					<section data-auto-animate>
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul>
+								<ul align="left">
 								  <li>This is my first time at CppCon!</li>
 								  <li>Regularly program in C++ for robotics</li>
 								</ul>
@@ -51,8 +46,8 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul>I've worked at a few robotics startups</ul>
-								<ul>
+								<ul align="left">I've worked at a few robotics startups</ul>
+								<ul align="left">
 									<li>Fetch Robotics (2016-2022)</li>
 									<li>Thirdwave.ai (2022-2023)</li>
 									<li>Tortuga AgTech (2023-present)</li>
@@ -69,8 +64,8 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul>Mostly doing</ul>
-								<ul>
+								<ul align="left">Mostly doing</ul>
+								<ul align="left">
 									<li>General architecture and frameworks around robot systems</li>
 									<li>Navigation and perception systems</li>
 								</ul>
@@ -86,8 +81,8 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul>Other interests</ul>
-								<ul>
+								<ul align="left">Other interests</ul>
+								<ul align="left">
 									<li>Game engines</li>
 									<li>Meta-programming</li>
 								</ul>
@@ -102,55 +97,131 @@
 				</section>
 
 
-
+				<!-- slide -->
 				<section>
 					<blockquote>Modern memory pipelines are so complex you are basically optimizing for the cache</blockquote>
 					- Random person on StackOverflow
 				</section>
 
 
-				<section>
-					<h2>Robot path planning</h2>
-					<ul>
-					How a robot figures out how to get from one location to another before moving
-					</ul>
-				</section>
-
-
-
-				<section>
-					<h2>Cache-friendly design</h2>
-					<ul>
-					Program design focused on preventing performance degradation caused by organizing how data is accessed through the memory caching structure of a target computer system.
-					</ul>
-				</section>
-
-
-
+				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>So what do we really mean by cache-friendliness?</h2>
+						<h2>Robot path planning</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Robot path planning</h2>
 						<ul>
-							<li>Accessing data and running instructions means accessing memory through the cache</li>	
+						How a robot figures out how to get from one location to another before moving.
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Robot path planning</h2>
+						<div class="r-stack">
+							<img src="slides/robot_path_planning.png">
+						</div>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+						Program design focused on preventing performance degradation caused by how memory is accessed through the memory caching structure of a computer system.
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<div class="r-stack">
+							<img src="slides/robot_program_architecture.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<div class="r-stack">
+							<img src="slides/robot_target_system.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>	
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>	
 							<li>If some data or instruction is not in the cache, this is a <em>cache-miss</em></li>	
 						</ul>
 					</section>
 					<section data-auto-animate>
-						<h2>So what do we really mean by cache-friendliness?</h2>
-						<ul>
+						<h2>Cache-friendly design</h2>
+						<div class="r-stack">
+							<img src="slides/cache.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<div class="r-stack">
+							<img src="slides/cache_miss.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
+							<li>Every level is slower to access data</li>	
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
 							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
 							<li>Every level is slower to access data</li>	
 							<li>More instructions == slower programs</li>	
 						</ul>
 					</section>
 					<section data-auto-animate>
-						<h2>Cache-friendly code minimizes cache misses!</h2>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Minimizes data cache misses!</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Minimizes data cache misses!</li>
+							<li>Minimizes instruction cache misses!</li>
+						</ul>
 					</section>
 				</section>
 
 
-
+				<!-- slide -->
 				<section>
+					<section data-auto-animate>
+						<h2>High level goals of this talk</h2>
+					</section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<ul>
@@ -160,16 +231,1439 @@
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<ul>
+							<li>Implement cache-friendly path planning code in C++</li>
+							<li>Do so using the STL</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>High level goals of this talk</h2>
+						<ul>
+							<li>Implement cache-friendly path planning code in C++</li>
 							<li>Do so using the STL</li>
 							<li>Do so without writing custom allocators</li>
 						</ul>
 					</section>
 				</section>
 
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>Robots typically need to move.</ul>
+					</section>
+
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3 style="color: white">Mobile Robot Systems</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
+							<li>Home robots: vaccuums, etc.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
+							<li>Home robots: vaccuums, etc.</li>
+							<li>Outdoor robots: tractors, berry-pickers, delivery drones, etc.</li>
+						</ul>
+					</section>
+
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Before moving to a goal location, robots need to figure out how to move.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Before moving to a goal location, robots need to figure out how to move.</li>
+							<li>These robots operate in highly dynamic environments.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>Before moving to a goal location, robots need to figure out how to move.</li>
+							<li>These robots operate in highly dynamic environments.</li>
+							<li>A robot might need to figure out how to move multiple times while making its way to a goal location.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<div class="r-stack">
+							<img src="slides/robot_navigation_system.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>
+							<li>Figuring out how to move is computationally expensive.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>
+							<li>Figuring out how to move is computationally expensive.</li>
+							<li>This only gets worse as the state-space of the problem gets bigger.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>
+							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>
+							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
+							<li>When we tell a robot to do something, we want it moving quickly</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<ul>
+							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
+							<li>When we tell a robot to do something, we want it moving quickly</li>
+							<li>We need our planning algorithms to execute quickly to prevent them from sitting around.</li>
+						</ul>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<div class="r-stack">
+							<img src="slides/fake_distribution_facility.png">
+						</div>
+						<lu>This is a map of a distribution facility that is 0.5 miles long.</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<div class="r-stack">
+							<img src="slides/fake_distribution_facility_graph.png">
+						</div>
+						<lu>This is a spatial graph extracted from the map.</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<div class="r-stack">
+							<img src="slides/fake_distribution_facility_graph_zoomed.png">
+						</div>
+						<lu>This is a spatial graph extracted from the map.</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<div class="r-stack">
+							<img src="slides/fake_distribution_facility_graph_path.png">
+						</div>
+						<lu>A robot might make global plans using this graph to get around the warehouse.</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-transition="fade">
+						<h2>Why not just pre-compute all paths?</h2>
+						<div class="r-stack">
+							<img src="slides/no_precompute.png">
+						</div>
+					</section>
+					<section data-transition="fade">
+						<h2>Why not just pre-compute all paths?</h2>
+						<div class="r-stack">
+							<img src="slides/no_precompute_2.png">
+						</div>
+					</section>
+					<section data-transition="fade">
+						<h2>Why not just pre-compute all paths?</h2>
+						<lu>Practically speaking, we will need to run some kind of online search unless our graph is very small, which is normally is not.</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3 style="color: white">Sampling-based</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Sampling-based</h3>
+						<lu align="left">
+							<li>Rapidly-exploring random trees (RRT)</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Sampling-based</h3>
+						<lu align="left">
+							<li>Rapidly-exploring random trees (RRT)</li>
+							<li>Probabilistic road maps (PRM)</li>
+						</lu>
+					</section>
+
+
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3 style="color: white">Search-based</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li>Dijkstra's algorithm</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li>Dijkstra's algorithm</li>
+							<li>A*</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li>Dijkstra's algorithm</li>
+							<li>A*</li>
+							<li>Lifelong planning A* (LPA*)</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li>Dijkstra's algorithm</li>
+							<li>A*</li>
+							<li>Lifelong planning A* (LPA*)</li>
+							<li>D*</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li>Dijkstra's algorithm</li>
+							<li>A*</li>
+							<li>Lifelong planning A* (LPA*)</li>
+							<li>D*</li>
+							<li>etc.</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Shortest-path search algorithms</h2>
+						<h3>Search-based</h3>
+						<lu align="left">
+							<li style="color: red;">Dijkstra's algorithm</li>
+							<li style="color: red;">A*</li>
+							<li style="color: grey;">Lifelong planning A* (LPA*)</li>
+							<li style="color: grey;">D*</li>
+							<li style="color: grey;">etc.</li>
+						</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<h2>Dijkstra's algorithm (early stopping)</h2>
+					<div class="r-stack">
+						<img src="slides/dijkstras_fast.gif" height="400", width="400">
+					</div>
+				</section>
+
+
+				<!-- slide -->
+				<section data-markdown>
+					 <textarea data-template>
+## Dijkstra's algorithm (early stopping)
+
+```r [1|3-6|8|9-10|11-13|15-16|17-19|21]
+function Dijkstras(Graph, source, target):
+
+  for each vertex v in Graph.Vertices:
+    prev[v] ← UNDEFINED                                 # predecessors of v (visited set)
+  create (vertex, vertex, dist) priority queue Q        # create a priority queue
+  Q.add_with_priority((start, start, 0))                # add start vertex to priority queue
+
+  while Q is not empty:
+    (p,u,dist_u) ← Q.extract_min()                      # remove next best vertex (u) and its
+                                                        # predecesssor (p)
+    if prev[u] is not UNDEFINED:                        # if we have visted (u), ignore
+      continue
+    prev[u] ← p                                         # otherwise, set predecessor of (u)
+
+    if u is target:                                     # end if we are at the target vertex
+      break
+    for each neighbor v of u with prev[v] is UNDEFINED:
+      dist_v ← dist_u + Graph.Edge(u, v)                # compute distance to (v)
+      Q.add_with_priority((u, v, dist_v))               # enqueue (v,u,dist)
+
+  return prev[]                                         # return predecessors to recover path
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<h2>Dijkstra's algorithm (early stopping)</h2>
+					<div class="r-stack">
+						<img src="slides/astar_fast.gif" height="400", width="400">
+					</div>
+				</section>
+
+
+				<!-- slide -->
+				<section data-markdown>
+					 <textarea data-template>
+## A* (early stopping)
+
+```r [18]
+function Dijkstras(Graph, source, target):
+
+  for each vertex v in Graph.Vertices:
+    prev[v] ← UNDEFINED                                 # predecessors of v (visited set)
+  create (vertex, vertex, dist) priority queue Q        # create a priority queue
+  Q.add_with_priority((start, start, 0))                # add start vertex to priority queue
+
+  while Q is not empty:
+    (p,u,dist_u) ← Q.extract_min()                      # remove next best vertex (u) and its
+                                                        # predecesssor (p)
+    if prev[u] is not UNDEFINED:                        # if we have visted (u), ignore
+      continue
+    prev[u] ← p                                         # otherwise, set predecessor of (u)
+
+    if u is target:                                     # end if we are at the target vertex
+      break
+    for each neighbor v of u with prev[v] is UNDEFINED:
+      dist_v ← dist_u + Graph.Edge(u, v) + H(v)         # compute distance to (v) + heuristic
+      Q.add_with_priority((u, v, dist_v))               # enqueue (v,u,dist)
+
+  return prev[]                                         # return predecessors to recover path
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+							<li>Use containers and other STL facilities</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+							<li>Use containers and other STL facilities</li>
+							<li>Measure cache performance</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+							<li>Use containers and other STL facilities</li>
+							<li>Measure cache performance</li>
+							<li>Incrementally improve perfomance with better choices</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+							<li>Use containers and other STL facilities</li>
+							<li>Measure cache performance</li>
+							<li>Incrementally improve perfomance with better choices</li>
+							<li>Any improvements we make will also apply to A*</li>
+						</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h1 style="color: white">The search algorithm!</h1>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section data-markdown>
+					 <textarea data-template>
+```c++ [1-2|4|6|8|10-13|14-17|19-22|23-32|34]
+template<SearchContext C, SearchGraph G>
+bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
+{
+  ctx.reset(graph, start, goal);
+
+  while (ctx.is_queue_not_empty())
+  {
+    const auto [from, to, to_dist] = ctx.dequeue();
+    
+    if (ctx.is_visited(to))
+    {
+      continue;
+    }
+    else
+    {
+      ctx.mark_visited(to, from);
+    }
+    
+    if (ctx.is_terminal(to))
+    {
+      return true;
+    }
+    else
+    {
+      graph.for_each_edge(
+        to,
+        [&ctx, to, to_dist](VertexID v, const EdgeProperties& edge) mutable {
+        if (edge.valid and !ctx.is_visited(v)) {
+          ctx.enqueue(to, v, edge.dist + to_dist);
+        }
+      }); 
+    }
+  }
+  return false;
+}
+```
+					</textarea>
+				</section>
+
+				<!-- slide -->
+				<section data-markdown>
+					 <textarea data-template>
+```c++ [1-2|4|7-10|11-15|17]
+template<typename OutputIteratorT, SearchContext C>
+OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID from)
+{
+  (*out) = from;
+  while (true)
+  {
+    if (const auto to = ctx.predecessor(from); to == from)
+    {
+      break;
+    }
+    else
+    {
+      (*out) = to;
+      from = to;
+    }
+  }
+  return out;
+}
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3 style="color: white">Something to hold the graph!</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3>Something to hold the graph!</h3>
+						<lu align="left">
+							<li>Vertex adjacencies (edges)</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3>Something to hold the graph!</h3>
+						<lu align="left">
+							<li>Vertex adjacencies (edges)</li>
+							<li>Vertex properties (locations, etc.)</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3>Something to hold the graph!</h3>
+						<lu align="left">
+							<li>Vertex adjacencies (edges)</li>
+							<li>Vertex properties (locations, etc.)</li>
+							<li>Edge properties (distance, validity, etc.)</li>
+						</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+## What do we need?
+```c++
+template <typename T>
+concept SearchGraph = 
+  requires(T&& g)
+  {
+      { g.for_each_edge(VertexID{}, [](VertexID, const EdgeProperties&) {}) };
+      { g.vertex_count() };
+      { g.vertex(VertexID{}) };
+  };
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [0]
+struct VertexProperties { double x; double y; /* ... */ };
+
+struct EdgeProperties { bool valid; EdgeWeight weight; /* ... */ };
+
+using Edge = std::pair<VertexID, EdgeProperties>;
+
+class Graph
+{
+public:
+  const VertexProperties& vertex(VertexID q) const;
+
+  std::size_t vertex_count() const;
+
+  template<typename EdgeVisitorT>
+  void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const;
+};
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3 style="color: white">Something to hold search state!</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3>Something to hold search state!</h3>
+						<lu align="left">
+							<li>A container to hold visited nodes (and their relationships)</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+						<h3>Something to hold search state!</h3>
+						<lu align="left">
+							<li>A container to hold visited nodes (and their relationships)</li>
+							<li>A min-sorted priority queue of vertices</li>
+						</lu>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+## What do we need?
+```c++
+template <typename T>
+concept SearchContext = 
+  requires(T&& ctx)
+  {
+      { ctx.is_queue_not_empty() };
+      { ctx.is_visited(VertexID{}) };
+      { ctx.is_terminal(VertexID{}) };
+      { ctx.mark_visited(VertexID{}, VertexID{}) };
+      { ctx.enqueue(VertexID{}, VertexID{}, EdgeWeight{}) };
+      { ctx.dequeue() };
+      { ctx.predecessor(VertexID{}) };
+  };
+```
+					</textarea>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [0]
+struct Transition { VertexID from; VertexID to; EdgeWeight weight; };
+
+class TerminateAtGoal
+{
+public:
+  template<SearchGraph G>
+  void reset(G&& graph, VertexID s, VertexID g);
+
+  bool is_queue_not_empty() const;
+
+  bool is_visited(VertexID q) const;
+
+  bool is_terminal(VertexID q) const;
+
+  void mark_visited(VertexID from, VertexID to);
+
+  VertexID predecessor(VertexID q) const;
+
+  Transition dequeue();
+  void enqueue(VertexID from, VertexID to, EdgeWeight w);
+};
+```
+					</textarea>
+				</section>
+
+
+
+
+
+				<!------------------ IMPLEMENTATION 0 ------------------>
+				<section>
+					<h1>Implementation 0</h1>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|1-2|4-11|7|9|12|14|16-27|23-26]
+#include <map>
+// map, multimap
+
+class Graph
+{
+private:
+  std::map<VertexID, VertexProperties> vertices_;
+
+  std::multimap<VertexID, Edge> adjacencies_;
+
+public:
+  const VertexProperties& vertex(VertexID q) const { return vertices_.at(q); }
+
+  std::size_t vertex_count() const { return vertices_.size(); }
+
+  template<typename EdgeVisitorT>
+  void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const
+  {
+    const auto [first, last] = adjacencies_.equal_range(q);
+    std::for_each(
+      first,
+      last,
+      [visitor](const auto& parent_and_edge) mutable
+      {
+        std::apply(visitor, parent_and_edge.second);
+      });
+  }
+};
+```
+					</textarea>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|1-4|6-15|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
+#include <functional>
+#include <queue>
+#include <map>
+#include <vector>
+
+class TerminateAtGoal
+{
+private:
+  VertexID goal_;
+
+  std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> queue_;
+
+  std::map<VertexID, VertexID> visited_;
+
+public:
+  template<SearchGraph G>
+  void reset(G&& graph, VertexID s, VertexID g)
+  {
+    // Clear visited set
+    visited_.clear();
+    // Clear any stragglers in the queue
+    while (!queue_.empty()) { queue_.pop(); }
+    // Set current goal
+    goal_ = g;
+    // Add start as first vertex in queue
+    enqueue(s, s, 0);
+  }
+
+  bool is_queue_not_empty() const { return !queue_.empty(); }
+
+  bool is_visited(VertexID q) const { return visited_.count(q); }
+
+  bool is_terminal(VertexID q) const { return goal_ == q; }
+
+  void mark_visited(VertexID from, VertexID to) { visited_.emplace(to, from); }
+
+  VertexID predecessor(VertexID q) const
+  {
+    if (const auto itr = visited_.find(q); itr == visited_.end())
+    {
+      return q;
+    }
+    else
+    {
+      return itr->second;
+    }
+  }
+
+  Transition dequeue()
+  {
+    auto t = queue_.top();
+    queue_.pop();
+    return t;
+  }
+
+  void enqueue(VertexID from, VertexID to, EdgeWeight w)
+  {
+    queue_.push(Transition{
+      .from = from,
+      .to = to,
+      .weight = w
+    });
+  }
+};
+```
+					</textarea>
+				</section>
+				<!------------------ IMPLEMENTATION 0 ------------------>
+
+
+
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+- Run searches over our example warehouse graph
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+- Run searches over our example warehouse graph
+- Select some percentage of all vertices, N
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+- Run searches over our example warehouse graph
+- Select some percentage of all vertices, N
+- Run N^2 searches between all vertices as start/goal pairs
+						</textarea>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<h3 style="color: white">Run under cachegrind</h3>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+### Run under cachegrind
+
+```bash
+> valgrind --tool=cachegrind --cache-sim=yes ./run_demo ...
+```	
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Measuring cache performance
+```text [|4-8|10-14]
+==131579== Cachegrind, a cache and branch-prediction profiler
+==131579== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+…
+==131579== I   refs:      20,721,901,316
+==131579== I1  misses:             4,744
+==131579== LLi misses:             3,909
+==131579== I1  miss rate:           0.00%
+==131579== LLi miss rate:           0.00%
+==131579== 
+==131579== D   refs:       7,762,293,651  (6,285,352,547 rd   + 1,476,941,104 wr)
+==131579== D1  misses:       615,102,179  (  604,712,021 rd   +    10,390,158 wr)
+==131579== LLd misses:         3,336,167  (    2,266,653 rd   +     1,069,514 wr)
+==131579== D1  miss rate:            7.9% (          9.6%     +           0.7%  )
+==131579== LLd miss rate:            0.0% (          0.0%     +           0.1%  )
+==131579== 
+==131579== LL refs:          615,106,923  (  604,716,765 rd   +    10,390,158 wr)
+==131579== LL misses:          3,340,076  (    2,270,562 rd   +     1,069,514 wr)
+==131579== LL miss rate:             0.0% (          0.0%     +           0.1%  )
+
+```
+						</textarea>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<h3 style="color: white">Run under hotspot (perf)</h3>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+### Run under hotspot (perf)
+
+```bash
+> sudo apt install linux-tools-6.2.0-33-generic
+
+> sudo hotspot
+```	
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+### Instructions
+
+![me](slides/v0_hotspot_instructions.png)
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown>
+						<textarea data-template>
+## Measuring cache performance
+
+### Cache-misses
+
+![me](slides/v0_hotspot_cache_misses.png)
+						</textarea>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3 style="color: white">Spatial Locality</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Spatial Locality</h3>
+						<lu align="left">
+							<li>Data that we access should be close together in memory.</li>
+						</lu>
+					</section>
+
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3 style="color: white">Temporal Locality</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Temporal Locality</h3>
+						<lu align="left">
+							<li>Maximize the number of times we access data in the cache.</li>
+						</lu>
+					</section>
+
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3 style="color: white">Rules of thumb</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Rules of thumb</h3>
+						<lu align="left">
+							<li>Access data sequentially.</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Rules of thumb</h3>
+						<lu align="left">
+							<li>Access data sequentially.</li>
+							<li>Reduce indirections through pointers.</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Rules of thumb</h3>
+						<lu align="left">
+							<li>Access data sequentially.</li>
+							<li>Reduce indirections through pointers.</li>
+							<li>Do not jump around memory frequently.</li>
+						</lu>
+					</section>
+
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3 style="color: white">Does out first implementation do any of these things?</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Does out first implementation do any of these things?</h3>
+						<h1 style="color: white">No not really.</h3>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>std::multimap</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>std::multimap</h2>
+						<div class="r-stack">
+							<img src="slides/v0_multimap_rep.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>std::multimap</h2>
+						<div class="r-stack">
+							<img src="slides/v0_multimap_actual.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>std::multimap</h2>
+						<div class="r-stack">
+							<img src="slides/v0_multimap_mem.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>std::multimap</h2>
+						<div class="r-stack">
+							<img src="slides/v0_multimap_equal_range.png">
+						</div>
+					</section>
+				</section>
+
+
+
+				<!------------------ IMPLEMENTATION 1 ------------------>
+				<section>
+					<h1>Implementation 1</h1>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|1-2|4-11|7|9|12|14|16-27|23-26]
+#include <unordered_map>
+// unordered_map, unordered_multimap
+
+class Graph
+{
+private:
+  std::unordered_map<VertexID, VertexProperties> vertices_;
+
+  std::unordered_multimap<VertexID, Edge> adjacencies_;
+
+public:
+  const VertexProperties& vertex(VertexID q) const { return vertices_.at(q); }
+
+  std::size_t vertex_count() const { return vertices_.size(); }
+
+  template<typename EdgeVisitorT>
+  void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const
+  {
+    const auto [first, last] = adjacencies_.equal_range(q);
+    std::for_each(
+      first,
+      last,
+      [visitor](const auto& parent_and_edge) mutable
+      {
+        std::apply(visitor, parent_and_edge.second);
+      });
+  }
+};
+```
+					</textarea>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|1-4|6-15|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
+#include <functional>
+#include <queue>
+#include <unordered_map>
+#include <vector>
+
+class TerminateAtGoal
+{
+private:
+  VertexID goal_;
+
+  std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> queue_;
+
+  std::unordered_map<VertexID, VertexID> visited_;
+
+public:
+  template<SearchGraph G>
+  void reset(G&& graph, VertexID s, VertexID g)
+  {
+    // Clear visited set
+    visited_.clear();
+    // Clear any stragglers in the queue
+    while (!queue_.empty()) { queue_.pop(); }
+    // Set current goal
+    goal_ = g;
+    // Add start as first vertex in queue
+    enqueue(s, s, 0);
+  }
+
+  bool is_queue_not_empty() const { return !queue_.empty(); }
+
+  bool is_visited(VertexID q) const { return visited_.count(q); }
+
+  bool is_terminal(VertexID q) const { return goal_ == q; }
+
+  void mark_visited(VertexID from, VertexID to) { visited_.emplace(to, from); }
+
+  VertexID predecessor(VertexID q) const
+  {
+    if (const auto itr = visited_.find(q); itr == visited_.end())
+    {
+      return q;
+    }
+    else
+    {
+      return itr->second;
+    }
+  }
+
+  Transition dequeue()
+  {
+    auto t = queue_.top();
+    queue_.pop();
+    return t;
+  }
+
+  void enqueue(VertexID from, VertexID to, EdgeWeight w)
+  {
+    queue_.push(Transition{
+      .from = from,
+      .to = to,
+      .weight = w
+    });
+  }
+};
+```
+					</textarea>
+				</section>
+				<!------------------ IMPLEMENTATION 1 ------------------>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Measuring cache performance
+```text [|4-8|10-14]
+==132432== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==132432== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+…
+==132432== I   refs:      11,574,779,293
+==132432== I1  misses:             3,778
+==132432== LLi misses:             3,700
+==132432== I1  miss rate:           0.00%
+==132432== LLi miss rate:           0.00%
+==132432== 
+==132432== D   refs:       4,525,697,105  (2,946,691,588 rd   + 1,579,005,517 wr)
+==132432== D1  misses:       109,346,888  (  103,780,511 rd   +     5,566,377 wr)
+==132432== LLd misses:         3,231,301  (    2,205,723 rd   +     1,025,578 wr)
+==132432== D1  miss rate:            2.4% (          3.5%     +           0.4%  )
+==132432== LLd miss rate:            0.1% (          0.1%     +           0.1%  )
+==132432== 
+==132432== LL refs:          109,350,666  (  103,784,289 rd   +     5,566,377 wr)
+==132432== LL misses:          3,235,001  (    2,209,423 rd   +     1,025,578 wr)
+==132432== LL miss rate:             0.0% (          0.0%     +           0.1%  )
+
+```
+						</textarea>
+					</section>
+				</section>
+
+
+				<!------------------ IMPLEMENTATION 1.5 ----------------->
+				<section>
+					<h1>Implementation 1 + reserve buckets</h1>
+				</section>
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [20-21]
+#include <functional>
+#include <queue>
+#include <unordered_map>
+#include <vector>
+
+class TerminateAtGoal
+{
+private:
+  VertexID goal_;
+
+  std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> queue_;
+
+  std::unordered_map<VertexID, VertexID> visited_;
+
+public:
+  template<SearchGraph G>
+  void reset(G&& graph, VertexID s, VertexID g)
+  {
+    // Clear visited set
+    visited_.clear();
+    visited_.reserve(graph.vertex_count());
+    // Clear any stragglers in the queue
+    while (!queue_.empty()) { queue_.pop(); }
+    // Set current goal
+    goal_ = g;
+    // Add start as first vertex in queue
+    enqueue(s, s, 0);
+  }
+
+  bool is_queue_not_empty() const { return !queue_.empty(); }
+
+  bool is_visited(VertexID q) const { return visited_.count(q); }
+
+  bool is_terminal(VertexID q) const { return goal_ == q; }
+
+  void mark_visited(VertexID from, VertexID to) { visited_.emplace(to, from); }
+
+  VertexID predecessor(VertexID q) const
+  {
+    if (const auto itr = visited_.find(q); itr == visited_.end())
+    {
+      return q;
+    }
+    else
+    {
+      return itr->second;
+    }
+  }
+
+  Transition dequeue()
+  {
+    auto t = queue_.top();
+    queue_.pop();
+    return t;
+  }
+
+  void enqueue(VertexID from, VertexID to, EdgeWeight w)
+  {
+    queue_.push(Transition{
+      .from = from,
+      .to = to,
+      .weight = w
+    });
+  }
+};
+```
+					</textarea>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Measuring cache performance
+```text [|4-8|10-14]
+==133350== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==133350== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+…
+==133350== I   refs:      11,574,779,289
+==133350== I1  misses:             6,017
+==133350== LLi misses:             3,935
+==133350== I1  miss rate:           0.00%
+==133350== LLi miss rate:           0.00%
+==133350== 
+==133350== D   refs:       4,525,697,103  (2,946,691,588 rd   + 1,579,005,515 wr)
+==133350== D1  misses:        90,999,080  (   85,486,438 rd   +     5,512,642 wr)
+==133350== LLd misses:         3,231,302  (    2,205,724 rd   +     1,025,578 wr)
+==133350== D1  miss rate:            2.0% (          2.9%     +           0.3%  )
+==133350== LLd miss rate:            0.1% (          0.1%     +           0.1%  )
+==133350== 
+==133350== LL refs:           91,005,097  (   85,492,455 rd   +     5,512,642 wr)
+==133350== LL misses:          3,235,237  (    2,209,659 rd   +     1,025,578 wr)
+==133350== LL miss rate:             0.0% (          0.0%     +           0.1%  )
+
+```
+						</textarea>
+					</section>
+				</section>
+				<!------------------ IMPLEMENTATION 1.5 ----------------->
+
+
+
+
+
+				<!------------------ IMPLEMENTATION 2 ------------------>
+				<section>
+					<h1>Implementation 2</h1>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|]
+#include <vector>
+
+class Graph
+{
+private:
+  std::vector<VertexProperties> vertices_;
+
+  std::vector<std::vector<Edge>> adjacencies_;
+
+public:
+  const VertexProperties& vertex(VertexID q) const { return vertices_[q]; }
+
+  std::size_t vertex_count() const { return vertices_.size(); }
+
+  template<typename EdgeVisitorT>
+  void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const
+  {
+    std::for_each(
+      adjacencies_[q].begin(),
+      adjacencies_[q].end(),
+      [q, visitor](const auto& child_and_edge_weight) mutable
+      {
+        const auto& [succ, edge_weight] = child_and_edge_weight;
+        visitor(succ, edge_weight);
+      });
+  }
+};
+```
+					</textarea>
+				</section>
+
+
+				<section data-auto-animate data-markdown>
+					 <textarea data-template>
+```c++ [|]
+#include <functional>
+#include <queue>
+#include <vector>
+
+class TerminateAtGoal
+{
+private:
+  VertexID goal_;
+
+  std::priority_queue<Transition, std::vector<Transition>, std::greater<Transition>> queue_;
+
+  std::vector<VertexID> visited_;
+
+public:
+  template<SearchGraph G>
+  void reset(G&& graph, VertexID s, VertexID g)
+  {
+    // Clear visited set
+    visited_.resize(graph.vertex_count());
+    visited_.assign(graph.vertex_count(), graph.vertex_count());
+
+    // Clear any stragglers in the queue
+    while (!queue_.empty()) { queue_.pop(); }
+    // Set current goal
+    goal_ = g;
+    // Add start as first vertex in queue
+    enqueue(s, s, 0);
+  }
+
+  bool is_queue_not_empty() const { return !queue_.empty(); }
+
+  bool is_visited(VertexID q) const { return visited_.count(q); }
+
+  bool is_terminal(VertexID q) const { return goal_ == q; }
+
+  void mark_visited(VertexID from, VertexID to) { visited_[to] = from; }
+
+  VertexID predecessor(VertexID q) const
+  {
+    return visited_[q];
+  }
+
+  Transition dequeue()
+  {
+    auto t = queue_.top();
+    queue_.pop();
+    return t;
+  }
+
+  void enqueue(VertexID from, VertexID to, EdgeWeight w)
+  {
+    queue_.push(Transition{
+      .from = from,
+      .to = to,
+      .weight = w
+    });
+  }
+};
+```
+					</textarea>
+				</section>
+				<!------------------ IMPLEMENTATION 2 ------------------>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Measuring cache performance
+```text [|4-8|10-14]
+==135295== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==135295== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+…
+==135295== I   refs:      6,919,489,865
+==135295== I1  misses:            6,058
+==135295== LLi misses:            3,887
+==135295== I1  miss rate:          0.00%
+==135295== LLi miss rate:          0.00%
+==135295== 
+==135295== D   refs:      2,516,605,627  (1,700,911,074 rd   + 815,694,553 wr)
+==135295== D1  misses:       43,267,746  (   40,602,167 rd   +   2,665,579 wr)
+==135295== LLd misses:        3,054,946  (    2,183,488 rd   +     871,458 wr)
+==135295== D1  miss rate:           1.7% (          2.4%     +         0.3%  )
+==135295== LLd miss rate:           0.1% (          0.1%     +         0.1%  )
+==135295== 
+==135295== LL refs:          43,273,804  (   40,608,225 rd   +   2,665,579 wr)
+==135295== LL misses:         3,058,833  (    2,187,375 rd   +     871,458 wr)
+==135295== LL miss rate:            0.0% (          0.0%     +         0.1%  )
+
+```
+						</textarea>
+					</section>
+				</section>
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Impact of ordering of the graph</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Impact of ordering of the graph</h2>
+						<lu	align="left">
+							<li>We re-ordering vertices with std::sort</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Impact of ordering of the graph</h2>
+						<lu	align="left">
+							<li>We re-ordering vertices with std::sort</li>
+							<li>Vertices which are close in space are more likely to be neighbors</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Impact of ordering of the graph</h2>
+						<lu	align="left">
+							<li>We re-ordering vertices with std::sort</li>
+							<li>Vertices which are close in space are more likely to be neighbors</li>
+							<li>We can order vertex adjacency data in memory such that the probability of accessing nearby vertex data in the same cache line is higher</li>
+						</lu>
+					</section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Impact of ordering of the graph
+```c++ [|5-13|12|15]
+std::vector<std::size_t> remapping;
+remapping.resize(graph.vertex_count());
+std::iota(remapping.begin(), remapping.end(), 0);
+
+std::sort(
+  remapping.begin(),
+  remapping.end(),
+  [&graph](VertexID lhs, VertexID rhs) -> bool
+  {
+    const auto& lv = graph.vertex(lhs);
+    const auto& rv = graph.vertex(rhs);
+    return ((lv.x * lv.x) + (lv.y + lv.y)) < ((rv.x * rv.x) + (rv.y + rv.y));
+  });
+
+graph.remap(remapping);
+```
+						</textarea>
+					</section>
+				</section>
+
+
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate data-markdown>
+						 <textarea data-template>
+## Measuring cache performance
+```text [|4-8|10-14]
+==135709== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==135709== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+…
+==135709== I   refs:      6,944,720,850
+==135709== I1  misses:            6,115
+==135709== LLi misses:            3,906
+==135709== I1  miss rate:          0.00%
+==135709== LLi miss rate:          0.00%
+==135709== 
+==135709== D   refs:      2,526,314,915  (1,707,693,876 rd   + 818,621,039 wr)
+==135709== D1  misses:       28,448,985  (   25,770,132 rd   +   2,678,853 wr)
+==135709== LLd misses:        3,054,896  (    2,183,489 rd   +     871,407 wr)
+==135709== D1  miss rate:           1.1% (          1.5%     +         0.3%  )
+==135709== LLd miss rate:           0.1% (          0.1%     +         0.1%  )
+==135709== 
+==135709== LL refs:          28,455,100  (   25,776,247 rd   +   2,678,853 wr)
+==135709== LL misses:         3,058,802  (    2,187,395 rd   +     871,407 wr)
+==135709== LL miss rate:            0.0% (          0.0%     +         0.1%  )
+
+```
+						</textarea>
+					</section>
+				</section>
+
+
 			</div>
 		</div>
 
 		<script src="dist/reveal.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
@@ -183,7 +1677,7 @@
 				slideNumber: 'c/t',
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
 			});
 		</script>
 	</body>

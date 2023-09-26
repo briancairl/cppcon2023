@@ -22,6 +22,7 @@ public:
   void reset([[maybe_unused]] G&& graph, vertex_id_t s)
   {
     visited_.clear();
+    visited_.reserve(graph.vertex_count());
     while (!queue_.empty()) { queue_.pop(); }
     enqueue(s, s, 0);
   }
