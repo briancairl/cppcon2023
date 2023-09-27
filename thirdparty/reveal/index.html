@@ -150,10 +150,10 @@
 						<aside class="notes">
 							<p>Refers to how an (autonomous) agent figures out how to get from one location to another before actually moving.</p>
 							<p>Within robotics this extends to a variety of sub-domains.</p>
-							<p>We plan paths for 9-jointed robot arms to move car parts to and from a conveyor belt.</p>
+							<p>We plan paths for 9-jointed robot arm end effectors moving car parts on and off of conveyor belts.</p>
 							<p>Just as we plan paths for our robot vacuum cleaners to make their way through our houses.</p>
 							<p>But the concept of path planning, obviously, extends outside the domain of robotics.</p>
-							<p>Many of the same planning algorithms used in robots finds its place in games; online map services, like google maps; etc.</p>
+							<p>Many of the same planning algorithms used in robots finds thier place in video games; online map services; even computer network packet routing</p>
 						</aside>
 					</section>
 				</section>
@@ -164,7 +164,7 @@
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<aside class="notes">
-							<p>So now we're onto the the slightly more nebulous and philosophical part of the title: cache friendly design</p>
+							<p>So now we're onto the the slightly more philosophical, programming-focused part of the title: cache friendly design</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -196,8 +196,8 @@
 						<aside class="notes">
 							<p>Robots have brains made of computers</p>
 							<p>Most of the robots I've ever worked on use the same CPU hardware that sits in most high-end laptops</p>
-							<p>So at least in the domain of mobile robotics I'm covering a lot of ground by claiming that, as far as hardware is concerned: the CPUs we use to execute high-level software like path-planners, general isn't exotic</p>
-							<p>And we are optimizing for the same targets that most people working in a non-embedded systems land are optimizing for.</p>
+							<p>So at least in the domain of mobile robotics I'm covering a lot of ground by claiming that, as far as hardware is concerned: the CPUs we use to execute high-level software like path-planners, generally isn't all that exotic</p>
+							<p>And we are optimizing for the same or similar targets that most people working in a non-embedded systems land are optimizing for.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -208,9 +208,9 @@
 						<aside class="notes">
 							<p>A typical robot system might have some high-level architecture that looks like this</p>
 							<p>Where we have a bunch of non-hard-real-time applications running together in user space</p>
-							<p>They are talking to each other with some inter-process message-passing protocol</p>
+							<p>And they are talking to each other with some inter-process message-passing protocol</p>
 							<p>A popular choice for this sort of structure is ROS (the Robot operating system), which is not actually an OS</p>
-							<p>And they are interfaced with some lower level, probably but not definitely real-time systems for actually getting the robot to move and; reacting safely and deterministically around critical things like human passersby</p>
+							<p>And they are interfaced with some lower level, probably -- but not definitely -- real-time systems for actually getting the robot to move and; reacting safely and deterministically around critical things like human passersby</p>
 							<p>At least we hope</p>
 						</aside>
 					</section>
@@ -222,7 +222,7 @@
 						<aside class="notes">
 							<p>All that to say: at least for the most brain-like part of the system, we are running on a consumer-grade CPU</p>
 							<p>With a consumer-grade memory pipeline</p>
-							<p>That is probably organized something like this where we have small, but fast caches close to our cores</p>
+							<p>That is probably organized something like what this probably-familiar diagram aims to show where: we have small, but fast caches close to our cores</p>
 							<p>And some large, slower cache interfaced with main memory</p>
 						</aside>
 					</section>
@@ -266,7 +266,7 @@
 							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
 						</ul>
 						<aside class="notes">
-							<p>When things are already in the cache, the CPU is happy</p>
+							<p>When things are already in the L1 cache, the CPU is happy, because it doesn't need to wait for data that it needs to run the next set of instructions</p>
 							<p>But sometimes data a program might need has already been removed from the cache, or it wasn't in the cache to begin with</p>
 						</aside>
 					</section>
@@ -381,7 +381,7 @@
 							<li>Implement cache-friendly path planning code in C++</li>
 						</ul>
 						<aside class="notes">
-							<p>We want to be able to implemented path planning code for typical robot systems that is performant, and, for the sake of this take, specifically cache-performant</p>
+							<p>I'd like to show how to implement some path-planning code that could be used on a robot system, video game, etc. that is performant, and, for the sake of this talk, specifically cache-performant</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -391,7 +391,8 @@
 							<li>Do so using the STL</li>
 						</ul>
 						<aside class="notes">
-							<p>We want to be able to do so using facilities that are readily available to C++ programmers out of the box: the STL</p>
+							<p>I want to show that we can do so using facilities that are readily available to C++ programmers out of the box</p>
+							<p>Namely, with things that are available in the C++ STL</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -402,8 +403,8 @@
 							<li>Try to keep our choices simple</li>
 						</ul>
 						<aside class="notes">
-							<p>We will try to keep these choices simple</p>
-							<p>Namely, we will do our best with what we have without touching custom memory allocators</p>
+							<p>And I will show that we can keep our choices relative simple</p>
+							<p>We can do alot have without having to do things like touch custom memory allocators</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -415,7 +416,7 @@
 							<li>Measure</li>
 						</ul>
 						<aside class="notes">
-							<p>We will make some choices guided by measurement</p>
+							<p>I will also attempt to show how we can make these choices guided by measurement</p>
 						</aside>
 					</section>
 				</section>
@@ -465,7 +466,7 @@
 							<li>Home robots: vacuums, etc.</li>
 						</ul>
 						<aside class="notes">
-							<p>Home robots moving around your house, moving along some hopefully optimal dust collecting paths</p>
+							<p>Home robots moving around your house, moving from room to room optimally to conserve battery and maximize the amount of cat hair they pick up</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -488,7 +489,7 @@
 							<li>These robots operate in highly dynamic environments.</li>
 						</ul>
 						<aside class="notes">
-							<p>Even though these robots hallucinate a lower dimensional space, moving around is a hard problem because the environment they work in is chaotic</p>
+							<p>Even though these robots hallucinate a low dimensional space, moving around is a hard problem because the environment they work in is chaotic</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -499,7 +500,7 @@
 							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
 						</ul>
 						<aside class="notes">
-							<p>They might experience blockages while driving that they directly observe or are informed about</p>
+							<p>They might experience blockages while driving that they directly observe or are informed about by some coordinating central system or from information shared from other robots</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -523,7 +524,8 @@
 							<p>A hypothetical state machine for a navigating robot system might look like this.</p>
 							<p>A robot is initialized with some information about its environment, typically in the form of a map and/or a graph.</p>
 							<p>It gets commands to go somewhere else.</p>
-							<p>It comes up with some high-level reference plan all the way to its goal, that we will refer to as a global plan</p>
+							<p>It comes up with some high-level reference plan all the way to its goal</p>
+							<p>We will refer to this as a global plan</p>
 							<p>And then it follows that global plan as a reference while it uses some other lower-level planner/optimizer/controller to make adjustments around obstacles</p>
 							<p>When the local control systems can't figure out how to react, the system will likely drop back to the global planner for a new global plan</p>
 							<p>And so on and so forth until the robot gets to its intended goal location</p>
@@ -582,7 +584,7 @@
 							<li style="color: cyan">Fast planning algorithms == less time robots are sitting around.</li>
 						</ul>
 						<aside class="notes">
-							<p>And more importantly: is money, chop-chop, the robot's cant be sitting around</p>
+							<p>And someone is paying for these robots to do things so: chop-chop, time is money, the robot's cant be sitting around for long</p>
 						</aside>
 					</section>
 				</section>
@@ -653,6 +655,8 @@
 							<p>So zooming in a bit we can see things a bit better</p>
 							<p>The graph effectively establishes some nice, central pathways between aisles and shelves that the robot can plan along</p>
 							<p>We can assume for now that the paths we can extract from this graph are all kinematically sane and traversable by our robot system</p>
+							<p>These are not unlike a static network of roadways used by GoogleMaps</p>
+							<p>Or pre-scripted pathways for characters to walk in a video game</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -678,7 +682,8 @@
 						<aside class="notes">
 							<p>Just to get this out of the way: why not just also pre-compute all the possible paths the robot can take as well?</p>
 							<p>I mean, probably the best we can do in terms of memory performance is just load sequential blocks of data from memory</p>
-							<p>And it it was simply a matter of traveling from vertex to vertex, we probably could for even relatively large graphs</p>
+							<p>You know, completely just not have to use some algorithm which has to hop through memory and do a bunch of complicated stuff</p>
+							<p>And if it was simply a matter of traveling from vertex to vertex, we probably could for even relatively large graphs</p>
 						</aside>
 					</section>
 					<section data-transition="fade">
@@ -687,7 +692,7 @@
 							<img src="slides/no_precompute_2.png">
 						</div>
 						<aside class="notes">
-							<p>But the environment is dynamic. Edges become inaccessible due to blockages we can't know about ahead time</p>
+							<p>But, as I mentioned, the environment is dynamic. Edges become inaccessible due to blockages we can't know about ahead time</p>
 							<p>This changes the topology of the graph</p>
 							<p>As a result, pre-computing would lead to a combinatorial explosion of a lookup table when you have to consider every possible edge as a gate</p>
 							<p>So, practically speaking, we will need to run some kind of on-line search unless our graph is very small</p>
@@ -745,7 +750,7 @@
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Search-based</h3>
 						<aside class="notes">
-							<p>The flavor we will focus on is the search based variety.</p>
+							<p>Because we are coming to the table with some prior graph, the flavor we will focus on is the search based variety.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -755,7 +760,7 @@
 							<li>Dijkstra's algorithm</li>
 						</lu>
 						<aside class="notes">
-							<p>The canonical example is Dijkstra's algorithm.</p>
+							<p>The canonical example, in my opinion, being Dijkstra's algorithm.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -822,7 +827,8 @@
 							<p>But the planning algorithm we will focus on is Dijkstra's algorithm.</p>
 							<p>The reason for this is that, anecdotally, its sort of a first-pick in robot systems where you can know the graph you are planning over ahead of time.</p>
 							<p>So it covers a lot of practical application ground.</p>
-							<p>Its a relatively simple algorithm so show as C++.</p>
+							<p>Its a relatively simple algorithm to show as C++.</p>
+							<p>It can definitely be implemented with the STL pretty effectively.</p>
 							<p>And any performance optimizations we can make will also apply to A* because of how similar these algorithms are.</p>
 						</aside>
 					</section>
@@ -846,7 +852,7 @@
 
 
 				<!-- slide -->
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ## Dijkstra's algorithm (early stopping)
 
@@ -873,6 +879,16 @@ function Dijkstras(Graph, source, target):
 
   return prev[]                                         # return predecessors to recover path
 ```
+
+Note:
+1. We are implementing a point-to-point version of Dijkstra's so our function will accept some prior graph; and a start and goal vertex within that graph
+2. To initialize we are going to create a "visited set" which will encode which vertices we've evaluated, and how we got there; as well as a priority queue, which will contain the next-best vertices to evaluate based on their total computer distance from the start. We'll put the start vertex in this queue with 0 distance.
+3. The algorithm will proceed until the queue is empty
+4. At each stop, we will remove the vertex from the queue with the smallest total distance
+5. If we've visited that vertex, we'll ignore it; otherwise we'll record it at visited
+6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal
+7. Otherwise, we will inspect each vertex connected to the vertex we are evaluating that we haven't yet visited, and add those vertices to the queue with an updated total distance
+7. When we've found the goal, the algorithm will grant use a set of transitions that we can walk through from the goal to the start. The path we recover from this will be the shortest path.
 					</textarea>
 				</section>
 
@@ -887,17 +903,17 @@ function Dijkstras(Graph, source, target):
 						<p>And here is another semi famous wiki-pedia graphic for A*</p>
 						<p>We see that, compared to Dijkstra's, the algorithm has to visit less vertices to find a path to the goal</p>
 						<p>This is because it uses a heuristic function to estimate the total cost to the goal. which changes the order in which vertices are evaluated</p>
-						<p>As long as this heuristic underestimates the cost to the goal, A* will give us the same optimal paths as Dijkstra's for less computational work</p>
+						<p>As long as this heuristic underestimates the cost to the goal (we call this an admissible heuristic), A* will give us the same optimal paths as Dijkstra's for less computational work</p>
 						<p>So the first optimization one can make when using Dijkstra's is: just use A* and pick a good heuristic</p>
 						<p>But here we are interested in optimizing the work the CPU is doing in a mostly orthogonal domain</p>
-						<p>And I'm claiming that the optimizations we make will naturally extend to A*</p>
-						<p>To prove it, here is the algorithm</p>
+						<p>I'm claiming that the optimizations we make will naturally extend to A*</p>
+						<p>And to prove it, here is the algorithm</p>
 					</aside>
 				</section>
 
 
 				<!-- slide -->
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ## A* (early stopping)
 
@@ -924,6 +940,13 @@ function Astar(Graph, source, target):
 
   return prev[]                                         # return predecessors to recover path
 ```
+
+Note:
+- The algorithm is exactly the same, with the exception of how we compute the total distance between nodes
+- Here we apply some heuristic function H(v)
+- If want to be really fancy, we can think back to when we talked about pre-computing all the paths through the graph
+- Since those paths are always going to have shorter or equal distances to our goal, they could be used to create a great admissible heuristic
+- But most folks just use the L2 distance between the current vertex and the goal, and since a straight-line path is always shorter than a bendy one, its admissable.
 					</textarea>
 				</section>
 
@@ -932,12 +955,18 @@ function Astar(Graph, source, target):
 				<section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
+						<aside class="notes">
+							<p>Getting back on topic, lets finally get to some C++</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 						</lu>
+						<aside class="notes">
+							<p>Here, we want to implement Dijkstras as C++ code</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
@@ -945,6 +974,9 @@ function Astar(Graph, source, target):
 							<li>Implement Dijkstra's algorithm in C++</li>
 							<li>Use the STL: containers and other facilities</li>
 						</lu>
+						<aside class="notes">
+							<p>Use the STL as-is, as much as we can</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
@@ -953,6 +985,9 @@ function Astar(Graph, source, target):
 							<li>Use the STL: containers and other facilities</li>
 							<li>Measure cache performance</li>
 						</lu>
+						<aside class="notes">
+							<p>Measure cache-performance of this implementation</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
@@ -962,6 +997,9 @@ function Astar(Graph, source, target):
 							<li>Measure cache performance</li>
 							<li>Incrementally improve performance with better choices</li>
 						</lu>
+						<aside class="notes">
+							<p>Make improvements through better STL choices, guided by measurements</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
@@ -971,7 +1009,10 @@ function Astar(Graph, source, target):
 							<li>Measure cache performance</li>
 							<li>Incrementally improve performance with better choices</li>
 							<li>Keep in mind that any improvements we make will also apply to A* or similar search algorithms.</li>
-						</lu>
+						</lu>'
+						<aside class="notes">
+							<p>And then also keep in mind that these optimizations will apply to A* and other similarly structured search algorithms</p>
+						</aside>
 					</section>
 				</section>
 
@@ -980,16 +1021,22 @@ function Astar(Graph, source, target):
 				<section>
 					<section data-auto-animate>
 						<h2>What do we need?</h2>
+						<aside class="notes">
+							<p>What do we want to do first?</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What do we need?</h2>
 						<h1 style="color: white">The search algorithm!</h1>
+						<aside class="notes">
+							<p>Lets implement the search algorithm</p>
+						</aside>
 					</section>
 				</section>
 
 
 				<!-- slide -->
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 Here is Dijkstra's algorithm as C++ code
 ```c++ [|1-2|4|6|8|10-13|14-17|19-22|23-32|34]
@@ -1029,12 +1076,26 @@ bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
   return false;
 }
 ```
+
+Note:
+1. Here is Dijstra's as a templated C++ function; its pretty much the pseudo code that we just looked at
+2. With the exception that I chose to implement the state we will access during the search as this opaque, context object of type `C` constraint by the concept `SearchContext`, and that's going to include our visited set and priority queue. The choice to put all the search state into a context object is an important choice for a customization point because it will allow us to re-use some stuff between successive searches, namely memory that we've allocated to hold certain data.
+3. At the start of the implementation we are initialize the context with a start and goal vertex. We are also passing the graph because we can probably use information about the graph it to pre-allocate some stuff
+4. The the implementation follows the algorithm; we search until the queue is empty
+5. We pop the next best vertex from the queue
+6. We ignore it if its been visited
+7. We record it if it hasn't
+8. If its the goal vertex, we stop
+9. Otherwise, we inspect all the vertices connected to our current vertex that we haven't yet visited and add them to the queue with an updated cost. Here the edge traversal is implemented through a lambda used as a visitor callback which is passed the vertex 'v' that 'to' is connected to, and some structure of edge properties. This struct contains a boolean value used to mark if the edge is traversable during the search, i.e. is it blocked by somehting or not; and a phsyical distance along the connecting edge. Notice that if an edge is blocked, we don't even bother adding it to the queue because it effectively has an infinite cost.
+10. If the search ends without finding the goal the function simply returns `false` to indicate that the search failed, which is possible given the fact that the edges of our `G` can be toggled on or off. As such this accounts for graph configurations where the goal will be completely unreachable
+
+One over arching thing to point out is that we are going to make this a templated function. Additionally, our graph `G` and our context `C` will be header-only implementations. When we use `search` with some custom implementations for the graph and context we will allow the compiler to see the full context of the code in a single translation unit so that when we compile with optimizations, we can allow the compiler to make the best of this decently readable code.
 					</textarea>
 				</section>
 
 				<!-- slide -->
 				<section data-markdown>
-					 <textarea data-template>
+					 <textarea data-template data-separator-notes="^Note:">
 Here is the code to recover a path on a successful search
 ```c++ [1-2|4|7-10|11-15|17]
 template<typename OutputIteratorT, SearchContext C>
@@ -1056,6 +1117,12 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
   return out;
 }
 ```
+
+Note:
+1. As a companion to our `search` function, we can also implement a function which uses the search context object to recover a path back from the goal vertex if the search succeeded
+2. All it does is fill a sequence, using an output iterator, with the optimal transitions we computed during the search. This will represent our path, but in reverse order starting from the goal
+3. It stops adding to the output path if the vertex we are inspecting is connected to itself, which should indicate that we are at the start vertex
+4. Otherwise we keeps adding the output path sequence
 					</textarea>
 				</section>
 
@@ -1064,10 +1131,16 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 				<section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
+						<aside class="notes">
+							<p>Ok what else? We established two main customization points in `search`</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
 						<h3 style="color: white">Something to hold the graph!</h3>
+						<aside class="notes">
+							<p>Lets start with the graph</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
@@ -1075,6 +1148,10 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 						<lu align="left">
 							<li>Vertex adjacencies (edges)</li>
 						</lu>
+						<aside class="notes">
+							<p>The graph needs to hold adjacencies between vertices</p>
+							<p>These are the edges of the graph</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
@@ -1083,6 +1160,10 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 							<li>Vertex adjacencies (edges)</li>
 							<li>Vertex properties (locations, etc.)</li>
 						</lu>
+						<aside class="notes">
+							<p>It could probably hold some extra properties about each vertex, such as a physical location in space</p>
+							<p>This wont be needed for the search, but is still useful semantic data</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
@@ -1092,12 +1173,16 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 							<li>Vertex properties (locations, etc.)</li>
 							<li>Edge properties (distance, validity, etc.)</li>
 						</lu>
+						<aside class="notes">
+							<p>Lastly we need to hold properties about each edge.</p>
+							<p>Most importantly, a distance, as well as a flag for toggling the edge</p>
+						</aside>
 					</section>
 				</section>
 
 
 				<!-- slide -->
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ## What do we need?
 ```c++
@@ -1110,12 +1195,16 @@ concept SearchGraph =
       { g.vertex(VertexID{}) };
   };
 ```
+
+Note:
+- In `search`, I constrained the graph type `G` by some concept
+- Here is a simple concept to check that `G` implements a few requisite methods
 					</textarea>
 				</section>
 
 
 				<!-- slide -->
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ```c++ [|1-5|10-11|13-14|16-18]
 struct VertexProperties { double x; double y; /* ... */ };
@@ -1138,6 +1227,13 @@ public:
   void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const;
 };
 ```
+
+Note:
+1. And this is a full definition of our graph without any guts
+2. We have some definitions for out vertex and edge properties
+3. An accessor for our vertex properties
+4. An accessor for the number of vertices
+5. And a method for calling a visitor on each edge connected to some query vertex
 					</textarea>
 				</section>
 
