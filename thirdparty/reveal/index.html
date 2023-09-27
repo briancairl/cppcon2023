@@ -19,6 +19,10 @@
 
 				<!-- slide -->
 				<section data-background="slides/cppcontitle.png">
+					<aside class="notes">
+						<p>Hello everyone.</p>
+						<p>My name is Brian Cairl and I am presenting: Cache-friendly design in robot path planning</p>
+					</aside>
 				</section>
 
 
@@ -39,6 +43,12 @@
 								</div>
 							</div>
 						</div>
+						<aside class="notes">
+							<p>This is my first live cppcon.</p>
+							<p>Last year I attended remotely, so I'm excited to be here in person.</p>
+							<p>I've programmed in C++ on a daily basis as a robotics software developer for the past 7 years.</p>
+							<p>Though, I've been a C++ programmer since 2012 or so.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<div class="row">
@@ -59,6 +69,10 @@
 								</div>
 							</div>
 						</div>
+						<aside class="notes">
+							<p>I've worked on mostly mobile robot systems which operate in warehouses.</p>
+							<p>But as of a few months ago I started working at a robot agriculture company called Tortuga AgTech, so first time in 7 years, I'm finely getting some fresh air.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<div class="row">
@@ -78,6 +92,10 @@
 								</div>
 							</div>
 						</div>
+						<aside class="notes">
+							<p>I typically write broader robot systems code.</p>
+							<p>But I've focused on mostly algorithms and architecture around robot navigation and perception.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<div class="row">
@@ -97,6 +115,11 @@
 								</div>
 							</div>
 						</div>
+						<aside class="notes">
+							<p>Besides coding in C++ for work, I also code for fun.</p>
+							<p>In 1000 years I'll finish a game engine.</p>
+							<p>And to procrastinate I tool around template meta-programming nonsense.</p>
+						</aside>
 					</section>
 				</section>
 
@@ -105,10 +128,16 @@
 				<section>
 					<section data-auto-animate>
 						<h2 style="color: white">Robot path planning</h2>
+						<aside class="notes">
+							<p>To parse the title of this talk backwards, lets start with: robot path planning</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Robot path planning</h2>
 						<h2 style="color: white">Path planning</h2>
+						<aside class="notes">
+							<p>Or more generally just: path planning</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Path planning</h2>
@@ -118,6 +147,14 @@
 						<div class="r-stack">
 							<img src="slides/robot_path_planning.png" width="500" height="auto">
 						</div>
+						<aside class="notes">
+							<p>Refers to how an (autonomous) agent figures out how to get from one location to another before actually moving.</p>
+							<p>Within robotics this extends to a variety of sub-domains.</p>
+							<p>We plan paths for 9-jointed robot arms to move car parts to and from a conveyor belt.</p>
+							<p>Just as we plan paths for our robot vacuum cleaners to make their way through our houses.</p>
+							<p>But the concept of path planning, obviously, extends outside the domain of robotics.</p>
+							<p>Many of the same planning algorithms used in robots finds its place in games; online map services, like google maps; etc.</p>
+						</aside>
 					</section>
 				</section>
 
@@ -126,12 +163,19 @@
 				<section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
+						<aside class="notes">
+							<p>So now we're onto the the slightly more nebulous and philosophical part of the title: cache friendly design</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
 						Program design focused on optimizing code by avoiding pathological affects of memory access through the caching structure of a computer system.
 						</ul>
+						<aside class="notes">
+							<p>Cache friendly design refers to: program design guided by attempts to prevent the CPU from slowing down while accessing data in memory</p>
+							<p>And because most CPUs we actually use are faster than our memory hardware: we are accessing that data through some complex pipeline of connected cache levels which sit between the CPU and main memory.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -139,30 +183,57 @@
 							<blockquote>Modern memory pipelines are so complex you are basically optimizing for the cache</blockquote>
 							- Random person on StackOverflow
 						</div>
+						<aside class="notes">
+							<p>And these are indeed complex and important</p>
+							<p>This guy said so</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<div class="r-stack">
 							<img src="slides/robot_target_system.png">
 						</div>
+						<aside class="notes">
+							<p>Robots have brains made of computers</p>
+							<p>Most of the robots I've ever worked on use the same CPU hardware that sits in most high-end laptops</p>
+							<p>So at least in the domain of mobile robotics I'm covering a lot of ground by claiming that, as far as hardware is concerned: the CPUs we use to execute high-level software like path-planners, general isn't exotic</p>
+							<p>And we are optimizing for the same targets that most people working in a non-embedded systems land are optimizing for.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<div class="r-stack">
 							<img src="slides/robot_program_architecture.png">
 						</div>
+						<aside class="notes">
+							<p>A typical robot system might have some high-level architecture that looks like this</p>
+							<p>Where we have a bunch of non-hard-real-time applications running together in user space</p>
+							<p>They are talking to each other with some inter-process message-passing protocol</p>
+							<p>A popular choice for this sort of structure is ROS (the Robot operating system), which is not actually an OS</p>
+							<p>And they are interfaced with some lower level, probably but not definitely real-time systems for actually getting the robot to move and; reacting safely and deterministically around critical things like human passersby</p>
+							<p>At least we hope</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<div class="r-stack">
 							<img src="slides/cache.png">
 						</div>
+						<aside class="notes">
+							<p>All that to say: at least for the most brain-like part of the system, we are running on a consumer-grade CPU</p>
+							<p>With a consumer-grade memory pipeline</p>
+							<p>That is probably organized something like this where we have small, but fast caches close to our cores</p>
+							<p>And some large, slower cache interfaced with main memory</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
 							<li>Accessing data means accessing memory through the cache</li>
 						</ul>
+						<aside class="notes">
+							<p>Any time one of our high-level programs reads or writes data to memory, it is doing so through the cache</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -170,6 +241,9 @@
 							<li>Accessing data means accessing memory through the cache</li>
 							<li>Running instructions means accessing memory through the cache</li>	
 						</ul>
+						<aside class="notes">
+							<p>Any time one of our high-level programs executes instructions, it is first reading them from the cache</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -178,6 +252,10 @@
 							<li>Running instructions means accessing memory through the cache</li>	
 							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
 						</ul>
+						<aside class="notes">
+							<p>In order to reduce the amount of times that we need to reach into slow, main memory, the cache is populated with possibly relevant data besides the data the program is currently accessing</p>
+							<p>This is called pre-fetching</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -187,6 +265,10 @@
 							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
 							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
 						</ul>
+						<aside class="notes">
+							<p>When things are already in the cache, the CPU is happy</p>
+							<p>But sometimes data a program might need has already been removed from the cache, or it wasn't in the cache to begin with</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -197,18 +279,30 @@
 							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
 							<li>If a program attempts to access something that not in the cache, this is a <em style="color:red">cache miss</em></li>	
 						</ul>
+						<aside class="notes">
+							<p>This is called a cache miss</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<div class="r-stack">
 							<img src="slides/cache_miss.png">
 						</div>
+						<aside class="notes">
+							<p>Cache misses can happen at each level of the cache</p>
+							<p>If data isn't available in an L1 cache line, the L2 cache is checked, and so on and so forth</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
 							<li>Cache misses introduce latency</li>	
 						</ul>
+						<aside class="notes">
+							<p>The cache exists to bridge the gap between the difference in speed between CPU and memory hardware</p>
+							<p>And on the happy path, this obviously works</p>
+							<p>But cache misses potentially add extra latency to program execution</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -216,6 +310,9 @@
 							<li>Cache misses introduce latency</li>	
 							<li>Access through each level is slower than the previous level</li>	
 						</ul>
+						<aside class="notes">
+							<p>Accessing data at each cache level, from L1 down to main memory, is considerably slower than the previous level</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -224,6 +321,9 @@
 							<li>Access through each level is slower than the previous level</li>	
 							<li>CPUs can run out of things to do while waiting for the the next cache line from memory</li>	
 						</ul>
+						<aside class="notes">
+							<p>So a bad cache miss where the data isn't in any cache can cause the CPU to wait</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -233,6 +333,9 @@
 							<li>CPUs can run out of things to do while waiting for the the next cache line from memory</li>
 							<li>This is called a CPU stall</li>
 						</ul>
+						<aside class="notes">
+							<p>This is referred to as a CPU stall</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -243,14 +346,23 @@
 							<li>This is called a CPU stall</li>
 							<li>There are mitigations, e.g. out-of-order execution</li>
 						</ul>
+						<aside class="notes">
+							<p>There are mitigations beyond our control, such as out-of-order execution, that allow a CPU can run instructions while waiting on a cache-miss to be satisfied</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<h3 style="color: white">Optimizes how a program uses data already in the cache.</h3>
+						<aside class="notes">
+							<p>But we can certainly attempt to write code in such a way that makes the best use of the cache pipeline</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<h1 style="color: white">Minimizes cache misses!</h1>
+						<aside class="notes">
+							<p>And in order to do that, we will have to minimize the number of cache-misses that occur during the execution of our programs</p>
+						</aside>
 					</section>
 				</section>
 
@@ -259,12 +371,18 @@
 				<section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
+						<aside class="notes">
+							<p>With all that background in mind: some high level goals of this talk</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<ul>
 							<li>Implement cache-friendly path planning code in C++</li>
 						</ul>
+						<aside class="notes">
+							<p>We want to be able to implemented path planning code for typical robot systems that is performant, and, for the sake of this take, specifically cache-performant</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
@@ -272,6 +390,9 @@
 							<li>Implement cache-friendly path planning code in C++</li>
 							<li>Do so using the STL</li>
 						</ul>
+						<aside class="notes">
+							<p>We want to be able to do so using facilities that are readily available to C++ programmers out of the box: the STL</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
@@ -280,6 +401,22 @@
 							<li>Do so using the STL</li>
 							<li>Try to keep our choices simple</li>
 						</ul>
+						<aside class="notes">
+							<p>We will try to keep these choices simple</p>
+							<p>Namely, we will do our best with what we have without touching custom memory allocators</p>
+						</aside>
+					</section>
+					<section data-auto-animate>
+						<h2>High level goals of this talk</h2>
+						<ul>
+							<li>Implement cache-friendly path planning code in C++</li>
+							<li>Do so using the STL</li>
+							<li>Try to keep our choices simple</li>
+							<li>Measure</li>
+						</ul>
+						<aside class="notes">
+							<p>We will make some choices guided by measurement</p>
+						</aside>
 					</section>
 				</section>
 
@@ -287,125 +424,156 @@
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
+						<aside class="notes">
+							<p>To kick off an implementation journey, lets focus on a motivating problem</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3 style="color: white">Robots typically need to move.</h3>
+						<aside class="notes">
+							<p>We want our robots to move</p>
+							<p>A noble goal</p>
+						</aside>
 					</section>
 
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3 style="color: white">Mobile Robot Systems</h3>
+						<aside class="notes">
+							<p>Lets focus on mobile robot systems</p>
+							<p>Mobile means they definitely should be moving</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
 						</ul>
+						<aside class="notes">
+							<p>Lets focus even more specifically on robots that can pretend they live in a 2D world</p>
+							<p>Like autonomous forklifts moving pallets around</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
-							<li>Home robots: vaccuums, etc.</li>
+							<li>Home robots: vacuums, etc.</li>
 						</ul>
+						<aside class="notes">
+							<p>Home robots moving around your house, moving along some hopefully optimal dust collecting paths</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>Warehouse robots: forklifts, pallet-movers, etc.</li>
-							<li>Home robots: vaccuums, etc.</li>
-							<li>Outdoor robots: tractors, berry-pickers, delivery drones, etc.</li>
+							<li>Home robots: vacuums, etc.</li>
+							<li>Outdoor robots: tractors, berry-pickers, delivery platforms, etc.</li>
 						</ul>
+						<aside class="notes">
+							<p>Or even outdoor robots like robot tractors; berry-pickers; or robot delivery systems</p>
+						</aside>
 					</section>
 
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>These robots operate in highly dynamic environments.</li>
 						</ul>
+						<aside class="notes">
+							<p>Even though these robots hallucinate a lower dimensional space, moving around is a hard problem because the environment they work in is chaotic</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
-						<h3>Mobile Robot Systems</h3>
-						<ul>
-							<li>These robots operate in highly dynamic environments.</li>
-							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
-						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>These robots operate in highly dynamic environments.</li>
 							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
-							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
 						</ul>
+						<aside class="notes">
+							<p>They might experience blockages while driving that they directly observe or are informed about</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
 							<li>These robots operate in highly dynamic environments.</li>
 							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
 							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
-							<li>It could observe out that its locally blocked by obstacles.</li>
 						</ul>
+						<aside class="notes">
+							<p>So they likely need to be reactive with how they come up with new plans towards a goal they are moving to.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
-						<h3>Mobile Robot Systems</h3>
-						<ul>
-							<li>These robots operate in highly dynamic environments.</li>
-							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
-							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
-							<li>It could observe out that its locally blocked by obstacles.</li>
-							<li>It could get information from a central source that its path cuts through unfavorable or blocked areas that are further away.</li>
-						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<div class="r-stack">
 							<img src="slides/robot_navigation_system.png">
 						</div>
+						<aside class="notes">
+							<p>A hypothetical state machine for a navigating robot system might look like this.</p>
+							<p>A robot is initialized with some information about its environment, typically in the form of a map and/or a graph.</p>
+							<p>It gets commands to go somewhere else.</p>
+							<p>It comes up with some high-level reference plan all the way to its goal, that we will refer to as a global plan</p>
+							<p>And then it follows that global plan as a reference while it uses some other lower-level planner/optimizer/controller to make adjustments around obstacles</p>
+							<p>When the local control systems can't figure out how to react, the system will likely drop back to the global planner for a new global plan</p>
+							<p>And so on and so forth until the robot gets to its intended goal location</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<ul>
 							<li>Figuring out how to move is computationally expensive.</li>
 						</ul>
+						<aside class="notes">
+							<p>Coming up with these global plans is a relatively infrequent occurrence given everything else going on in the system at a given time</p>
+							<p>But when they happen, they are typically require a lot of resources</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<ul>
 							<li>Figuring out how to move is computationally expensive.</li>
 							<li>This only gets worse as the state-space of the problem gets bigger.</li>
 						</ul>
+						<aside class="notes">
+							<p>This only gets worse for larger planning state-spaces</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<ul>
 							<li>Figuring out how to move is computationally expensive.</li>
 							<li>This only gets worse as the state-space of the problem gets bigger.</li>
 							<li>We are concerned about computation time as it affects overall system latency stack-up.</li>
 						</ul>
+						<aside class="notes">
+							<p>And we are concerned with minimizing the amount of time it takes to come up with a global plan as it factors into how reactive our system is</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<ul>
 							<li>Figuring out how to move is computationally expensive.</li>
 							<li>This only gets worse as the state-space of the problem gets bigger.</li>
 							<li>We are concerned about computation time as it affects overall system latency stack-up.</li>
 							<li>When we tell a robot to do something, we want it moving quickly.</li>
 						</ul>
+						<aside class="notes">
+							<p>We typically want our robots to look intelligent, so they have to be snappy about re-routing</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Motivation</h2>
+						<h2>The motivating problem</h2>
 						<ul>
 							<li>Figuring out how to move is computationally expensive.</li>
 							<li>This only gets worse as the state-space of the problem gets bigger.</li>
@@ -413,6 +581,9 @@
 							<li>When we tell a robot to do something, we want it moving quickly.</li>
 							<li style="color: cyan">Fast planning algorithms == less time robots are sitting around.</li>
 						</ul>
+						<aside class="notes">
+							<p>And more importantly: is money, chop-chop, the robot's cant be sitting around</p>
+						</aside>
 					</section>
 				</section>
 
@@ -420,51 +591,79 @@
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
+						</ul>
+						<aside class="notes">
+							<p>Lets look at a typical environment we would want to move through</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<h3 style="color: white">Robots operating in a very big warehouse.</h3>
+						<aside class="notes">
+							<p>An easy example that we can't seem to get away from these days is some mega-warehouse butlered by mobile robots</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility.png" width="1500", height="auto">
 						</div>
+						<aside class="notes">
+							<p>Here is a top-down map of a make-believe distribution facility</p>
+							<p>Its probably quite hard to see, but it has a bunch of repeated areas with shelves probably holding beans or protein powder or whatever folks order from a mega-corp</p>
+							<p>And at the bottom and top are some areas where a robot might take said product to be packaged for shipping</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility.png" width="1500", height="auto">
 						</div>
 						<div align="center">
 							This is a map of a make-believe distribution facility that is:
 							<lu align>
-								<li>0.5 miles long</li>
-								<li>0.25 miles deep</li>
+								<li>0.8 km long</li>
+								<li>0.4 km deep</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>This facility is fairly big, but not the biggest</p>
+							<p>Its 0.8 by 0.4 km where each pixel of this image represents 5cm of space</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility_graph.png">
 						</div>
 						<lu>This is a spatial graph extracted from the map.</lu>
+						<aside class="notes">
+							<p>And here is a spatial graph extracted from the map using a fancy little python script which did some image processing</p>
+							<p>All for naught because its probably hard for you to see it</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility_graph_zoomed.png">
 						</div>
 						<lu>This is a spatial graph informs the robot about good "roadways" to travel along.</lu>
+						<aside class="notes">
+							<p>So zooming in a bit we can see things a bit better</p>
+							<p>The graph effectively establishes some nice, central pathways between aisles and shelves that the robot can plan along</p>
+							<p>We can assume for now that the paths we can extract from this graph are all kinematically sane and traversable by our robot system</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Practical example</h2>
+						<h2>Operating environment, a priori</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility_graph_path.png">
 						</div>
 						<lu>A robot could used this graph to make global plans using this graph to get around the warehouse.</lu>
+						<aside class="notes">
+							<p>And to get from place to place, a robot would, compute paths from its current location to somewhere else in an on-line sense</p>
+						</aside>
 					</section>
 				</section>
 
@@ -476,21 +675,24 @@
 						<div class="r-stack">
 							<img src="slides/no_precompute.png">
 						</div>
+						<aside class="notes">
+							<p>Just to get this out of the way: why not just also pre-compute all the possible paths the robot can take as well?</p>
+							<p>I mean, probably the best we can do in terms of memory performance is just load sequential blocks of data from memory</p>
+							<p>And it it was simply a matter of traveling from vertex to vertex, we probably could for even relatively large graphs</p>
+						</aside>
 					</section>
 					<section data-transition="fade">
 						<h2>Why not just pre-compute all paths?</h2>
 						<div class="r-stack">
 							<img src="slides/no_precompute_2.png">
 						</div>
-					</section>
-					<section data-transition="fade" data-visibility="hidden">
-						<h2>Why not just pre-compute all paths?</h2>
-						<div class="r-stack">
-							<img src="slides/no_precompute_2.png">
-						</div>
-						<div align="left">
-							Practically speaking, we will need to run some kind of on-line search unless our graph is very small, <em>which it is normally is not.</em>
-						</div>
+						<aside class="notes">
+							<p>But the environment is dynamic. Edges become inaccessible due to blockages we can't know about ahead time</p>
+							<p>This changes the topology of the graph</p>
+							<p>As a result, pre-computing would lead to a combinatorial explosion of a lookup table when you have to consider every possible edge as a gate</p>
+							<p>So, practically speaking, we will need to run some kind of on-line search unless our graph is very small</p>
+							<p>As a sort of throw-away remark, we could still use precomputed paths as a heuristic to speed up our algorithms, but lets put that aside</p>
+						</aside>
 					</section>
 				</section>
 
@@ -499,13 +701,22 @@
 				<section>
 					<section data-auto-animate>
 						<h2>What do we do?</h2>
+						<aside class="notes">
+							<p>So what do we do?</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2 style="color: white">Shortest-path search algorithms</h2>
+						<aside class="notes">
+							<p>We'll employ a shortest path search algorithm</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Sampling-based</h3>
+						<aside class="notes">
+							<p>Some common ones used in the field are sampling based, where we basically make structured-random guesses to fill space based on the robots kinematics or other constraints.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -513,6 +724,9 @@
 						<lu align="left">
 							<li>Rapidly-exploring random trees (RRT)</li>
 						</lu>
+						<aside class="notes">
+							<p>Just to name some: these include RRT: Rapidly-exploring random trees</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -521,12 +735,18 @@
 							<li>Rapidly-exploring random trees (RRT)</li>
 							<li>Probabilistic road maps (PRM)</li>
 						</lu>
+						<aside class="notes">
+							<p>These include PRM: Probabilistic road maps</p>
+						</aside>
 					</section>
 
 
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Search-based</h3>
+						<aside class="notes">
+							<p>The flavor we will focus on is the search based variety.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -534,6 +754,9 @@
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 						</lu>
+						<aside class="notes">
+							<p>The canonical example is Dijkstra's algorithm.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -542,6 +765,9 @@
 							<li>Dijkstra's algorithm</li>
 							<li>A*</li>
 						</lu>
+						<aside class="notes">
+							<p>A*, which is effectively a superset-form of Dijstra's.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -551,6 +777,9 @@
 							<li>A*</li>
 							<li>Lifelong planning A* (LPA*)</li>
 						</lu>
+						<aside class="notes">
+							<p>LPA*</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -561,6 +790,9 @@
 							<li>Lifelong planning A* (LPA*)</li>
 							<li>D*</li>
 						</lu>
+						<aside class="notes">
+							<p>D*</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -572,6 +804,9 @@
 							<li>D*</li>
 							<li>etc.</li>
 						</lu>
+						<aside class="notes">
+							<p>and so on</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
@@ -583,6 +818,13 @@
 							<li style="color: grey;">D*</li>
 							<li style="color: grey;">etc.</li>
 						</lu>
+						<aside class="notes">
+							<p>But the planning algorithm we will focus on is Dijkstra's algorithm.</p>
+							<p>The reason for this is that, anecdotally, its sort of a first-pick in robot systems where you can know the graph you are planning over ahead of time.</p>
+							<p>So it covers a lot of practical application ground.</p>
+							<p>Its a relatively simple algorithm so show as C++.</p>
+							<p>And any performance optimizations we can make will also apply to A* because of how similar these algorithms are.</p>
+						</aside>
 					</section>
 				</section>
 
@@ -593,6 +835,13 @@
 					<div class="r-stack">
 						<img src="slides/dijkstras_fast.gif" height="400", width="400">
 					</div>
+					<aside class="notes">
+						<p>So here is that semi famous wiki-pedia graphic for Dijkstra's</p>
+						<p>Here, the spatial graph is embedded upon some kind of uniform lattice structure, like a grid</p>
+						<p>And we see that the search proceeds from some start point until a goal vertex is reached</p>
+						<p>We can call this an "early stopping" variant of Dijkstra's since the algorithm stops at a specific goal vertex</p>
+						<p>Though the more common variant will find optimal paths to all other nodes, from the start if you just let it run until all vertices have been visited</p>
+					</aside>
 				</section>
 
 
@@ -634,6 +883,16 @@ function Dijkstras(Graph, source, target):
 					<div class="r-stack">
 						<img src="slides/astar_fast.gif" height="400", width="400">
 					</div>
+					<aside class="notes">
+						<p>And here is another semi famous wiki-pedia graphic for A*</p>
+						<p>We see that, compared to Dijkstra's, the algorithm has to visit less vertices to find a path to the goal</p>
+						<p>This is because it uses a heuristic function to estimate the total cost to the goal. which changes the order in which vertices are evaluated</p>
+						<p>As long as this heuristic underestimates the cost to the goal, A* will give us the same optimal paths as Dijkstra's for less computational work</p>
+						<p>So the first optimization one can make when using Dijkstra's is: just use A* and pick a good heuristic</p>
+						<p>But here we are interested in optimizing the work the CPU is doing in a mostly orthogonal domain</p>
+						<p>And I'm claiming that the optimizations we make will naturally extend to A*</p>
+						<p>To prove it, here is the algorithm</p>
+					</aside>
 				</section>
 
 
@@ -672,26 +931,23 @@ function Astar(Graph, source, target):
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 					</section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 						</lu>
-						<aside class="notes">
-							Shhh, these are your private notes 📝
-						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 							<li>Use the STL: containers and other facilities</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 							<li>Use the STL: containers and other facilities</li>
@@ -699,7 +955,7 @@ function Astar(Graph, source, target):
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 							<li>Use the STL: containers and other facilities</li>
@@ -708,7 +964,7 @@ function Astar(Graph, source, target):
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>Goals</h2>
+						<h2>Implementation Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
 							<li>Use the STL: containers and other facilities</li>
@@ -1911,8 +2167,6 @@ graph.remap(remapping);
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-
-				slideNumber: 'c/t',
 
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]

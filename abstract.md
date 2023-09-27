@@ -44,8 +44,21 @@ valgrind --tool=cachegrind ./run_demo /home/brian/Downloads/BeanCoDistributionFa
 ```
 
 
-### Presentation
+### Presentation Docker
 
 ```
 docker pull node
 docker run --network host --name present -it node:latest bash
+git clone https://github.com/briancairl/cppcon2023.git
+cd cppcon2023/thirdparty/reveal
+npm install
+npm start
+```
+
+```
+docker pull node
+docker run --network host --name present -v ~/dev/cppcon2023:/home/cppcon2023 -it node:latest bash
+cd /home/cppcon2023/thirdparty/reveal
+npm install
+npm start
+```
