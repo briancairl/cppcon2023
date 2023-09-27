@@ -42,3 +42,10 @@ instructions,cpu-cycles,longest_lat_cache.miss,l1d.hwpf_miss,l2_request.miss
 ```
 valgrind --tool=cachegrind ./run_demo /home/brian/Downloads/BeanCoDistributionFacilities.graph.json /home/brian/Downloads/BeanCoDistributionFacilities.results.json 0.01 9 --cache-sim=yes
 ```
+
+
+### Presentation
+
+```
+docker pull node
+docker run --network host --name present -it node:latest bash

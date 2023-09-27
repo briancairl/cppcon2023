@@ -31,8 +31,8 @@ def render(graph_data: dict):
   canvas[:,:,1] = input_image
   canvas[:,:,2] = input_image
 
-  circle_radius = max([1, int(bin_size_px / 8)])
-  line_width = max([1, int(bin_size_px / 8)])
+  circle_radius = max([1, int(bin_size_px / 4)])
+  line_width = max([1, int(bin_size_px / 6)])
   for e in edges:
       u = int(e['u'])
       v = int(e['v'])
@@ -42,6 +42,8 @@ def render(graph_data: dict):
 
   for v in nodes:
       cv2.circle(canvas, (int(v['y']), int(v['x'])), circle_radius, (0, 0, 255), -1)
+
+  cv2.imwrite(os.path.splitext(graph_data["source"])[0]+".render.png", canvas)
 
   canvas //= 3
 

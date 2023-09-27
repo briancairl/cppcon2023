@@ -18,14 +18,12 @@
 			<div class="slides">
 
 				<!-- slide -->
-				<section>
-					<h1>Cache-friendly Design in Robot Path Planning</h1>
-					<p>Brian Cairl</p>
+				<section data-background="slides/cppcontitle.png">
 				</section>
 
 
 				<!-- slide -->
-				<section>
+				<section data-transition="fade">
 					<section data-auto-animate>
 						<div class="row">
 							<div class="column">
@@ -46,12 +44,14 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul align="left">I've worked at a few robotics startups</ul>
-								<ul align="left">
-									<li>Fetch Robotics (2016-2022)</li>
-									<li>Thirdwave.ai (2022-2023)</li>
-									<li>Tortuga AgTech (2023-present)</li>
-								</ul>
+								<div align="left">
+									<h4 style="color: white">I've worked at a few robotics startups:</h4>
+									<ul align="left">
+										<li>Fetch Robotics (2016-2022)</li>
+										<li>Thirdwave.ai (2022-2023)</li>
+										<li>Tortuga AgTech (present)</li>
+									</ul>
+								</div>
 							</div>
 							<div class="column">
 								<div class="r-stack">
@@ -64,11 +64,13 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul align="left">Mostly doing</ul>
-								<ul align="left">
-									<li>General architecture and frameworks around robot systems</li>
-									<li>Navigation and perception systems</li>
-								</ul>
+								<div align="left">
+									<h4 style="color: white">Mostly doing:</h4>
+									<ul align="left">
+										<li>General architecture and frameworks around robot systems</li>
+										<li>Navigation and perception systems</li>
+									</ul>
+								</div>
 							</div>
 							<div class="column">
 								<div class="r-stack">
@@ -81,11 +83,13 @@
 						<div class="row">
 							<div class="column">
 								<h2>About Me</h2>
-								<ul align="left">Other interests</ul>
-								<ul align="left">
-									<li>Game engines</li>
-									<li>Meta-programming</li>
-								</ul>
+								<div align="left">
+									<h4 style="color: white">Other interests:</h4>
+									<ul>
+										<li>Game engines</li>
+										<li>Meta-programming</li>
+									</ul>
+								</div>
 							</div>
 							<div class="column">
 								<div class="r-stack">
@@ -99,26 +103,20 @@
 
 				<!-- slide -->
 				<section>
-					<blockquote>Modern memory pipelines are so complex you are basically optimizing for the cache</blockquote>
-					- Random person on StackOverflow
-				</section>
-
-
-				<!-- slide -->
-				<section>
 					<section data-auto-animate>
-						<h2>Robot path planning</h2>
+						<h2 style="color: white">Robot path planning</h2>
 					</section>
 					<section data-auto-animate>
 						<h2>Robot path planning</h2>
+						<h2 style="color: white">Path planning</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Path planning</h2>
 						<ul>
-						How a robot figures out how to get from one location to another before moving.
+						How an (autonomous) agent figures out how to get from one location to another before actually moving.
 						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Robot path planning</h2>
 						<div class="r-stack">
-							<img src="slides/robot_path_planning.png">
+							<img src="slides/robot_path_planning.png" width="500" height="auto">
 						</div>
 					</section>
 				</section>
@@ -132,13 +130,14 @@
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-						Program design focused on preventing performance degradation caused by how memory is accessed through the memory caching structure of a computer system.
+						Program design focused on optimizing code by avoiding pathological affects of memory access through the caching structure of a computer system.
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
-						<div class="r-stack">
-							<img src="slides/robot_program_architecture.png">
+						<div>
+							<blockquote>Modern memory pipelines are so complex you are basically optimizing for the cache</blockquote>
+							- Random person on StackOverflow
 						</div>
 					</section>
 					<section data-auto-animate>
@@ -149,30 +148,55 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
-						<ul align="left">
-							<li>Accessing data means accessing memory through the cache</li>
-						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Cache-friendly design</h2>
-						<ul align="left">
-							<li>Accessing data means accessing memory through the cache</li>
-							<li>Running instructions means accessing memory through the cache</li>	
-						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Cache-friendly design</h2>
-						<ul align="left">
-							<li>Accessing data means accessing memory through the cache</li>
-							<li>Running instructions means accessing memory through the cache</li>	
-							<li>If some data or instruction is not in the cache, this is a <em>cache-miss</em></li>	
-						</ul>
+						<div class="r-stack">
+							<img src="slides/robot_program_architecture.png">
+						</div>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<div class="r-stack">
 							<img src="slides/cache.png">
 						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>	
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>	
+							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>
+							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
+							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<ul align="left">
+							<li>Accessing data means accessing memory through the cache</li>
+							<li>Running instructions means accessing memory through the cache</li>
+							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
+							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
+							<li>If a program attempts to access something that not in the cache, this is a <em style="color:red">cache miss</em></li>	
+						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
@@ -183,36 +207,50 @@
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
+							<li>Cache misses introduce latency</li>	
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
-							<li>Every level is slower to access data</li>	
+							<li>Cache misses introduce latency</li>	
+							<li>Access through each level is slower than the previous level</li>	
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-							<li>The more cache-misses, the more work the CPU needs to do to fetch the data from a lower cache level</li>	
-							<li>Every level is slower to access data</li>	
-							<li>More instructions == slower programs</li>	
+							<li>Cache misses introduce latency</li>	
+							<li>Access through each level is slower than the previous level</li>	
+							<li>CPUs can run out of things to do while waiting for the the next cache line from memory</li>	
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-							<li>Minimizes data cache misses!</li>
+							<li>Cache misses introduce latency</li>	
+							<li>Access through each level is slower than the previous level</li>	
+							<li>CPUs can run out of things to do while waiting for the the next cache line from memory</li>
+							<li>This is called a CPU stall</li>
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<ul align="left">
-							<li>Minimizes data cache misses!</li>
-							<li>Minimizes instruction cache misses!</li>
+							<li>Cache misses introduce latency</li>	
+							<li>Access through each level is slower than the previous level</li>	
+							<li>CPUs can run out of things to do while waiting for the the next cache line from memory</li>
+							<li>This is called a CPU stall</li>
+							<li>There are mitigations, e.g. out-of-order execution</li>
 						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<h3 style="color: white">Optimizes how a program uses data already in the cache.</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Cache-friendly design</h2>
+						<h1 style="color: white">Minimizes cache misses!</h1>
 					</section>
 				</section>
 
@@ -240,7 +278,7 @@
 						<ul>
 							<li>Implement cache-friendly path planning code in C++</li>
 							<li>Do so using the STL</li>
-							<li>Do so without writing custom allocators</li>
+							<li>Try to keep our choices simple</li>
 						</ul>
 					</section>
 				</section>
@@ -250,7 +288,10 @@
 				<section>
 					<section data-auto-animate>
 						<h2>Motivation</h2>
-						<ul>Robots typically need to move.</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3 style="color: white">Robots typically need to move.</h3>
 					</section>
 
 					<section data-auto-animate>
@@ -286,14 +327,6 @@
 						<h2>Motivation</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
-							<li>Before moving to a goal location, robots need to figure out how to move.</li>
-						</ul>
-					</section>
-					<section data-auto-animate>
-						<h2>Motivation</h2>
-						<h3>Mobile Robot Systems</h3>
-						<ul>
-							<li>Before moving to a goal location, robots need to figure out how to move.</li>
 							<li>These robots operate in highly dynamic environments.</li>
 						</ul>
 					</section>
@@ -301,9 +334,38 @@
 						<h2>Motivation</h2>
 						<h3>Mobile Robot Systems</h3>
 						<ul>
-							<li>Before moving to a goal location, robots need to figure out how to move.</li>
 							<li>These robots operate in highly dynamic environments.</li>
-							<li>A robot might need to figure out how to move multiple times while making its way to a goal location.</li>
+							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>These robots operate in highly dynamic environments.</li>
+							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
+							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>These robots operate in highly dynamic environments.</li>
+							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
+							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
+							<li>It could observe out that its locally blocked by obstacles.</li>
+						</ul>
+					</section>
+					<section data-auto-animate>
+						<h2>Motivation</h2>
+						<h3>Mobile Robot Systems</h3>
+						<ul>
+							<li>These robots operate in highly dynamic environments.</li>
+							<li>Robots might be informed about blockages local observation or some centralized coordination system.</li>
+							<li>A robot might need to figure out how to move multiple times while making its way to a goal.</li>
+							<li>It could observe out that its locally blocked by obstacles.</li>
+							<li>It could get information from a central source that its path cuts through unfavorable or blocked areas that are further away.</li>
 						</ul>
 					</section>
 					<section data-auto-animate>
@@ -328,22 +390,28 @@
 					<section data-auto-animate>
 						<h2>Motivation</h2>
 						<ul>
-							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
+							<li>Figuring out how to move is computationally expensive.</li>
+							<li>This only gets worse as the state-space of the problem gets bigger.</li>
+							<li>We are concerned about computation time as it affects overall system latency stack-up.</li>
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Motivation</h2>
 						<ul>
-							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
-							<li>When we tell a robot to do something, we want it moving quickly</li>
+							<li>Figuring out how to move is computationally expensive.</li>
+							<li>This only gets worse as the state-space of the problem gets bigger.</li>
+							<li>We are concerned about computation time as it affects overall system latency stack-up.</li>
+							<li>When we tell a robot to do something, we want it moving quickly.</li>
 						</ul>
 					</section>
 					<section data-auto-animate>
 						<h2>Motivation</h2>
 						<ul>
-							<li>Like any other computer system, we are worried about computation time as it affects latency.</li>
-							<li>When we tell a robot to do something, we want it moving quickly</li>
-							<li>We need our planning algorithms to execute quickly to prevent them from sitting around.</li>
+							<li>Figuring out how to move is computationally expensive.</li>
+							<li>This only gets worse as the state-space of the problem gets bigger.</li>
+							<li>We are concerned about computation time as it affects overall system latency stack-up.</li>
+							<li>When we tell a robot to do something, we want it moving quickly.</li>
+							<li style="color: cyan">Fast planning algorithms == less time robots are sitting around.</li>
 						</ul>
 					</section>
 				</section>
@@ -353,10 +421,29 @@
 				<section>
 					<section data-auto-animate>
 						<h2>Practical example</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<h3 style="color: white">Robots operating in a very big warehouse.</h3>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
 						<div class="r-stack">
-							<img src="slides/fake_distribution_facility.png">
+							<img src="slides/fake_distribution_facility.png" width="1500", height="auto">
 						</div>
-						<lu>This is a map of a distribution facility that is 0.5 miles long.</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Practical example</h2>
+						<div class="r-stack">
+							<img src="slides/fake_distribution_facility.png" width="1500", height="auto">
+						</div>
+						<div align="center">
+							This is a map of a make-believe distribution facility that is:
+							<lu align>
+								<li>0.5 miles long</li>
+								<li>0.25 miles deep</li>
+							</lu>
+						</div>
 					</section>
 					<section data-auto-animate>
 						<h2>Practical example</h2>
@@ -370,14 +457,14 @@
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility_graph_zoomed.png">
 						</div>
-						<lu>This is a spatial graph extracted from the map.</lu>
+						<lu>This is a spatial graph informs the robot about good "roadways" to travel along.</lu>
 					</section>
 					<section data-auto-animate>
 						<h2>Practical example</h2>
 						<div class="r-stack">
 							<img src="slides/fake_distribution_facility_graph_path.png">
 						</div>
-						<lu>A robot might make global plans using this graph to get around the warehouse.</lu>
+						<lu>A robot could used this graph to make global plans using this graph to get around the warehouse.</lu>
 					</section>
 				</section>
 
@@ -396,15 +483,26 @@
 							<img src="slides/no_precompute_2.png">
 						</div>
 					</section>
-					<section data-transition="fade">
+					<section data-transition="fade" data-visibility="hidden">
 						<h2>Why not just pre-compute all paths?</h2>
-						<lu>Practically speaking, we will need to run some kind of online search unless our graph is very small, which is normally is not.</lu>
+						<div class="r-stack">
+							<img src="slides/no_precompute_2.png">
+						</div>
+						<div align="left">
+							Practically speaking, we will need to run some kind of on-line search unless our graph is very small, <em>which it is normally is not.</em>
+						</div>
 					</section>
 				</section>
 
 
 				<!-- slide -->
 				<section>
+					<section data-auto-animate>
+						<h2>What do we do?</h2>
+					</section>
+					<section data-auto-animate>
+						<h2 style="color: white">Shortest-path search algorithms</h2>
+					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Sampling-based</h3>
@@ -532,7 +630,7 @@ function Dijkstras(Graph, source, target):
 
 				<!-- slide -->
 				<section>
-					<h2>Dijkstra's algorithm (early stopping)</h2>
+					<h2>A* (early stopping)</h2>
 					<div class="r-stack">
 						<img src="slides/astar_fast.gif" height="400", width="400">
 					</div>
@@ -545,7 +643,7 @@ function Dijkstras(Graph, source, target):
 ## A* (early stopping)
 
 ```r [18]
-function Dijkstras(Graph, source, target):
+function Astar(Graph, source, target):
 
   for each vertex v in Graph.Vertices:
     prev[v] ← UNDEFINED                                 # predecessors of v (visited set)
@@ -575,22 +673,28 @@ function Dijkstras(Graph, source, target):
 				<section>
 					<section data-auto-animate>
 						<h2>Goals</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
+						</lu>
+						<aside class="notes">
+							Shhh, these are your private notes 📝
+						</aside>
+					</section>
+					<section data-auto-animate>
+						<h2>Goals</h2>
+						<lu align="left">
+							<li>Implement Dijkstra's algorithm in C++</li>
+							<li>Use the STL: containers and other facilities</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
 						<h2>Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
-							<li>Use containers and other STL facilities</li>
-						</lu>
-					</section>
-					<section data-auto-animate>
-						<h2>Goals</h2>
-						<lu align="left">
-							<li>Implement Dijkstra's algorithm in C++</li>
-							<li>Use containers and other STL facilities</li>
+							<li>Use the STL: containers and other facilities</li>
 							<li>Measure cache performance</li>
 						</lu>
 					</section>
@@ -598,19 +702,19 @@ function Dijkstras(Graph, source, target):
 						<h2>Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
-							<li>Use containers and other STL facilities</li>
+							<li>Use the STL: containers and other facilities</li>
 							<li>Measure cache performance</li>
-							<li>Incrementally improve perfomance with better choices</li>
+							<li>Incrementally improve performance with better choices</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
 						<h2>Goals</h2>
 						<lu align="left">
 							<li>Implement Dijkstra's algorithm in C++</li>
-							<li>Use containers and other STL facilities</li>
+							<li>Use the STL: containers and other facilities</li>
 							<li>Measure cache performance</li>
-							<li>Incrementally improve perfomance with better choices</li>
-							<li>Any improvements we make will also apply to A*</li>
+							<li>Incrementally improve performance with better choices</li>
+							<li>Keep in mind that any improvements we make will also apply to A* or similar search algorithms.</li>
 						</lu>
 					</section>
 				</section>
@@ -618,6 +722,9 @@ function Dijkstras(Graph, source, target):
 
 				<!-- slide -->
 				<section>
+					<section data-auto-animate>
+						<h2>What do we need?</h2>
+					</section>
 					<section data-auto-animate>
 						<h2>What do we need?</h2>
 						<h1 style="color: white">The search algorithm!</h1>
@@ -628,7 +735,8 @@ function Dijkstras(Graph, source, target):
 				<!-- slide -->
 				<section data-markdown>
 					 <textarea data-template>
-```c++ [1-2|4|6|8|10-13|14-17|19-22|23-32|34]
+Here is Dijkstra's algorithm as C++ code
+```c++ [|1-2|4|6|8|10-13|14-17|19-22|23-32|34]
 template<SearchContext C, SearchGraph G>
 bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
 {
@@ -671,6 +779,7 @@ bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
 				<!-- slide -->
 				<section data-markdown>
 					 <textarea data-template>
+Here is the code to recover a path on a successful search
 ```c++ [1-2|4|7-10|11-15|17]
 template<typename OutputIteratorT, SearchContext C>
 OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID from)
@@ -698,18 +807,21 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>What else do we need?</h2>
 						<h3 style="color: white">Something to hold the graph!</h3>
 					</section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
 						<h3>Something to hold the graph!</h3>
 						<lu align="left">
 							<li>Vertex adjacencies (edges)</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
 						<h3>Something to hold the graph!</h3>
 						<lu align="left">
 							<li>Vertex adjacencies (edges)</li>
@@ -717,7 +829,7 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
 						<h3>Something to hold the graph!</h3>
 						<lu align="left">
 							<li>Vertex adjacencies (edges)</li>
@@ -749,7 +861,7 @@ concept SearchGraph =
 				<!-- slide -->
 				<section data-auto-animate data-markdown>
 					 <textarea data-template>
-```c++ [0]
+```c++ [|1-5|10-11|13-14|16-18]
 struct VertexProperties { double x; double y; /* ... */ };
 
 struct EdgeProperties { bool valid; EdgeWeight weight; /* ... */ };
@@ -759,10 +871,13 @@ using Edge = std::pair<VertexID, EdgeProperties>;
 class Graph
 {
 public:
+  /// Returns vertex properties for a given vertex
   const VertexProperties& vertex(VertexID q) const;
 
+  /// Returns the total number of vertices
   std::size_t vertex_count() const;
 
+  /// Invokes a visitor on each edge of "q"
   template<typename EdgeVisitorT>
   void for_each_edge(VertexID q, EdgeVisitorT&& visitor) const;
 };
@@ -774,18 +889,21 @@ public:
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>What else do we need?</h2>
 						<h3 style="color: white">Something to hold search state!</h3>
 					</section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
 						<h3>Something to hold search state!</h3>
 						<lu align="left">
 							<li>A container to hold visited nodes (and their relationships)</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
-						<h2>What do we need?</h2>
+						<h2>What else do we need?</h2>
 						<h3>Something to hold search state!</h3>
 						<lu align="left">
 							<li>A container to hold visited nodes (and their relationships)</li>
@@ -819,26 +937,28 @@ concept SearchContext =
 
 				<section data-auto-animate data-markdown>
 					 <textarea data-template>
-```c++ [0]
+```c++ [|6-8|9-10|11-12|13-14|15-16|17-18|19-20|21-22]
 struct Transition { VertexID from; VertexID to; EdgeWeight weight; };
 
 class TerminateAtGoal
 {
 public:
+  /// Resets internal state; sets start and goal vertices
   template<SearchGraph G>
   void reset(G&& graph, VertexID s, VertexID g);
-
+  /// Returns true if there are still elements in the queue
   bool is_queue_not_empty() const;
-
+  /// Returns true if a vertex has been visited
   bool is_visited(VertexID q) const;
-
+  /// Returns true if a vertex is the goal
   bool is_terminal(VertexID q) const;
-
+  /// Sets a vertex as visited
   void mark_visited(VertexID from, VertexID to);
-
+  /// Returns the predecessor of a vertex
   VertexID predecessor(VertexID q) const;
-
+  /// Get vertex from queue next best distance
   Transition dequeue();
+  /// Adds vertex to queue with a distance
   void enqueue(VertexID from, VertexID to, EdgeWeight w);
 };
 ```
@@ -1321,6 +1441,36 @@ public:
 ```
 						</textarea>
 					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v0_v1_cmi.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v1_multimap_rep.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v1_multimap_actual.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v1_multimap_mem.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v1_multimap_equal_range.png">
+						</div>
+					</section>
 				</section>
 
 
@@ -1429,6 +1579,12 @@ public:
 
 ```
 						</textarea>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v0_v1_v1res_cmi.png">
+						</div>
 					</section>
 				</section>
 				<!------------------ IMPLEMENTATION 1.5 ----------------->
@@ -1573,6 +1729,12 @@ public:
 ```
 						</textarea>
 					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v0_v1_v1res_v2_cmi.png">
+						</div>
+					</section>
 				</section>
 
 
@@ -1584,21 +1746,29 @@ public:
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
-							<li>We re-ordering vertices with std::sort</li>
+							<li>We can re-order vertices and their adjacencies with std::sort</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
-							<li>We re-ordering vertices with std::sort</li>
-							<li>Vertices which are close in space are more likely to be neighbors</li>
+							<li>We can re-order vertices and their adjacencies with std::sort</li>
+							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
 						</lu>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
-							<li>We re-ordering vertices with std::sort</li>
-							<li>Vertices which are close in space are more likely to be neighbors</li>
+							<li>We can re-order vertices and their adjacencies with std::sort</li>
+							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
+							<li>We know that vertices which are close in space are more likely to be neighbors</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Impact of ordering of the graph</h2>
+						<lu	align="left">
+							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
+							<li>We know that vertices which are close in space are more likely to be neighbors</li>
 							<li>We can order vertex adjacency data in memory such that the probability of accessing nearby vertex data in the same cache line is higher</li>
 						</lu>
 					</section>
@@ -1656,8 +1826,76 @@ graph.remap(remapping);
 ```
 						</textarea>
 					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/v0_v1_v1res_v2_v2sorted_cmi.png">
+						</div>
+					</section>
 				</section>
 
+
+				<!-- slide -->
+				<section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+					</section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+						<div align="left">
+							<lu>
+								<li>Cache performance has a non-trivial effect on any algorithm</li>
+							</lu>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+						<div align="left">
+							<lu>
+								<li>Cache performance has a non-trivial effect on any algorithm</li>
+								<li>We can optimize the code for our search based planning (SBP) algorithms before even optimizing the algorithm itself and make an appreciable performance impact</li>
+							</lu>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+						<div align="left">
+							<lu>
+								<li>Cache performance has a non-trivial effect on any algorithm</li>
+								<li>We can optimize the code for our search based planning (SBP) algorithms before even optimizing the algorithm itself and make an appreciable performance impact</li>
+								<li>We can use the STL to effectively implement a SBP algorithm</li>
+							</lu>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+						<div align="left">
+							<lu>
+								<li>Cache performance has a non-trivial effect on any algorithm</li>
+								<li>We can optimize the code for our search based planning (SBP) algorithms before even optimizing the algorithm itself and make an appreciable performance impact</li>
+								<li>We can use the STL to effectively implement a SBP algorithm</li>
+								<li>Memory ordering has a large impact (but we do not need to jump straight to writing allocators)</li>
+							</lu>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Some final remarks</h2>
+						<div align="left">
+							<lu>
+								<li>Cache performance has a non-trivial effect on any algorithm</li>
+								<li>We can optimize the code for our search based planning (SBP) algorithms before even optimizing the algorithm itself and make an appreciable performance impact</li>
+								<li>We can use the STL to effectively implement a SBP algorithm</li>
+								<li>Memory ordering has a large impact (but we do not need to jump straight to writing allocators)</li>
+								<li>Cache pipelines are complex, so measurement is our best bet!</li>
+							</lu>
+						</div>
+					</section>
+
+
+				<!-- slide -->
+				<section>
+					<h3 style="color: white">https://github.com/briancairl/cppcon2023</h3>
+				<second>
 
 			</div>
 		</div>
