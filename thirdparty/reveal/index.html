@@ -842,11 +842,12 @@
 						<img src="slides/dijkstras_fast.gif" height="400", width="400">
 					</div>
 					<aside class="notes">
-						<p>So here is that semi famous wiki-pedia graphic for Dijkstra's</p>
+						<p>So here is a semi famous wikipedia graphic for Dijkstra's</p>
 						<p>Here, the spatial graph is embedded upon some kind of uniform lattice structure, like a grid</p>
 						<p>And we see that the search proceeds from some start point until a goal vertex is reached</p>
 						<p>We can call this an "early stopping" variant of Dijkstra's since the algorithm stops at a specific goal vertex</p>
-						<p>Though the more common variant will find optimal paths to all other nodes, from the start if you just let it run until all vertices have been visited</p>
+						<p>Though I think the more well known variant is one that finds optimal paths to all other vertices, from the start if you just let it run until all vertices have been visited</p>
+						<p>There is really only a small difference between the two which is: don't stop the search when you reach the goal</p>
 					</aside>
 				</section>
 
@@ -882,10 +883,10 @@ function Dijkstras(Graph, source, target):
 
 Note:
 1. We are implementing a point-to-point version of Dijkstra's so our function will accept some prior graph; and a start and goal vertex within that graph
-2. To initialize we are going to create a "visited set" which will encode which vertices we've evaluated, and how we got there; as well as a priority queue, which will contain the next-best vertices to evaluate based on their total computer distance from the start. We'll put the start vertex in this queue with 0 distance.
+2. To initialize we are going to create a "visited set" which will encode which vertices we've evaluated, and how we got there; as well as a priority queue, which will contain the next-best vertices to evaluate based on their total computed distance from the start. We'll put the start vertex in this queue with 0 distance, which will be the first vertex we pop off the queue.
 3. The algorithm will proceed until the queue is empty
-4. At each stop, we will remove the vertex from the queue with the smallest total distance
-5. If we've visited that vertex, we'll ignore it; otherwise we'll record it at visited
+4. At each step, we will remove the vertex from the queue with the smallest total distance
+5. If we've visited that vertex, we'll ignore it; otherwise we'll record it as visited, taking note of how we got there
 6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal
 7. Otherwise, we will inspect each vertex connected to the vertex we are evaluating that we haven't yet visited, and add those vertices to the queue with an updated total distance
 7. When we've found the goal, the algorithm will grant use a set of transitions that we can walk through from the goal to the start. The path we recover from this will be the shortest path.
@@ -900,14 +901,14 @@ Note:
 						<img src="slides/astar_fast.gif" height="400", width="400">
 					</div>
 					<aside class="notes">
-						<p>And here is another semi famous wiki-pedia graphic for A*</p>
+						<p>And here is another semi famous wikipedia graphic for A*</p>
 						<p>We see that, compared to Dijkstra's, the algorithm has to visit less vertices to find a path to the goal</p>
 						<p>This is because it uses a heuristic function to estimate the total cost to the goal. which changes the order in which vertices are evaluated</p>
-						<p>As long as this heuristic underestimates the cost to the goal (we call this an admissible heuristic), A* will give us the same optimal paths as Dijkstra's for less computational work</p>
+						<p>As long as this heuristic underestimates the cost to the goal -- we call this an admissible heuristic -- A* will give us the same optimal paths as Dijkstra's for less computational work</p>
 						<p>So the first optimization one can make when using Dijkstra's is: just use A* and pick a good heuristic</p>
 						<p>But here we are interested in optimizing the work the CPU is doing in a mostly orthogonal domain</p>
-						<p>I'm claiming that the optimizations we make will naturally extend to A*</p>
-						<p>And to prove it, here is the algorithm</p>
+						<p>And I'm claiming that the optimizations we make will naturally extend to A* because the algorithms are basically the same</p>
+						<p>To prove it, here is the algorithm</p>
 					</aside>
 				</section>
 
@@ -942,11 +943,11 @@ function Astar(Graph, source, target):
 ```
 
 Note:
-- The algorithm is exactly the same, with the exception of how we compute the total distance between nodes
-- Here we apply some heuristic function H(v)
+- As you can see -- exactly the same, with the exception of how we compute the total distance between vertices
+- Here we apply some heuristic function H(v) when summing up the next total distance to the goal
 - If want to be really fancy, we can think back to when we talked about pre-computing all the paths through the graph
-- Since those paths are always going to have shorter or equal distances to our goal, they could be used to create a great admissible heuristic
-- But most folks just use the L2 distance between the current vertex and the goal, and since a straight-line path is always shorter than a bendy one, its admissable.
+- Since those paths are always going to have shorter or equal distances to our goal, they could be used to create a decent admissible heuristic that would guide the search along known happy paths
+- But most folks just use the L2 distance between the current vertex and the goal, and since its pretty general and a straight-line path is always shorter than a bendy one.
 					</textarea>
 				</section>
 
@@ -965,7 +966,7 @@ Note:
 							<li>Implement Dijkstra's algorithm in C++</li>
 						</lu>
 						<aside class="notes">
-							<p>Here, we want to implement Dijkstras as C++ code</p>
+							<p>Here, we want to implement Dijkstras in C++</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1086,10 +1087,10 @@ Note:
 6. We ignore it if its been visited
 7. We record it if it hasn't
 8. If its the goal vertex, we stop
-9. Otherwise, we inspect all the vertices connected to our current vertex that we haven't yet visited and add them to the queue with an updated cost. Here the edge traversal is implemented through a lambda used as a visitor callback which is passed the vertex 'v' that 'to' is connected to, and some structure of edge properties. This struct contains a boolean value used to mark if the edge is traversable during the search, i.e. is it blocked by somehting or not; and a phsyical distance along the connecting edge. Notice that if an edge is blocked, we don't even bother adding it to the queue because it effectively has an infinite cost.
+9. Otherwise, we inspect all the vertices connected to our current vertex that we haven't yet visited and add them to the queue with an updated cost. Here the edge traversal is implemented through a lambda used as a visitor callback. The lambda is invoked with the vertex 'v' that connected to our best vertex; and some structure containing a MINIMAL set of edge properties. This struct contains a boolean value used to mark if the edge is traversable during the search, i.e. is it blocked by somehting or not; and a phsyical distance along the connecting edge. Notice that if an edge is blocked, we don't even bother adding it to the queue because it effectively has an infinite cost.
 10. If the search ends without finding the goal the function simply returns `false` to indicate that the search failed, which is possible given the fact that the edges of our `G` can be toggled on or off. As such this accounts for graph configurations where the goal will be completely unreachable
 
-One over arching thing to point out is that we are going to make this a templated function. Additionally, our graph `G` and our context `C` will be header-only implementations. When we use `search` with some custom implementations for the graph and context we will allow the compiler to see the full context of the code in a single translation unit so that when we compile with optimizations, we can allow the compiler to make the best of this decently readable code.
+One over arching thing to point out is that we are going to make this a templated function; and, our custom graph `G` and our context `C` will also be header-only implementations. We want the compiler to see the full context of the code in a single translation unit so that when we compile with optimizations, we can allow the compiler to make any and all optimizations to this decently readable code.
 					</textarea>
 				</section>
 
@@ -1119,8 +1120,8 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 ```
 
 Note:
-1. As a companion to our `search` function, we can also implement a function which uses the search context object to recover a path back from the goal vertex if the search succeeded
-2. All it does is fill a sequence, using an output iterator, with the optimal transitions we computed during the search. This will represent our path, but in reverse order starting from the goal
+1. As a companion to our `search` function, we can also implement a function which uses the search context object to recover an optimal path back from the goal vertex if the search succeeded
+2. All it does is fill a sequence through an output iterator, like a `std::back_inserter`, with the vertex transitions we computed during the search. This sequence will represent out optimal path, but in reverse order starting from the goal
 3. It stops adding to the output path if the vertex we are inspecting is connected to itself, which should indicate that we are at the start vertex
 4. Otherwise we keeps adding the output path sequence
 					</textarea>
@@ -1184,7 +1185,7 @@ Note:
 				<!-- slide -->
 				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-## What do we need?
+## What else do we need?
 ```c++
 template <typename T>
 concept SearchGraph = 
@@ -1242,33 +1243,46 @@ Note:
 				<section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
+						<aside class="notes">
+							<p>We have one more customization point to go over</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
 						<h3 style="color: white">Something to hold search state!</h3>
+						<aside class="notes">
+							<p>Which is the `SearchContext` object</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
 						<h3>Something to hold search state!</h3>
 						<lu align="left">
-							<li>A container to hold visited nodes (and their relationships)</li>
+							<li>A container to hold visited vertices (and their relationships)</li>
 						</lu>
+						<aside class="notes">
+							<p>This object will hold on to state about which vertices have already been evaluated</p>
+							<p>As well as information about which vertices we transition from to get there, which we will need to recover our optimal path</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
 						<h3>Something to hold search state!</h3>
 						<lu align="left">
-							<li>A container to hold visited nodes (and their relationships)</li>
+							<li>A container to hold visited vertices (and their relationships)</li>
 							<li>A min-sorted priority queue of vertices</li>
 						</lu>
+						<aside class="notes">
+							<p>And the other big piece of state during the search, which is a min-sorted priority queue</p>
+						</aside>
 					</section>
 				</section>
 
 
 				<!-- slide -->
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-## What do we need?
+## What else do we need?
 ```c++
 template <typename T>
 concept SearchContext = 
@@ -1283,11 +1297,15 @@ concept SearchContext =
       { ctx.predecessor(VertexID{}) };
   };
 ```
+
+Note:
+- In `search`, I constrained the search context type `C` by some concept
+- Here is a simple concept to check that `C` implements a few requisite methods
 					</textarea>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ```c++ [|6-8|9-10|11-12|13-14|15-16|17-18|19-20|21-22]
 struct Transition { VertexID from; VertexID to; EdgeWeight weight; };
@@ -1314,6 +1332,17 @@ public:
   void enqueue(VertexID from, VertexID to, EdgeWeight w);
 };
 ```
+
+Note:
+1. And this is a full definition of our graph without any guts. Its a bit more involved than the graph, but each method is fairly simple
+2. We a method to reset the state of the search. This will set our start/goal vertices; reset the queue; reset the visited set... and importantly do any up-front allocation before the search anywhere we can do it.
+3. We have a way to check if the priority queue is empty
+4. We have a way to check if a vertex has been evaluated already
+5. We have a way to check if a vertex is the goal
+6. We have a way to record a vertex as visited, as well as how we got there from some other vertex
+7. We have a way to retrieve the vertex which was evaluated before some vertex; this is needed to recover our shortest path after a successful search
+8. We have a way to remove the next best vertex from the min-queue
+9. And lastly, a way to push thins on the the min-queue
 					</textarea>
 				</section>
 
@@ -1324,14 +1353,19 @@ public:
 				<!------------------ IMPLEMENTATION 0 ------------------>
 				<section>
 					<h1>Implementation 0</h1>
+					<aside class="notes">
+						<p>With the bulk of the algorithm implemented, we will have to fill out the guts of the graph and search context.</p>
+						<p>So we've reduced the scope of what we actually need to make choices about</p>
+						<p>And more importantly, we've reduced the scope of what we will need to optimize</p>
+					</aside>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-2|4-11|7|9|12|14|16-27|23-26]
-#include <map>
-// map, multimap
+```c++ [|1-2|7|9|12|14|16-27|23-26]
+#include <map>  // std::map, std::multimap
+// #include<algorhitm>, #include<tuple>
 
 class Graph
 {
@@ -1359,17 +1393,27 @@ public:
   }
 };
 ```
+
+Note:
+1. The first thing I'm going to implement is the `Graph`. We are going to start with a somewhat contrived implementation.
+2. This implementation will make use of `std::map` and `std::multimap`. After all, these are sort of the canonical, age-old associative containers in the STL, and we have a bunch of vertices and we need to associate with other vertices to represent our adjacencies in the graph
+3. We can store our vertex properties as unique key-value pairs between vertices and their properties with a map because we don't expect duplication  -- seems sane
+4. And we can store vertices with their neighbors with a multimap because we want to associate 1 or more neighboring vertices with with a vertex -- hence we need to allow for repeating keys. A multimap will also allow use to iterate over these neighbors nicely.
+5. Our vertex property access method is simple; we can just use `std::map::at` for that, which returns a value payload associated with our vertex as a key
+6. Our vertex count method can just return the size of the aforementioned map, since it has as many entries as there are vertices
+7. And lastly, we can implement our neighbor iteration method using `std::multimap::equal_range` since it will give us access to an iterable range referring the the edges emanating from our query vertex; or return iterators referring to an empty range if the query vertex does not exist
+8. Inside this implementation we are also using `std::for_each` from the `<algorithm>` header and `std::apply` from the `<tuple>` header because the value payload associated with each node of the multimap -- our edges -- are themselves `std::pairs` and we want to invoke some user-supplied visitor callback with the elements of this pair as arguments
 					</textarea>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-4|6-15|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
-#include <functional>
-#include <queue>
-#include <map>
-#include <vector>
+```c++ [|1-4|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
+#include <functional>  // std::greater
+#include <queue>       // std::priority_queue
+#include <map>         // std::map
+#include <vector>      // std::vector
 
 class TerminateAtGoal
 {
@@ -1431,6 +1475,21 @@ public:
   }
 };
 ```
+
+Note:
+1. Ok, onto the `SearchContext` implementation; here I've name the context `TerminateAtGoal` because it will stop the search at a goal, but this implementation just needs to fulfill the contact enforced by our `SearchContext` concept
+2. This time we are going to need to need a few more headers, but we will still use `std::map` for associative stuff. The other major include here is for the `std::priority_queue` container adapter. This will largely remain constant through most of our implementations because the STL doesn't really provide any other queue implementation other than a heap-based queue. Underneath the hood this is using `std::push/pop_heap`. We will be using `<vector>` simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
+3. Inside the class we have our current goal, which is simply a vertex ID
+4. We have our min-sorted priority queue. Note that we have to use `std::greater` as an extra comparator argument here because, by default, `std::priority` queue will sort elements as a max-heap. This change will make it a min-heap.
+5. And we will represent our visited set as an std::map which we will use to associate vertices to their predecessors in the search
+6. In our reset method we want to make sure that any stale state is reset, because again our aim is to just re-use this object. This includes flushing our visited set and our queue. Here re-use doesn't really buy us anything because the containers we've chosen don't have some magic reserve method to pre-allocate some memory.
+7. Checking if our queue is empty is pretty straight-forward
+8. Checking if we've visited a node simple requires us to check for its existence in the map. For this we can use `std::map::count`, which will either return 1 or 0
+9. Our search termination check will just tell us if the query vertex equivalent goal to the vertex we've set as our search goal
+10. The method we use to mark a vertex as visited, and annotate where it came from, will simply add a new node the the visited map
+11. The method we use to find the predecessor of a vertex will return to us that predecessor if it exists in the map, or the vertex itself if there is no predecessor
+12. Dequeue removes the next best vertex from the min-queue and returns it
+12. Enqueue adds a new vertex to the min-queue with an associated weight to sort it
 					</textarea>
 				</section>
 				<!------------------ IMPLEMENTATION 0 ------------------>
@@ -1443,36 +1502,56 @@ public:
 				<section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
+						<aside class="notes">
+							<p>So lets see how will this search implementation performs, specifically in terms of its performance with respect to cache interactions because we claimed initially that it has a big impact on overall performance.</p>
+							<p>And lets not expect too much.</p>
+						</aside>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
 - Run searches over our example warehouse graph
+
+Note:
+- We have a magic program which will load the spatial warehouse graph from before and runs searches on that graph
+- We can pretend the program is like a service that the robot would make requests for one of more plans from
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
 - Run searches over our example warehouse graph
 - Select some percentage of all vertices, N
+
+Note:
+- The program will deterministically sample some percentage of unique vertices from the graph
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
 - Run searches over our example warehouse graph
 - Select some percentage of all vertices, N
 - Run N^2 searches between all vertices as start/goal pairs
+
+Note:
+- And then it will run searches between all of these vertices, pairwise, using each as either a start or a goal in a search
+- This will give us a good idea of the performance over a mixture of short range and long range plans
+- Additionally, on the back-end, I've randomized how the nodes are arranged after they are loaded from a file to sort of normalize the affects of lucky placement in memory, since we aren't exacting any sort of control over that and we want to avoid biasing the results with some lucky memory ordering as best we can
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<h3 style="color: white">Run under cachegrind</h3>
+						<aside class="notes">
+							<p>One tool I like to use to get a rough idea of cache performance is called `cachegrind`</p>
+							<p>Its particularly useful for short-running programs like this one</p>
+						</aside>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
@@ -1481,9 +1560,19 @@ public:
 ```bash
 > valgrind --tool=cachegrind --cache-sim=yes ./run_demo ...
 ```	
+
+Note:
+- Its a tool which can be invoked with `valgrind` which instruments compiled code before execution
+- Its slows down execution a bunch, but gives us
+- The number of instructions run during the program
+- As well as an estimate about cache performance by simulating the cache
+- The simulation assumes an architecture with two cache levels
+- But in the case of most modern processors with more than two cache levels, it will detect the number actual cache levels and then
+    - simulate the smallest and instruction cache
+    - as well as the smallest and largest data cache
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Measuring cache performance
 ```text [|4-8|10-14]
@@ -1505,28 +1594,81 @@ public:
 ==131579== LL refs:          615,106,923  (  604,716,765 rd   +    10,390,158 wr)
 ==131579== LL misses:          3,340,076  (    2,270,562 rd   +     1,069,514 wr)
 ==131579== LL miss rate:             0.0% (          0.0%     +           0.1%  )
-
 ```
+
+Note:
+1. Here is a summary of the cache performance of our first implementation
+2. First off we can look at the instruction cache simulation results. We notice a very large number of references to out instruction caches, but the actual number of instruction cache misses for both levels is very low. So low in fact that `cachegrind` supports a virtually 0% miss rate. Great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much because what this tells us is that our program fits within the L1 instruction cache and is basically never evicted.
+3. On the other hand, our data cache is a whole other story. We see that, our largest latency (LL) cache experienced no misses, but out L1 cache -- the one closest to the CPU -- experienced a very large number of misses. In fact almost 10% of all L1 cache references results in a miss
+
+Cachegrind offers some tools to show us exactly which function calls
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
+						 <textarea data-template>
+## Measuring cache performance
+```
+cg_annotate <cachegrind.xxxx>
+```
+
+Note:
+Cachegrind offers a tools to show us exactly which function calls caused these cache misses, the go-to being `cg_annotate` which is just packaged with the tool -- and there are guis which break things down nicely, but I'm actually just going
+to do another measurement with another tool to break things down using actual measurements rather than simulated ones. So we've used cachegrind to sort of quickly guide ourselves
+to the idea that there is probably a cache-bottleneck in the program, and we want to see what its actually doing on our hardware.
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
-						<h3 style="color: white">Run under hotspot (perf)</h3>
+						<h3 style="color: white">perf</h3>
+						<aside class="notes">
+							<p>For that we can use `perf`, at least on linux-based systems.</p>
+							<p>In the robotics world we are mostly using linux-based distros so its safe to assume this is available for most within the domain.</p>
+							<p>Heck most of the robots I've worked on just run some stripped down version of ubuntu.</p>
+						</aside>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
-### Run under hotspot (perf)
+### perf
 
 ```bash
 > sudo apt install linux-tools-6.2.0-33-generic
 
-> sudo hotspot
+> perf record \
+ -o ~/perf.data \
+ --call-graph dwarf \
+ --event instructions,cpu-cycles,cache-misses,branches,branch-misses \
+ --aio \
+ --sample-cpu <exec>
 ```	
+
+Note:
+- Perf is what is referred to as a sampling-based profiler which will record the state of hardware counters during the execution of our program
+- It can give us insight into the number of cpu-cycles, instructions, cache-misses, branches, etc
+- It can also be attached to a live program without causing an abysmal slow down like our valgrind tools
+- The problem is that, in my opinion, the output hard to visually parse
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
+						<textarea data-template>
+## Measuring cache performance
+
+### perf
+
+```bash
+> sudo apt install hotspot
+
+> sudo hotspot
+```	
+
+Note:
+- So to look To look at the result we can use this nice program called `hotspot` which, among other things, will produce flamegraphs of particular events to show us which calls contributed the most of a particular event
+- We will look at instruction counts
+- And cache miss counts
+						</textarea>
+					</section>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						<textarea data-template>
 ## Measuring cache performance
 
@@ -1602,6 +1744,16 @@ public:
 							<li>Access data sequentially.</li>
 							<li>Reduce indirections through pointers.</li>
 							<li>Do not jump around memory frequently.</li>
+						</lu>
+					</section>
+					<section data-auto-animate>
+						<h2>Achieving good (data) cache performance</h2>
+						<h3>Rules of thumb</h3>
+						<lu align="left">
+							<li>Access data sequentially.</li>
+							<li>Reduce indirections through pointers.</li>
+							<li>Do not jump around memory frequently.</li>
+							<li style="color: red">Don't allocate memory during execution.</li>
 						</lu>
 					</section>
 
