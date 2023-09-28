@@ -716,14 +716,14 @@
 							<p>We'll employ a shortest path search algorithm</p>
 						</aside>
 					</section>
-					<section data-auto-animate>
+					<section data-auto-animate data-visibility="hidden">
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Sampling-based</h3>
 						<aside class="notes">
 							<p>Some common ones used in the field are sampling based, where we basically make structured-random guesses to fill space based on the robots kinematics or other constraints.</p>
 						</aside>
 					</section>
-					<section data-auto-animate>
+					<section data-auto-animate data-visibility="hidden">
 						<h2>Shortest-path search algorithms</h2>
 						<h3>Sampling-based</h3>
 						<lu align="left">
@@ -733,7 +733,7 @@
 							<p>Just to name some: these include RRT: Rapidly-exploring random trees</p>
 						</aside>
 					</section>
-					<section data-auto-animate>
+					<section data-auto-animate data-visibility="hidden">
 						<h2>Shortest-path search algorithms</h2>
 						<h3>Sampling-based</h3>
 						<lu align="left">
@@ -750,7 +750,7 @@
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Search-based</h3>
 						<aside class="notes">
-							<p>Because we are coming to the table with some prior graph, the flavor we will focus on is the search based variety.</p>
+							<p>Because we are coming to the table with some prior graph, the flavor of search algorithm we will focus on is the search based variety.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -771,7 +771,7 @@
 							<li>A*</li>
 						</lu>
 						<aside class="notes">
-							<p>A*, which is effectively a superset-form of Dijstra's.</p>
+							<p>A*, which is effectively a superset-form of Dijkstra's.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -807,7 +807,6 @@
 							<li>A*</li>
 							<li>Lifelong planning A* (LPA*)</li>
 							<li>D*</li>
-							<li>etc.</li>
 						</lu>
 						<aside class="notes">
 							<p>and so on</p>
@@ -817,19 +816,18 @@
 						<h2>Shortest-path search algorithms</h2>
 						<h3>Search-based</h3>
 						<lu align="left">
-							<li style="color: red;">Dijkstra's algorithm</li>
-							<li style="color: red;">A*</li>
+							<li style="color: cyan;">Dijkstra's algorithm</li>
+							<li style="color: darkcyan;">A*</li>
 							<li style="color: grey;">Lifelong planning A* (LPA*)</li>
 							<li style="color: grey;">D*</li>
 							<li style="color: grey;">etc.</li>
 						</lu>
 						<aside class="notes">
-							<p>But the planning algorithm we will focus on is Dijkstra's algorithm.</p>
+							<p>From this set, we will focus on is Dijkstra's algorithm.</p>
 							<p>The reason for this is that, anecdotally, its sort of a first-pick in robot systems where you can know the graph you are planning over ahead of time.</p>
 							<p>So it covers a lot of practical application ground.</p>
 							<p>Its a relatively simple algorithm to show as C++.</p>
-							<p>It can definitely be implemented with the STL pretty effectively.</p>
-							<p>And any performance optimizations we can make will also apply to A* because of how similar these algorithms are.</p>
+							<p>And it can definitely be implemented with the STL pretty effectively.</p>
 						</aside>
 					</section>
 				</section>
@@ -843,11 +841,7 @@
 					</div>
 					<aside class="notes">
 						<p>So here is a semi famous wikipedia graphic for Dijkstra's</p>
-						<p>Here, the spatial graph is embedded upon some kind of uniform lattice structure, like a grid</p>
-						<p>And we see that the search proceeds from some start point until a goal vertex is reached</p>
-						<p>We can call this an "early stopping" variant of Dijkstra's since the algorithm stops at a specific goal vertex</p>
-						<p>Though I think the more well known variant is one that finds optimal paths to all other vertices, from the start if you just let it run until all vertices have been visited</p>
-						<p>There is really only a small difference between the two which is: don't stop the search when you reach the goal</p>
+						<p>We are looking at spatial graph is embedded upon some kind of uniform lattice structure, like a grid</p>
 					</aside>
 				</section>
 
@@ -887,9 +881,9 @@ Note:
 3. The algorithm will proceed until the queue is empty
 4. At each step, we will remove the vertex from the queue with the smallest total distance
 5. If we've visited that vertex, we'll ignore it; otherwise we'll record it as visited, taking note of how we got there
-6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal
-7. Otherwise, we will inspect each vertex connected to the vertex we are evaluating that we haven't yet visited, and add those vertices to the queue with an updated total distance
-7. When we've found the goal, the algorithm will grant use a set of transitions that we can walk through from the goal to the start. The path we recover from this will be the shortest path.
+6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal. In what I think is the more well-known version of Dijkstra's, we search from a start vertex to all other vertices in the graph. If we want optimal paths to all other vertices, we can just omit this line and the search will always run until the queue is empty.
+7. Otherwise, we will inspect each connected vertex that we haven't yet visited, and add those vertices to the queue with an updated total distance
+7. When we've found the goal, the algorithm will return a set of transitions that we can walk through from the goal to the start. The path we can recover by doing this be the shortest path.
 					</textarea>
 				</section>
 
@@ -903,12 +897,6 @@ Note:
 					<aside class="notes">
 						<p>And here is another semi famous wikipedia graphic for A*</p>
 						<p>We see that, compared to Dijkstra's, the algorithm has to visit less vertices to find a path to the goal</p>
-						<p>This is because it uses a heuristic function to estimate the total cost to the goal. which changes the order in which vertices are evaluated</p>
-						<p>As long as this heuristic underestimates the cost to the goal -- we call this an admissible heuristic -- A* will give us the same optimal paths as Dijkstra's for less computational work</p>
-						<p>So the first optimization one can make when using Dijkstra's is: just use A* and pick a good heuristic</p>
-						<p>But here we are interested in optimizing the work the CPU is doing in a mostly orthogonal domain</p>
-						<p>And I'm claiming that the optimizations we make will naturally extend to A* because the algorithms are basically the same</p>
-						<p>To prove it, here is the algorithm</p>
 					</aside>
 				</section>
 
@@ -943,11 +931,18 @@ function Astar(Graph, source, target):
 ```
 
 Note:
-- As you can see -- exactly the same, with the exception of how we compute the total distance between vertices
-- Here we apply some heuristic function H(v) when summing up the next total distance to the goal
-- If want to be really fancy, we can think back to when we talked about pre-computing all the paths through the graph
-- Since those paths are always going to have shorter or equal distances to our goal, they could be used to create a decent admissible heuristic that would guide the search along known happy paths
+- When compared to Dijkstra's we can can see that the algorithms are basically the same, we this exception of how we compute the total distance between vertices
+- Here we apply some heuristic function H(v) when summing up the next total distance
+- The heuristic function estimates the total cost to the goal, which changes the order in which vertices are evaluated
+- As long as this heuristic underestimates the total cost to the goal -- we call this an admissible heuristic -- A* will give us the same optimal paths as Dijkstra's for less overall work
+- Remember when I mentioned pre-computing all obstacle-free paths?
+- If want to be really fancy, we can implement something which uses those distances to populate a lookup table which would could act as our heuristic function
+- The function would be admissible because we are always going to have shorter or equal distance to our goal along any obstacle-free, happy path
 - But most folks just use the L2 distance between the current vertex and the goal, and since its pretty general and a straight-line path is always shorter than a bendy one.
+
+- So I'm mentioning this much about A* because the first optimization one can make when implementing Dijkstra's is: just use A* and pick a good heuristic
+- But here we are interested in optimizing the work the CPU is doing in a somewhat orthogonal domain
+- I only mention A* because it is a better go-to for robot path planning, in most cases; but more importantly, any cache-guided optimizations we can make in a Dijkstra's implementation will easily carry over to A*
 					</textarea>
 				</section>
 
@@ -976,7 +971,7 @@ Note:
 							<li>Use the STL: containers and other facilities</li>
 						</lu>
 						<aside class="notes">
-							<p>Use the STL as-is, as much as we can</p>
+							<p>We want to use the STL, as-is, as much as we can</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -987,7 +982,7 @@ Note:
 							<li>Measure cache performance</li>
 						</lu>
 						<aside class="notes">
-							<p>Measure cache-performance of this implementation</p>
+							<p>We want to measure the cache-performance of this implementation</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -999,20 +994,7 @@ Note:
 							<li>Incrementally improve performance with better choices</li>
 						</lu>
 						<aside class="notes">
-							<p>Make improvements through better STL choices, guided by measurements</p>
-						</aside>
-					</section>
-					<section data-auto-animate>
-						<h2>Implementation Goals</h2>
-						<lu align="left">
-							<li>Implement Dijkstra's algorithm in C++</li>
-							<li>Use the STL: containers and other facilities</li>
-							<li>Measure cache performance</li>
-							<li>Incrementally improve performance with better choices</li>
-							<li>Keep in mind that any improvements we make will also apply to A* or similar search algorithms.</li>
-						</lu>'
-						<aside class="notes">
-							<p>And then also keep in mind that these optimizations will apply to A* and other similarly structured search algorithms</p>
+							<p>And then make improvements through better STL choices, guided by our measurements</p>
 						</aside>
 					</section>
 				</section>
@@ -1040,7 +1022,7 @@ Note:
 				<section data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 Here is Dijkstra's algorithm as C++ code
-```c++ [|1-2|4|6|8|10-13|14-17|19-22|23-32|34]
+```c++ [|6-27|1-2|19-25|22|28]
 template<SearchContext C, SearchGraph G>
 bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
 {
@@ -1051,18 +1033,12 @@ bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
     const auto [from, to, to_dist] = ctx.dequeue();
     
     if (ctx.is_visited(to))
-    {
       continue;
-    }
     else
-    {
       ctx.mark_visited(to, from);
-    }
     
     if (ctx.is_terminal(to))
-    {
       return true;
-    }
     else
     {
       graph.for_each_edge(
@@ -1079,18 +1055,20 @@ bool search(C& ctx, const G& graph, VertexID start, VertexID goal)
 ```
 
 Note:
-1. Here is Dijstra's as a templated C++ function; its pretty much the pseudo code that we just looked at
-2. With the exception that I chose to implement the state we will access during the search as this opaque, context object of type `C` constraint by the concept `SearchContext`, and that's going to include our visited set and priority queue. The choice to put all the search state into a context object is an important choice for a customization point because it will allow us to re-use some stuff between successive searches, namely memory that we've allocated to hold certain data.
-3. At the start of the implementation we are initialize the context with a start and goal vertex. We are also passing the graph because we can probably use information about the graph it to pre-allocate some stuff
-4. The the implementation follows the algorithm; we search until the queue is empty
-5. We pop the next best vertex from the queue
-6. We ignore it if its been visited
-7. We record it if it hasn't
-8. If its the goal vertex, we stop
-9. Otherwise, we inspect all the vertices connected to our current vertex that we haven't yet visited and add them to the queue with an updated cost. Here the edge traversal is implemented through a lambda used as a visitor callback. The lambda is invoked with the vertex 'v' that connected to our best vertex; and some structure containing a MINIMAL set of edge properties. This struct contains a boolean value used to mark if the edge is traversable during the search, i.e. is it blocked by somehting or not; and a phsyical distance along the connecting edge. Notice that if an edge is blocked, we don't even bother adding it to the queue because it effectively has an infinite cost.
-10. If the search ends without finding the goal the function simply returns `false` to indicate that the search failed, which is possible given the fact that the edges of our `G` can be toggled on or off. As such this accounts for graph configurations where the goal will be completely unreachable
+1. Here is Dijkstra's implemented as a templated C++ function
+2. Its pretty much, verbatim, the pseudo code that we just looked at, so I wont go over it line by line
+3. One notable exception here is that I chose to implement the state we will be accessing during the search as an, opaque, context object of type `C` constrained by the concept `SearchContext`, and that's going to include our visited set and priority queue.
+   - This context bearing object will be an important customization point; and it will allow us to re-use some allocated memory between successive search attempts.
+   - Additionally, the graph object of type `G` constrained by the concept `SearchGraph`, will be our second key customization point
+4. To iterate over neighboring vertices in the graph, `G` will expose method called `for_each_edge` which will invoke a lambda with some edge property information corresponding with each connected vertex.
+5. We should also notice that, in this implementation, edges not only bear a weight, but a validity flag that we will use in conjunction with the visited set to omit certain edges from the search. The purpose of this flag is to represent obstacles which would prevent the robot or agent from traverse said edge. We could imagine that our robot system might update the edges of the graph with this obstacle information right before we attempt to search.
+6. As such, there might be scenarios where we can't actually find the goal. In these cases, the `search` function will simply return `false` indicating that the goal vertex was not found.
 
-One over arching thing to point out is that we are going to make this a templated function; and, our custom graph `G` and our context `C` will also be header-only implementations. We want the compiler to see the full context of the code in a single translation unit so that when we compile with optimizations, we can allow the compiler to make any and all optimizations to this decently readable code.
+- One over arching point to make here is that we choosing a templated function not only for the purpose genericness.
+- Sure, it makes it a bit easier to reuse this function while we iterate on implementations of the aforementioned customization points
+- But if we make our custom graph `G` and our context `C` header-only implementations as well, we give the compiler the ability to see the full context of the code in a single translation unit
+- As such when we compile with optimizations, we give the compiler free reign to make our readable code, faster.
+- We wont go into detail about exactly which optimizations are being made relative to the case where this code is be outlined, but its important to consider the fact that compiler optimizations make a huge difference on things like execution ordering and memory access, and we want to get the best out of our code without having to make these optimizations by hand.
 					</textarea>
 				</section>
 
@@ -1098,7 +1076,7 @@ One over arching thing to point out is that we are going to make this a template
 				<section data-markdown>
 					 <textarea data-template data-separator-notes="^Note:">
 Here is the code to recover a path on a successful search
-```c++ [1-2|4|7-10|11-15|17]
+```c++ [|5-16]
 template<typename OutputIteratorT, SearchContext C>
 OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID from)
 {
@@ -1120,10 +1098,8 @@ OutputIteratorT get_reverse_path(OutputIteratorT out, const C& ctx, VertexID fro
 ```
 
 Note:
-1. As a companion to our `search` function, we can also implement a function which uses the search context object to recover an optimal path back from the goal vertex if the search succeeded
-2. All it does is fill a sequence through an output iterator, like a `std::back_inserter`, with the vertex transitions we computed during the search. This sequence will represent out optimal path, but in reverse order starting from the goal
-3. It stops adding to the output path if the vertex we are inspecting is connected to itself, which should indicate that we are at the start vertex
-4. Otherwise we keeps adding the output path sequence
+1. As a practical companion to our `search` function, we can also implement a function which uses the context object from a successful search in order to recover an optimal path back from the goal vertex
+2. All it does is fill a sequence through an output iterator, like a `std::back_inserter`, with the vertex transitions we computed during the search. This sequence will represent our optimal path, but in reverse order starting from the goal
 					</textarea>
 				</section>
 
@@ -1133,7 +1109,7 @@ Note:
 					<section data-auto-animate>
 						<h2>What else do we need?</h2>
 						<aside class="notes">
-							<p>Ok what else? We established two main customization points in `search`</p>
+							<p>Ok what else should we do? As mentioned, we've established two main customization points in our `search` function.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1176,7 +1152,7 @@ Note:
 						</lu>
 						<aside class="notes">
 							<p>Lastly we need to hold properties about each edge.</p>
-							<p>Most importantly, a distance, as well as a flag for toggling the edge</p>
+							<p>Most importantly, a distance, as well as a flag for toggling the edge to represent accessibility</p>
 						</aside>
 					</section>
 				</section>
@@ -1207,7 +1183,7 @@ Note:
 				<!-- slide -->
 				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-5|10-11|13-14|16-18]
+```c++ [|1-5|10-14|16-18]
 struct VertexProperties { double x; double y; /* ... */ };
 
 struct EdgeProperties { bool valid; EdgeWeight weight; /* ... */ };
@@ -1231,9 +1207,8 @@ public:
 
 Note:
 1. And this is a full definition of our graph without any guts
-2. We have some definitions for out vertex and edge properties
-3. An accessor for our vertex properties
-4. An accessor for the number of vertices
+2. We have some definitions for our vertex and edge properties
+3. Accessors to query about vertex properties
 5. And a method for calling a visitor on each edge connected to some query vertex
 					</textarea>
 				</section>
@@ -1261,8 +1236,9 @@ Note:
 							<li>A container to hold visited vertices (and their relationships)</li>
 						</lu>
 						<aside class="notes">
-							<p>This object will hold on to state about which vertices have already been evaluated</p>
-							<p>As well as information about which vertices we transition from to get there, which we will need to recover our optimal path</p>
+							<p>This object hold state about which vertices have already been evaluated</p>
+							<p>As well as information about which vertices we transition from to get there
+							<p>Keep in mind that we will need to recover our optimal path</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1273,7 +1249,7 @@ Note:
 							<li>A min-sorted priority queue of vertices</li>
 						</lu>
 						<aside class="notes">
-							<p>And the other big piece of state during the search, which is a min-sorted priority queue</p>
+							<p>The other big piece is our min-sorted priority queue</p>
 						</aside>
 					</section>
 				</section>
@@ -1299,15 +1275,14 @@ concept SearchContext =
 ```
 
 Note:
-- In `search`, I constrained the search context type `C` by some concept
-- Here is a simple concept to check that `C` implements a few requisite methods
+- Quickly, here is simple concept to check that `C` implements a few requisite methods
 					</textarea>
 				</section>
 
 
 				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|6-8|9-10|11-12|13-14|15-16|17-18|19-20|21-22]
+```c++ [|6-8|10-11|13-18|20-25]
 struct Transition { VertexID from; VertexID to; EdgeWeight weight; };
 
 class TerminateAtGoal
@@ -1316,16 +1291,19 @@ public:
   /// Resets internal state; sets start and goal vertices
   template<SearchGraph G>
   void reset(G&& graph, VertexID s, VertexID g);
-  /// Returns true if there are still elements in the queue
-  bool is_queue_not_empty() const;
-  /// Returns true if a vertex has been visited
-  bool is_visited(VertexID q) const;
+
   /// Returns true if a vertex is the goal
   bool is_terminal(VertexID q) const;
+  
+  /// Returns true if a vertex has been visited
+  bool is_visited(VertexID q) const;
   /// Sets a vertex as visited
   void mark_visited(VertexID from, VertexID to);
   /// Returns the predecessor of a vertex
   VertexID predecessor(VertexID q) const;
+	
+  /// Returns true if there are still elements in the queue
+  bool is_queue_not_empty() const;
   /// Get vertex from queue next best distance
   Transition dequeue();
   /// Adds vertex to queue with a distance
@@ -1334,15 +1312,11 @@ public:
 ```
 
 Note:
-1. And this is a full definition of our graph without any guts. Its a bit more involved than the graph, but each method is fairly simple
-2. We a method to reset the state of the search. This will set our start/goal vertices; reset the queue; reset the visited set... and importantly do any up-front allocation before the search anywhere we can do it.
-3. We have a way to check if the priority queue is empty
-4. We have a way to check if a vertex has been evaluated already
-5. We have a way to check if a vertex is the goal
-6. We have a way to record a vertex as visited, as well as how we got there from some other vertex
-7. We have a way to retrieve the vertex which was evaluated before some vertex; this is needed to recover our shortest path after a successful search
-8. We have a way to remove the next best vertex from the min-queue
-9. And lastly, a way to push thins on the the min-queue
+1. And this is a full definition of our search context without any guts. Its a bit more involved than the graph, but each method is fairly simple
+2. We need a method to reset the state of the search. This will set our start/goal vertices; reset the queue; reset the visited set... and importantly do any up-front allocation in the containers we chose for our underlying implementation before we actually execute the search.
+3. We have a way to check if a vertex is the goal vertex
+3. We have some methods to mutate and access state about the visited set
+4. And lastly, we have a few methods to interact with the priory queue
 					</textarea>
 				</section>
 
@@ -1354,7 +1328,7 @@ Note:
 				<section>
 					<h1>Implementation 0</h1>
 					<aside class="notes">
-						<p>With the bulk of the algorithm implemented, we will have to fill out the guts of the graph and search context.</p>
+						<p>With algorithm implemented, we will have to fill out the guts of the graph and search context.</p>
 						<p>So we've reduced the scope of what we actually need to make choices about</p>
 						<p>And more importantly, we've reduced the scope of what we will need to optimize</p>
 					</aside>
@@ -1363,16 +1337,17 @@ Note:
 
 				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-2|7|9|12|14|16-27|23-26]
-#include <map>  // std::map, std::multimap
-// #include<algorhitm>, #include<tuple>
+```c++ [|2|8|10|13-15|17-28|24-27]
+#include <algorhitm> // std::for_each
+#include <map>       // std::map, std::multimap
+#include <tuple>     // std::apply
 
 class Graph
 {
 private:
-  std::map<VertexID, VertexProperties> vertices_;
-
   std::multimap<VertexID, Edge> adjacencies_;
+
+  std::map<VertexID, VertexProperties> vertices_;
 
 public:
   const VertexProperties& vertex(VertexID q) const { return vertices_.at(q); }
@@ -1395,21 +1370,20 @@ public:
 ```
 
 Note:
-1. The first thing I'm going to implement is the `Graph`. We are going to start with a somewhat contrived implementation.
-2. This implementation will make use of `std::map` and `std::multimap`. After all, these are sort of the canonical, age-old associative containers in the STL, and we have a bunch of vertices and we need to associate with other vertices to represent our adjacencies in the graph
-3. We can store our vertex properties as unique key-value pairs between vertices and their properties with a map because we don't expect duplication  -- seems sane
-4. And we can store vertices with their neighbors with a multimap because we want to associate 1 or more neighboring vertices with with a vertex -- hence we need to allow for repeating keys. A multimap will also allow use to iterate over these neighbors nicely.
-5. Our vertex property access method is simple; we can just use `std::map::at` for that, which returns a value payload associated with our vertex as a key
-6. Our vertex count method can just return the size of the aforementioned map, since it has as many entries as there are vertices
-7. And lastly, we can implement our neighbor iteration method using `std::multimap::equal_range` since it will give us access to an iterable range referring the the edges emanating from our query vertex; or return iterators referring to an empty range if the query vertex does not exist
-8. Inside this implementation we are also using `std::for_each` from the `<algorithm>` header and `std::apply` from the `<tuple>` header because the value payload associated with each node of the multimap -- our edges -- are themselves `std::pairs` and we want to invoke some user-supplied visitor callback with the elements of this pair as arguments
+1. The first thing I'm going to implement is the `Graph`. We are going to start with a somewhat contrived implementation to serve as a jumping off point.
+2. This implementation will make use of `std::map` and `std::multimap`. After all, these are the canonical, age-old associative containers in the STL, and we have a bunch of vertices that we need to associate with other vertices to represent our adjacencies in the graph.
+3. We can store vertices with their neighbors using a multimap. If we consider a vertex as a key, we will need to allow for repeating keys, because each vertex will need to be associated with 1 or more neighbors. A multimap will also allow use to iterate over these neighbors nicely.
+4. We can store our vertex properties as unique key-value pairs because we don't expect duplication here.
+5. Our vertex property access methods use the accessors of std::map in a straight-forward way
+7. And lastly, we can implement our neighbor iteration method using `std::multimap::equal_range` since it will give us access to an iterable range of all the edges associated with our query vertex `q`
+8. Inside this implementation we are also using `std::for_each` from the `<algorithm>` header and `std::apply` from the `<tuple>` header. This is because the value payload associated with each node of the multimap -- our edges -- are themselves `std::pairs` and we want to invoke some user-supplied visitor callback with the elements of this pair as arguments.
 					</textarea>
 				</section>
 
 
 				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-4|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
+```c++ [|1-4|9|11|13|16-27|29-63]
 #include <functional>  // std::greater
 #include <queue>       // std::priority_queue
 #include <map>         // std::map
@@ -1477,19 +1451,13 @@ public:
 ```
 
 Note:
-1. Ok, onto the `SearchContext` implementation; here I've name the context `TerminateAtGoal` because it will stop the search at a goal, but this implementation just needs to fulfill the contact enforced by our `SearchContext` concept
-2. This time we are going to need to need a few more headers, but we will still use `std::map` for associative stuff. The other major include here is for the `std::priority_queue` container adapter. This will largely remain constant through most of our implementations because the STL doesn't really provide any other queue implementation other than a heap-based queue. Underneath the hood this is using `std::push/pop_heap`. We will be using `<vector>` simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
-3. Inside the class we have our current goal, which is simply a vertex ID
-4. We have our min-sorted priority queue. Note that we have to use `std::greater` as an extra comparator argument here because, by default, `std::priority` queue will sort elements as a max-heap. This change will make it a min-heap.
-5. And we will represent our visited set as an std::map which we will use to associate vertices to their predecessors in the search
-6. In our reset method we want to make sure that any stale state is reset, because again our aim is to just re-use this object. This includes flushing our visited set and our queue. Here re-use doesn't really buy us anything because the containers we've chosen don't have some magic reserve method to pre-allocate some memory.
-7. Checking if our queue is empty is pretty straight-forward
-8. Checking if we've visited a node simple requires us to check for its existence in the map. For this we can use `std::map::count`, which will either return 1 or 0
-9. Our search termination check will just tell us if the query vertex equivalent goal to the vertex we've set as our search goal
-10. The method we use to mark a vertex as visited, and annotate where it came from, will simply add a new node the the visited map
-11. The method we use to find the predecessor of a vertex will return to us that predecessor if it exists in the map, or the vertex itself if there is no predecessor
-12. Dequeue removes the next best vertex from the min-queue and returns it
-12. Enqueue adds a new vertex to the min-queue with an associated weight to sort it
+1. Ok, onto the `SearchContext` implementation
+2. This time we are going to use `std::map` again. But the other major inclusion here is for the `std::priority_queue` container adapter. This will largely remain constant through most of our implementations to follow because the STL doesn't really provide any other queue implementation besides this one. Underneath the hood this is using `std::push_healp` and `std::pop_heap` so we know that its a heap-based queue. We will be using `<vector>` simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
+3. Inside the class we will store our active, current goal, which is simply a vertex ID
+4. We have our min-sorted priority queue. Note here that we have to use `std::greater` as an extra comparator argument because, by default, `std::priority_queue` will sort elements from greatest to least, with greatest at the top, and this change will make it so our vertices with the least distance will appear the top of the queue to be evaluated next.
+5. We will represent our visited set as an std::map which we will use to associate vertices, uniquely, to their predecessor vertices. The existence of a vertex in the map will signify that it has been visited.
+6. In our reset method we want to make sure that any stale state is cleared. This includes flushing our visited set and our queue. As a reminder, our aim is to re-use this context object, but in this implementation re-use doesn't really buy us anything because the containers we've chosen don't have some magic reserve method to pre-allocate memory up front. This will come into play later.
+7. Beyond that, the remaining methods are fairly straight-forward, and merely serve as wrappers around calls to methods of the underlying containers
 					</textarea>
 				</section>
 				<!------------------ IMPLEMENTATION 0 ------------------>
@@ -1503,8 +1471,9 @@ Note:
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<aside class="notes">
-							<p>So lets see how will this search implementation performs, specifically in terms of its performance with respect to cache interactions because we claimed initially that it has a big impact on overall performance.</p>
-							<p>And lets not expect too much.</p>
+							<p>Now that we have all the pieces, lets measure the performance of our search.
+							<p>Specifically, we will be looking at performance with respect to cache interactions, because, as we claimed initially, this will have a big impact on overall performance.</p>
+							<p>At least for this first implementation, lets not expect too much.</p>
 						</aside>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1514,8 +1483,8 @@ Note:
 - Run searches over our example warehouse graph
 
 Note:
-- We have a magic program which will load the spatial warehouse graph from before and runs searches on that graph
-- We can pretend the program is like a service that the robot would make requests for one of more plans from
+- In order to do this, we will run a program which will load the spatial warehouse graph from before
+- And then use our search implementation to run searches between vertices in this graph
 						</textarea>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1527,6 +1496,9 @@ Note:
 
 Note:
 - The program will deterministically sample some percentage of unique vertices from the graph
+- We can pretend that this behavior is like a request that the robot is making to a service that would compute one or more path plans at a time
+- Of course, to benchmark, we are running many more plans at a time that a robot would need to
+- But lets suspend our disbelief a bit
 						</textarea>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1538,9 +1510,9 @@ Note:
 - Run N^2 searches between all vertices as start/goal pairs
 
 Note:
-- And then it will run searches between all of these vertices, pairwise, using each as either a start or a goal in a search
-- This will give us a good idea of the performance over a mixture of short range and long range plans
-- Additionally, on the back-end, I've randomized how the nodes are arranged after they are loaded from a file to sort of normalize the affects of lucky placement in memory, since we aren't exacting any sort of control over that and we want to avoid biasing the results with some lucky memory ordering as best we can
+- This will give us a good idea of the performance of our search implement over a mixture of short range and long range plans
+- Additionally, on the back-end, I've randomized how the vertices are arranged in the graph after they are loaded from a file to normalize the affects of lucky placement in memory
+- We aren't trying to have any hand-crafter control over memory placement and it would be good to avoid biasing our results with some lucky memory ordering
 						</textarea>
 					</section>
 					<section data-auto-animate>
@@ -1558,17 +1530,18 @@ Note:
 ### Run under cachegrind
 
 ```bash
-> valgrind --tool=cachegrind --cache-sim=yes ./run_demo ...
+> valgrind --tool=cachegrind --cache-sim=yes ./run_search ...
 ```	
 
 Note:
-- Its a tool which can be invoked with `valgrind` which instruments compiled code before execution
-- Its slows down execution a bunch, but gives us
-- The number of instructions run during the program
-- As well as an estimate about cache performance by simulating the cache
-- The simulation assumes an architecture with two cache levels
-- But in the case of most modern processors with more than two cache levels, it will detect the number actual cache levels and then
-    - simulate the smallest and instruction cache
+- Its a tool which can be invoked with `valgrind`
+- It instruments our compiled code before execution, which will slow execution down significantly
+- But what gives is the number of instructions run during the program
+- As well as an estimate about cache performance
+- It does so by simulating the cache
+- This simulation assumes an architecture with two cache levels
+- But in the case of most more modern processors with more than two cache levels, it will detect this, and
+    - simulate the smallest and largest instruction cache
     - as well as the smallest and largest data cache
 						</textarea>
 					</section>
@@ -1598,29 +1571,15 @@ Note:
 
 Note:
 1. Here is a summary of the cache performance of our first implementation
-2. First off we can look at the instruction cache simulation results. We notice a very large number of references to out instruction caches, but the actual number of instruction cache misses for both levels is very low. So low in fact that `cachegrind` supports a virtually 0% miss rate. Great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much because what this tells us is that our program fits within the L1 instruction cache and is basically never evicted.
-3. On the other hand, our data cache is a whole other story. We see that, our largest latency (LL) cache experienced no misses, but out L1 cache -- the one closest to the CPU -- experienced a very large number of misses. In fact almost 10% of all L1 cache references results in a miss
-
-Cachegrind offers some tools to show us exactly which function calls
-						</textarea>
-					</section>
-					<section data-auto-animate data-markdown data-separator-notes="^Note:">
-						 <textarea data-template>
-## Measuring cache performance
-```
-cg_annotate <cachegrind.xxxx>
-```
-
-Note:
-Cachegrind offers a tools to show us exactly which function calls caused these cache misses, the go-to being `cg_annotate` which is just packaged with the tool -- and there are guis which break things down nicely, but I'm actually just going
-to do another measurement with another tool to break things down using actual measurements rather than simulated ones. So we've used cachegrind to sort of quickly guide ourselves
-to the idea that there is probably a cache-bottleneck in the program, and we want to see what its actually doing on our hardware.
+2. First off, we can look at the instruction cache simulation results. We notice a very large number of references to our instruction caches, but the actual number of instruction cache misses for both levels is very low. So low in fact that `cachegrind` reports a virtually 0% miss rate. This is great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much because what this tells us is that our program fits within the L1 instruction cache and is basically never evicted.
+3. On the other hand, our data cache is a whole other story. We see that, our simulated last-level (LL) cache experienced virtually no misses, but our L1 cache -- the one closest to the CPU -- experienced a very large number of misses. In fact almost 10% of all L1 cache references results in a miss
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<h3 style="color: white">perf</h3>
 						<aside class="notes">
+							<p>Cachegrind gives s
 							<p>For that we can use `perf`, at least on linux-based systems.</p>
 							<p>In the robotics world we are mostly using linux-based distros so its safe to assume this is available for most within the domain.</p>
 							<p>Heck most of the robots I've worked on just run some stripped down version of ubuntu.</p>
@@ -1663,7 +1622,7 @@ Note:
 ```	
 
 Note:
-- So to look To look at the result we can use this nice program called `hotspot` which, among other things, will produce flamegraphs of particular events to show us which calls contributed the most of a particular event
+- So, to look at the result we can use this nice program called `hotspot` which, among other things, will produce flamegraphs of particular events to show us which calls contributed the most of a particular event
 - We will look at instruction counts
 - And cache miss counts
 						</textarea>
@@ -1693,10 +1652,16 @@ Note:
 				<section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
+						<aside class="notes">
+							<p>So now that we have some measurements, how do we actually improve the cache performance of this path planning system</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3 style="color: white">Spatial Locality</h3>
+						<aside class="notes">
+							<p>A core tenant to good cache performance is spatial locality</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1704,11 +1669,17 @@ Note:
 						<lu align="left">
 							<li>Data that we access should be close together in memory.</li>
 						</lu>
+						<aside class="notes">
+							<p>In essence this means that we should try to keep data that we will access together close to together in memory</p>
+						</aside>
 					</section>
 
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3 style="color: white">Temporal Locality</h3>
+						<aside class="notes">
+							<p>In addition, we should strive to achieve good temporal locality</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1716,11 +1687,17 @@ Note:
 						<lu align="left">
 							<li>Maximize the number of times we access data in the cache.</li>
 						</lu>
+						<aside class="notes">
+							<p>Meaning that we should try to construct our program such that we are maximizing the amount of times we are accessing data that is already in the cache</p>
+						</aside>
 					</section>
 
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3 style="color: white">Rules of thumb</h3>
+						<aside class="notes">
+							<p>Some good rules of thumb for achieving both of things things include...</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1728,6 +1705,10 @@ Note:
 						<lu align="left">
 							<li>Access data sequentially.</li>
 						</lu>
+						<aside class="notes">
+							<p>Layout data so that it can be accessed sequentially</p>
+							<p>We effectively want to access data from contiguous sequences of memory as much as possible</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1736,6 +1717,10 @@ Note:
 							<li>Access data sequentially.</li>
 							<li>Reduce indirections through pointers.</li>
 						</lu>
+						<aside class="notes">
+							<p>Reduce the number of pointer indirections in our programs</p>
+							<p>We want to avoid having to de-reference pointers to access data in any linked node structure</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1745,6 +1730,9 @@ Note:
 							<li>Reduce indirections through pointers.</li>
 							<li>Do not jump around memory frequently.</li>
 						</lu>
+						<aside class="notes">
+							<p>Moreover, we want to reduce the number of pointers we jump through because the data we access by dereferencing those pointers might be in wildly different locations in memory</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
@@ -1755,6 +1743,14 @@ Note:
 							<li>Do not jump around memory frequently.</li>
 							<li style="color: red">Don't allocate memory during execution.</li>
 						</lu>
+						<aside class="notes">
+							<p>And sort of a related big one: we want avoid memory allocations during execution of hot code.</p>
+							<p>I think that this is a pretty well known thing that the mechanisms of memory memory allocations can be slow</p>
+							<p>This is because malloc is a non-trivial operation</p>
+							<p>But on top of that, successive calls to malloc and new which happen when we add elements to containers -- although the try their best -- might place those elements in non sequential areas of memory</p>
+							<p>So we at the mercy of malloc when it comes to placement unless we write our own container allocators</p>
+							<p>But we can get pretty far without needing to do so</p>
+						</aside>
 					</section>
 
 					<section data-auto-animate>
@@ -1772,30 +1768,35 @@ Note:
 				<!-- slide -->
 				<section>
 					<section data-auto-animate>
-						<h2>std::multimap</h2>
+						<h2>Let's take a closer look</h2>
+						<h4>std::multimap</h4>
 					</section>
 					<section data-auto-animate>
-						<h2>std::multimap</h2>
+						<h2>Let's take a closer look</h2>
+						<h4>std::multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v0_multimap_rep.png">
+							<img src="slides/multimap_mental_model.png">
 						</div>
 					</section>
 					<section data-auto-animate>
-						<h2>std::multimap</h2>
+						<h2>Let's take a closer look</h2>
+						<h4>std::multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v0_multimap_actual.png">
+							<img src="slides/multimap_actual.png">
 						</div>
 					</section>
 					<section data-auto-animate>
-						<h2>std::multimap</h2>
+						<h2>Let's take a closer look</h2>
+						<h4>std::multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v0_multimap_mem.png">
+							<img src="slides/multimap_mem.png">
 						</div>
 					</section>
 					<section data-auto-animate>
-						<h2>std::multimap</h2>
+						<h2>Let's take a closer look</h2>
+						<h4>std::multimap::equal_range(4)</h4>
 						<div class="r-stack">
-							<img src="slides/v0_multimap_equal_range.png">
+							<img src="slides/multimap_equal_range.png">
 						</div>
 					</section>
 				</section>
@@ -1953,26 +1954,30 @@ public:
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v1_multimap_rep.png">
+							<img src="slides/unordered_multimap_mental_model.png">
 						</div>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v1_multimap_actual.png">
+							<img src="slides/unordered_multimap_actual.png">
 						</div>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap</h4>
 						<div class="r-stack">
-							<img src="slides/v1_multimap_mem.png">
+							<img src="slides/unordered_multimap_mem.png">
 						</div>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap::equal_range(113)</h4>
 						<div class="r-stack">
-							<img src="slides/v1_multimap_equal_range.png">
+							<img src="slides/unordered_multimap_equal_range.png">
 						</div>
 					</section>
 				</section>
@@ -1980,7 +1985,7 @@ public:
 
 				<!------------------ IMPLEMENTATION 1.5 ----------------->
 				<section>
-					<h1>Implementation 1 + reserve buckets</h1>
+					<h1>Implementation 1.5</h1>
 				</section>
 
 				<section data-auto-animate data-markdown>
@@ -2090,6 +2095,21 @@ public:
 							<img src="slides/v0_v1_v1res_cmi.png">
 						</div>
 					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap</h4>
+						<div class="r-stack">
+							<img src="slides/unordered_multimap_mem_bins_reserved.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<h4>std::unordered_multimap::equal_range(113)</h4>
+						<div class="r-stack">
+							<img src="slides/unordered_multimap_equal_range_bins_reserved.png">
+						</div>
+					</section>
+				</section>
 				</section>
 				<!------------------ IMPLEMENTATION 1.5 ----------------->
 
@@ -2237,6 +2257,20 @@ public:
 						<h2>Measuring cache performance</h2>
 						<div class="r-stack">
 							<img src="slides/v0_v1_v1res_v2_cmi.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Let's take a closer look</h2>
+						<h4>std::vector[std::vector[...]]</std::vector<...></h4>
+						<div class="r-stack">
+							<img src="slides/vector_vector_mental_model.png">
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h2>Let's take a closer look</h2>
+						<h4>std::vector::operator[] -> std::vector</h4>
+						<div class="r-stack">
+							<img src="slides/vector_vector_access.png">
 						</div>
 					</section>
 				</section>
@@ -2415,7 +2449,7 @@ graph.remap(remapping);
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-
+				slideNumber: 'c/t',
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
 			});
