@@ -4,7 +4,7 @@ project (cppcon2023)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra -g -DNDEBUG -D_DEBUG")
 
-set(DEMO_LIST "v2")
+set(DEMO_LIST "v1")
 
 # AUTO-GENERATE DEMOS TO INCLUDE
 file(WRITE auto_generated_includes.h "// --- AUTO-GENERATED ---\n")

@@ -26,6 +26,7 @@ Graph::Graph(const std::filesystem::path& graph_file_name)
   }
 
   const auto& edges = root.at("edges").get<picojson::array>();
+  this->adjacencies_.reserve(this->vertices_.size());
   for (const auto& edge_value : edges)
   {
     const auto& edge_object = edge_value.get<picojson::object>();
@@ -56,6 +57,7 @@ void Graph::shuffle(const std::vector<std::size_t>& indices)
   {
     using AdjacenciesType = decltype(this->adjacencies_);
     AdjacenciesType new_adjacencies;
+    new_adjacencies.reserve(this->vertices_.size());
     for (const auto& [pred, edge] : this->adjacencies_)
     {
       const auto& [succ, edge_props] = edge;

@@ -861,8 +861,8 @@ function Dijkstras(Graph, source, target):
 
   while Q is not empty:
     (p,u,dist_u) ← Q.extract_min()                      # remove next best vertex (u) and its
-                                                        # predecesssor (p)
-    if prev[u] is not UNDEFINED:                        # if we have visted (u), ignore
+                                                        # predecessor (p)
+    if prev[u] is not UNDEFINED:                        # if we have visited (u), ignore
       continue
     prev[u] ← p                                         # otherwise, set predecessor of (u)
 
@@ -916,8 +916,8 @@ function Astar(Graph, source, target):
 
   while Q is not empty:
     (p,u,dist_u) ← Q.extract_min()                      # remove next best vertex (u) and its
-                                                        # predecesssor (p)
-    if prev[u] is not UNDEFINED:                        # if we have visted (u), ignore
+                                                        # predecessor (p)
+    if prev[u] is not UNDEFINED:                        # if we have visited (u), ignore
       continue
     prev[u] ← p                                         # otherwise, set predecessor of (u)
 
@@ -1452,7 +1452,7 @@ public:
 
 Note:
 1. Ok, onto the `SearchContext` implementation
-2. This time we are going to use `std::map` again. But the other major inclusion here is for the `std::priority_queue` container adapter. This will largely remain constant through most of our implementations to follow because the STL doesn't really provide any other queue implementation besides this one. Underneath the hood this is using `std::push_healp` and `std::pop_heap` so we know that its a heap-based queue. We will be using `<vector>` simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
+2. This time we are going to use `std::map` again. But the other major element here is for the `std::priority_queue` container adapter. This will remain a constant through the implementations to follow because the STL doesn't really provide any other priority queue implementation besides this one. Underneath the hood this is using `std::push_heap` and `std::pop_heap` so we know that its a heap-based queue. We will be using `<vector>` simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
 3. Inside the class we will store our active, current goal, which is simply a vertex ID
 4. We have our min-sorted priority queue. Note here that we have to use `std::greater` as an extra comparator argument because, by default, `std::priority_queue` will sort elements from greatest to least, with greatest at the top, and this change will make it so our vertices with the least distance will appear the top of the queue to be evaluated next.
 5. We will represent our visited set as an std::map which we will use to associate vertices, uniquely, to their predecessor vertices. The existence of a vertex in the map will signify that it has been visited.
@@ -1495,7 +1495,6 @@ Note:
 - Select some percentage of all vertices, N
 
 Note:
-- The program will deterministically sample some percentage of unique vertices from the graph
 - We can pretend that this behavior is like a request that the robot is making to a service that would compute one or more path plans at a time
 - Of course, to benchmark, we are running many more plans at a time that a robot would need to
 - But lets suspend our disbelief a bit
@@ -1510,9 +1509,9 @@ Note:
 - Run N^2 searches between all vertices as start/goal pairs
 
 Note:
-- This will give us a good idea of the performance of our search implement over a mixture of short range and long range plans
+- This will give us a good idea of the performance of our search implementation over a mixture of short range and long range plans
 - Additionally, on the back-end, I've randomized how the vertices are arranged in the graph after they are loaded from a file to normalize the affects of lucky placement in memory
-- We aren't trying to have any hand-crafter control over memory placement and it would be good to avoid biasing our results with some lucky memory ordering
+- We aren't trying to have any hand-crafted control over memory placement and it would be good to avoid biasing our results with some lucky ordering the best we can
 						</textarea>
 					</section>
 					<section data-auto-animate>
@@ -1540,7 +1539,7 @@ Note:
 - As well as an estimate about cache performance
 - It does so by simulating the cache
 - This simulation assumes an architecture with two cache levels
-- But in the case of most more modern processors with more than two cache levels, it will detect this, and
+- In the case of modern processors with more than two cache levels, `cachegrind` will detect this, and
     - simulate the smallest and largest instruction cache
     - as well as the smallest and largest data cache
 						</textarea>
@@ -1571,18 +1570,20 @@ Note:
 
 Note:
 1. Here is a summary of the cache performance of our first implementation
-2. First off, we can look at the instruction cache simulation results. We notice a very large number of references to our instruction caches, but the actual number of instruction cache misses for both levels is very low. So low in fact that `cachegrind` reports a virtually 0% miss rate. This is great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much because what this tells us is that our program fits within the L1 instruction cache and is basically never evicted.
+2. First off, we can look at the instruction cache simulation results. We notice a very large number of references to our instruction caches, but the actual number of instruction cache misses for both levels is very low. So low in fact that `cachegrind` reports what is virtually a 0% miss rate. This is great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much. What this tells us is that our program fits within the L1 instruction cache and is basically never evicted.
 3. On the other hand, our data cache is a whole other story. We see that, our simulated last-level (LL) cache experienced virtually no misses, but our L1 cache -- the one closest to the CPU -- experienced a very large number of misses. In fact almost 10% of all L1 cache references results in a miss
+
+- Here, cache-grind has given us indication that our program is very likely to be bottlenecked by memory accessed through the cache
+- To proceed, I like to use another tool to measure the actual performance of the program based on hardware performance counters.
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<h3 style="color: white">perf</h3>
 						<aside class="notes">
-							<p>Cachegrind gives s
-							<p>For that we can use `perf`, at least on linux-based systems.</p>
-							<p>In the robotics world we are mostly using linux-based distros so its safe to assume this is available for most within the domain.</p>
-							<p>Heck most of the robots I've worked on just run some stripped down version of ubuntu.</p>
+							<p>The program I use most regularly is `perf`, which is available on most linux-based systems.</p>
+							<p>I'm pretty confident in saying that most of us in the robotics world are using some kind of linux distro so its safe to assume this is available for most within the domain.</p>
+							<p>To my knowledge, there are similar tools for Windows, but I just haven't use them</p>
 						</aside>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1603,10 +1604,11 @@ Note:
 ```	
 
 Note:
-- Perf is what is referred to as a sampling-based profiler which will record the state of hardware counters during the execution of our program
-- It can give us insight into the number of cpu-cycles, instructions, cache-misses, branches, etc
-- It can also be attached to a live program without causing an abysmal slow down like our valgrind tools
-- The problem is that, in my opinion, the output hard to visually parse
+- Perf is what is referred to as a sampling-based profiler
+- What it will do is record the state of hardware counters during the execution of our program at some designated rate
+- It can give us insight into like the number of cpu-cycles, instructions, cache-misses, branches, branch-misses, and more
+- And it can also be attached to a live programs
+- The problem with perf, in my opinion, is that the output is hard to visually parse
 						</textarea>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1622,12 +1624,12 @@ Note:
 ```	
 
 Note:
-- So, to look at the result we can use this nice program called `hotspot` which, among other things, will produce flamegraphs of particular events to show us which calls contributed the most of a particular event
+- So, to look at the results that perf generates, we can use this nice program called `hotspot` which, among other things, will produce interactive flamegraphs of particular events to show us which calls contributed the most of a particular event
 - We will look at instruction counts
-- And cache miss counts
+- And cache miss counts of particular function calls to figure out exactly which functions need to be optimized the most
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown data-separator-notes="^Note:">
+					<section data-auto-animate data-markdown data-visibility="hidden">
 						<textarea data-template>
 ## Measuring cache performance
 
@@ -1636,7 +1638,7 @@ Note:
 ![me](slides/v0_hotspot_instructions.png)
 						</textarea>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-visibility="hidden">
 						<textarea data-template>
 ## Measuring cache performance
 
@@ -1653,14 +1655,14 @@ Note:
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<aside class="notes">
-							<p>So now that we have some measurements, how do we actually improve the cache performance of this path planning system</p>
+							<p>So now that we have some measurements, how do we actually improve the cache performance of our path planner</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3 style="color: white">Spatial Locality</h3>
 						<aside class="notes">
-							<p>A core tenant to good cache performance is spatial locality</p>
+							<p>A core tenant to good cache performance is what is refereed to as: spatial locality</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1706,8 +1708,7 @@ Note:
 							<li>Access data sequentially.</li>
 						</lu>
 						<aside class="notes">
-							<p>Layout data so that it can be accessed sequentially</p>
-							<p>We effectively want to access data from contiguous sequences of memory as much as possible</p>
+							<p>Laying out out data so that it can be accessed sequentially</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1719,7 +1720,7 @@ Note:
 						</lu>
 						<aside class="notes">
 							<p>Reduce the number of pointer indirections in our programs</p>
-							<p>We want to avoid having to de-reference pointers to access data in any linked node structure</p>
+							<p>So we will want to avoid having to de-reference pointers to access data in any linked node structures as much as possible</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1741,26 +1742,33 @@ Note:
 							<li>Access data sequentially.</li>
 							<li>Reduce indirections through pointers.</li>
 							<li>Do not jump around memory frequently.</li>
-							<li style="color: red">Don't allocate memory during execution.</li>
+							<li style="color: cyan">Don't allocate memory during execution.</li>
 						</lu>
 						<aside class="notes">
-							<p>And sort of a related big one: we want avoid memory allocations during execution of hot code.</p>
-							<p>I think that this is a pretty well known thing that the mechanisms of memory memory allocations can be slow</p>
-							<p>This is because malloc is a non-trivial operation</p>
-							<p>But on top of that, successive calls to malloc and new which happen when we add elements to containers -- although the try their best -- might place those elements in non sequential areas of memory</p>
+							<p>And sort of a related big one: we want avoid memory allocations during execution of our hottest code paths.</p>
+							<p>I think that this is a pretty well known thing that the mechanisms of memory allocations can be relatively slow</p>
+							<p>This is because memory allocation, itself, is a non-trivial operation</p>
+							<p>But on top of that, successive calls to a general purpose memory allocator through the `new` operation -- which happen when we add elements to our STL containers -- might place those elements in non sequential areas of memory</p>
 							<p>So we at the mercy of malloc when it comes to placement unless we write our own container allocators</p>
-							<p>But we can get pretty far without needing to do so</p>
+							<p>But I'm claiming here that we can get pretty far without needing to do so</p>
 						</aside>
 					</section>
 
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3 style="color: white">Does out first implementation do any of these things?</h3>
+						<aside class="notes">
+							<p>Looking back out our first pass at an implementation:</p>
+							<p>Does it achieve most or any of these guiding principals</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Achieving good (data) cache performance</h2>
 						<h3>Does out first implementation do any of these things?</h3>
 						<h1 style="color: white">No not really.</h3>
+						<aside class="notes">
+							<p>The simple answer is: no, not really</p>
+						</aside>
 					</section>
 				</section>
 
@@ -1770,6 +1778,11 @@ Note:
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
 						<h4>std::multimap</h4>
+						<aside class="notes">
+							<p>So lets take a closer look</p>
+							<p>When we looked at out results in hotspot, we noticed that a large contributer to the total cache misses in our program were method associated with std::multimap</p>
+							<p>Why is this so?</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
@@ -1777,6 +1790,11 @@ Note:
 						<div class="r-stack">
 							<img src="slides/multimap_mental_model.png">
 						</div>
+						<aside class="notes">
+							<p>std::multimap is what is holding the adjacencies in our graph</p>
+							<p>And we are walking over the adjacencies of a vertex at each iteration of Dijkstra's</p>
+							<p>Mentally, we can model these associations with a diagram that looks like so, where vertices are associated with sequences edge data</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
@@ -1784,6 +1802,9 @@ Note:
 						<div class="r-stack">
 							<img src="slides/multimap_actual.png">
 						</div>
+						<aside class="notes">
+							<p>In actuality, as we could see in some of our `perf` outputs, std::multiple is actually implement as a red-block tree, at least in GCC and Clang</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
@@ -1791,6 +1812,12 @@ Note:
 						<div class="r-stack">
 							<img src="slides/multimap_mem.png">
 						</div>
+						<aside class="notes">
+							<p>The nodes of this tree are linked via pointers, and the nodes themselves are placed in memory by an allocator</p>
+							<p>Since we have not control over where these node are placed -- unless we write out own allocator -- they can be placed anywhere ... we have no know way of knowing</p>
+							<p>Sometimes this means, even when iterating through an adjacency list, we could be hopping around memory quite a bit</p>
+							<p>Its even possible that we are creating cache-misses every time we iterate to another element in the adjacency sequence, simply because adjacent nodes were placed such that they never end up in the same cache-line</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
@@ -1798,6 +1825,13 @@ Note:
 						<div class="r-stack">
 							<img src="slides/multimap_equal_range.png">
 						</div>
+						<aside class="notes">
+							<p>In the case of std::multimap, however, the story is even a bit worse than that</p>
+							<p>Finding the values associated with a key in std::map or std::multimap involves walking the tree until we find a node with the matching key</p>
+							<p>std::multimap::equal_range is, as many of us know, guaranteed to be a O(log(n)) operation</p>
+							<p>This means that, even beyond iterating through our adjacencies, we are jumping between nodes just to find our adjacencies to begin with</p>
+							<p>Since our `search` naturally needs to query the std::multimap rather often, we find ourselves with a rather pathological case</p>
+						</aside>
 					</section>
 				</section>
 
@@ -1806,21 +1840,27 @@ Note:
 				<!------------------ IMPLEMENTATION 1 ------------------>
 				<section>
 					<h1>Implementation 1</h1>
+					<aside class="notes">
+						<p>std::multimap, has its uses, especially in cases which require key-value pairs to be in a particular order when iterating</p>
+						<p>But here we don't really have a need for those properties</p>
+						<p>The good news is that, as many of you are already probably guessing, we can improve things pretty immediately with a container which doesn't affect structure of our existing implementation much at all</p>
+					</aside>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-2|4-11|7|9|12|14|16-27|23-26]
-#include <unordered_map>
-// unordered_map, unordered_multimap
+```c++ [3,8,10|13-27]
+#include <algorithm>     // std::for_each
+#include <tuple>         // std::apply
+#include <unordered_map> // std::unordered_map, std::unordered_multimap
 
 class Graph
 {
 private:
-  std::unordered_map<VertexID, VertexProperties> vertices_;
-
   std::unordered_multimap<VertexID, Edge> adjacencies_;
+
+  std::unordered_map<VertexID, VertexProperties> vertices_;
 
 public:
   const VertexProperties& vertex(VertexID q) const { return vertices_.at(q); }
@@ -1841,13 +1881,17 @@ public:
   }
 };
 ```
+
+Note:
+1. In this updated implementation, we will be replacing all instances of std::map and std::multimap with their "unordered" counterparts
+2. Because this is, functionally, a drop-in replacement, the structure of our implementation remains exactly the same as before
 					</textarea>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|1-4|6-15|9|11|13|16-27|29|31|33|35|37-47|49-54|56-63]
+```c++ [3,13]
 #include <functional>
 #include <queue>
 #include <unordered_map>
@@ -1913,6 +1957,8 @@ public:
   }
 };
 ```
+Note:
+1. Likewise, in our `SearchContext` implementation we will swap out std::map used to represent our visited set for a std::unordered_map
 					</textarea>
 				</section>
 				<!------------------ IMPLEMENTATION 1 ------------------>
@@ -1920,10 +1966,10 @@ public:
 
 				<!-- slide -->
 				<section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Measuring cache performance
-```text [|4-8|10-14]
+```text [10-14|4]
 ==132432== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
 ==132432== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
 …
@@ -1942,15 +1988,21 @@ public:
 ==132432== LL refs:          109,350,666  (  103,784,289 rd   +     5,566,377 wr)
 ==132432== LL misses:          3,235,001  (    2,209,423 rd   +     1,025,578 wr)
 ==132432== LL miss rate:             0.0% (          0.0%     +           0.1%  )
-
 ```
+Note:
+1. Measuring again with `cachegrind` we see that our D1 cache-miss rate has gone down rather significantly
+2. I also want to point out that on top of our cache miss rate, the total number of instructions executed during our program has decreased by about half. Most of this has to do with the fact that the data access complexity of std::unorder_map is much lower than that of std::map, though it is still valuable to analyze in terms of cache performance.
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<div class="r-stack">
-							<img src="slides/v0_v1_cmi.png">
+							<img src="slides/simulated_cm_over_i_v1.png">
 						</div>
+						<aside class="notes">
+							<p>Here is a graph showing our simulated D1 cache-miss counts normalized by the total number of instruction references encountered during the program between our previous implementation and this one, side by side</p>
+							<p>We see that by making this very simple change, we've improved our data cache-performance significantly</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -1958,6 +2010,10 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_mental_model.png">
 						</div>
+						<aside class="notes">
+							<p>To dig a bit deeper, lets look at why this might be in terms of our guiding principals</p>
+							<p>Again, here is a mental-model for how our graph data is organized</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -1965,6 +2021,11 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_actual.png">
 						</div>
+						<aside class="notes">
+							<p>std::unordered_map is, effectively, a hashmap</p>
+							<p>This means that the data structure itself is likely comprised of an array of buckets, each of which point to some kind of linked list or tree structure</p>
+							<p>Because multiple keys can be resolved to the same bucket after hashing, access will involved walking these linked structures to find a matching key by an equality comparison</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -1972,6 +2033,9 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_mem.png">
 						</div>
+						<aside class="notes">
+							<p>Similarly to std::map, the nodes attached to a bucket are placed in memory by an allocator, so there is no guarantee that they are adjacent</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -1979,22 +2043,23 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_equal_range.png">
 						</div>
+						<aside class="notes">
+							<p>We have definitely reduced the total number of indirections, and therefore potential cache-misses, during a call to `equal_range` by making this change</p>
+							<p>However, in ordered to find a key we must still follow the links in a linked list</p>
+							<p>And additional, we will need to iterate over a linked list when traversing the adjacencies associated with a vertex</p>
+						</aside>
 					</section>
 				</section>
 
 
 				<!------------------ IMPLEMENTATION 1.5 ----------------->
-				<section>
-					<h1>Implementation 1.5</h1>
-				</section>
-
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
 ```c++ [20-21]
-#include <functional>
-#include <queue>
-#include <unordered_map>
-#include <vector>
+#include <functional>     // std::greater
+#include <queue>          // std::priority_queue
+#include <unordered_map>  // std::unordered_map
+#include <vector>         // std::vector
 
 class TerminateAtGoal
 {
@@ -2057,16 +2122,19 @@ public:
   }
 };
 ```
+
+Note:
+- One simple change we can make to ensure that each bucket only every contains data associated with a single vertex is that: we can call reserve on our `std::unordered_map`s and `std::unordered_multimap`s to manually set the number of buckets.
 					</textarea>
 				</section>
 
 
 				<!-- slide -->
 				<section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Measuring cache performance
-```text [|4-8|10-14]
+```text [10-14]
 ==133350== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
 ==133350== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
 …
@@ -2087,13 +2155,28 @@ public:
 ==133350== LL miss rate:             0.0% (          0.0%     +           0.1%  )
 
 ```
+
+Note:
+- We see from our cache-performance simulation that this has a non-trivially positive effect, and our cache-miss rate has reduced again
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<div class="r-stack">
-							<img src="slides/v0_v1_v1res_cmi.png">
+							<img src="slides/simulated_cm_over_i_v1_res.png">
 						</div>
+							<aside class="notes">
+							<p>Here is another side-by-side comparison to make it more obvious</p>
+						</aside>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/cycle_counts_v1_res.png">
+						</div>
+						<aside class="notes">
+							<p>And our cycle counts reported by perf, which have also reduced, but only by a smidge</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -2101,6 +2184,11 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_mem_bins_reserved.png">
 						</div>
+						<aside class="notes"/>
+							<p>What we are doing here is exploiting the knowledge that our keys are simple integers</p>
+							<p>And the fact that these keys are distributed over a range of values from 0 to N-1</p>
+							<p>So their hash value can simply be the value of the keys themselves with no hash collisions</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
@@ -2108,6 +2196,10 @@ public:
 						<div class="r-stack">
 							<img src="slides/unordered_multimap_equal_range_bins_reserved.png">
 						</div>
+						<aside class="notes"/>
+							<p>This is does not, however, affect iterating over adjacencies associated with a given vertex</p>
+							<p>So if our vertex has a large number of adjacencies, we are likely to still see a fair number of cache-misses</p>
+						</aside>
 					</section>
 				</section>
 				</section>
@@ -2120,13 +2212,18 @@ public:
 				<!------------------ IMPLEMENTATION 2 ------------------>
 				<section>
 					<h1>Implementation 2</h1>
+					<aside class="notes"/>
+						<p>And that brings, rather naturally, to our final major variation</p>
+					</aside>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|]
-#include <vector>
+```c++ [|3,8-10|19-27]
+#include <algorithm> // std::for_each
+#include <tuple>     // std::apply
+#include <vector>    // std::vector
 
 class Graph
 {
@@ -2154,16 +2251,22 @@ public:
   }
 };
 ```
+
+Note:
+1. std::vector is almost the best, we can't escape it
+2. Here we are swapping our our associative containers for a simple std::vector. Given the chosen representation for our keys, we really don't need anything more complicated than this. 
+3. To reflect these changes, we need to update our `for_each_edge` implementation a big, but notice that the structure remains basically the same
+
 					</textarea>
 				</section>
 
 
-				<section data-auto-animate data-markdown>
+				<section data-auto-animate data-markdown data-markdown data-separator-notes="^Note:">
 					 <textarea data-template>
-```c++ [|]
-#include <functional>
-#include <queue>
-#include <vector>
+```c++ [3,12|19-20|32,36]
+#include <functional> // std::greater
+#include <queue>      // std::priority_queue
+#include <vector>     // std::vector
 
 class TerminateAtGoal
 {
@@ -2192,7 +2295,7 @@ public:
 
   bool is_queue_not_empty() const { return !queue_.empty(); }
 
-  bool is_visited(VertexID q) const { return visited_.count(q); }
+  bool is_visited(VertexID q) const { return q != visted_.size(); }
 
   bool is_terminal(VertexID q) const { return goal_ == q; }
 
@@ -2220,6 +2323,11 @@ public:
   }
 };
 ```
+
+Note:
+1. Likewise, in our search context implementation, we can change the visited set to be represented by a std::vector as well
+2. The only real functional difference here is that we need to represent an unvisited vertex in a slightly different way. Previously, we were checking for the existence of a key in an a map. But here we need to assign each unvisited vertex with some special value. Because the our vertex IDs span from 0 to N-1, we can just chose this value to be N, the total number of vertices in the graph
+3. This way when we go check to see if a vertex has been visited, all we have to do is check to see if its predecessor vertex ID has been set to to something other than N
 					</textarea>
 				</section>
 				<!------------------ IMPLEMENTATION 2 ------------------>
@@ -2227,10 +2335,10 @@ public:
 
 				<!-- slide -->
 				<section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Measuring cache performance
-```text [|4-8|10-14]
+```text [10-14]
 ==135295== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
 ==135295== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
 …
@@ -2251,20 +2359,38 @@ public:
 ==135295== LL miss rate:            0.0% (          0.0%     +         0.1%  )
 
 ```
+
+Note:
+- As expected our cache-miss rate has decreased yet again
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<div class="r-stack">
-							<img src="slides/v0_v1_v1res_v2_cmi.png">
+							<img src="slides/simulated_cm_over_i_v2.png">
 						</div>
+							<aside class="notes">
+							<p>When we look at the numbers side by side, we see we have made steady progress in reducing our D1 cache misses</p>
+						</aside>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/cycle_counts_v2.png">
+						</div>
+						<aside class="notes">
+							<p>And our in cycle counts reported by perf</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
-						<h4>std::vector[std::vector[...]]</std::vector<...></h4>
+						<h4>std::vector::operator[] -> std::vector</h4>
 						<div class="r-stack">
 							<img src="slides/vector_vector_mental_model.png">
 						</div>
+						<aside class="notes"/>
+							<p>Looking just at our graph structure again...</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Let's take a closer look</h2>
@@ -2272,6 +2398,10 @@ public:
 						<div class="r-stack">
 							<img src="slides/vector_vector_access.png">
 						</div>
+						<aside class="notes"/>
+							<p>We know that by using a vector of vectors to hold our adjacencies, we still have two indirections happening every time we need to access the adjacencies associated with a given vertex</p>
+							<p>but we are at least guaranteed that adjacency data will be laid out as a contiguous sequence.</p>
+						</aside>
 					</section>
 				</section>
 
@@ -2280,12 +2410,18 @@ public:
 				<section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
+						<aside class="notes"/>
+							<p>One last thing that I would like to show is that we can influence cache performance just by changing the overall ordering of vertices and vertex data within the graph</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
 							<li>We can re-order vertices and their adjacencies with std::sort</li>
 						</lu>
+						<aside class="notes"/>
+							<p>The STL provides with some facilities to sort things, namely std::sort</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
@@ -2293,6 +2429,9 @@ public:
 							<li>We can re-order vertices and their adjacencies with std::sort</li>
 							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
 						</lu>
+						<aside class="notes"/>
+							<p>If we can find a single vertex sort that we only need to run once after loading the graph, then its probably a pretty practical thing to try</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
@@ -2301,19 +2440,23 @@ public:
 							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
 							<li>We know that vertices which are close in space are more likely to be neighbors</li>
 						</lu>
+						<aside class="notes"/>
+							<p>By looking at the graph, we notice that vertices which are closer together are more likely to be neighbors</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
-							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
-							<li>We know that vertices which are close in space are more likely to be neighbors</li>
 							<li>We can order vertex adjacency data in memory such that the probability of accessing nearby vertex data in the same cache line is higher</li>
 						</lu>
+						<aside class="notes"/>
+							<p>So why not try to sort our vertices so that when we go to access neighbor data, there is a higher probability that its already in the same cache line</p>
+						</aside>
 					</section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Impact of ordering of the graph
-```c++ [|5-13|12|15]
+```c++ [|1-3|5-13|12]
 std::vector<std::size_t> remapping;
 remapping.resize(graph.vertex_count());
 std::iota(remapping.begin(), remapping.end(), 0);
@@ -2330,6 +2473,12 @@ std::sort(
 
 graph.remap(remapping);
 ```
+
+Note:
+1. To do this, we can finally make use of our vertex property data, namely the position of each vertex in the map our environment
+2. We create a sequence of indices that we can use to remap vertex data, as well as edge adjacency data
+3. And then sort these indices using a custom comparison operation which sensitive to the spatial location of each vertex
+4. Here, as an example, I've just sorted vertices based on their squared L2 distance from the map origin, which is sort of arbitrary, but seems to work fairly well
 						</textarea>
 					</section>
 				</section>
@@ -2338,10 +2487,10 @@ graph.remap(remapping);
 
 				<!-- slide -->
 				<section>
-					<section data-auto-animate data-markdown>
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
 						 <textarea data-template>
 ## Measuring cache performance
-```text [|4-8|10-14]
+```text [10-14]
 ==135709== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
 ==135709== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
 …
@@ -2362,13 +2511,28 @@ graph.remap(remapping);
 ==135709== LL miss rate:            0.0% (          0.0%     +         0.1%  )
 
 ```
+
+Note:
+- Again, here are our data cache misses
 						</textarea>
 					</section>
 					<section data-auto-animate>
 						<h2>Measuring cache performance</h2>
 						<div class="r-stack">
-							<img src="slides/v0_v1_v1res_v2_v2sorted_cmi.png">
+							<img src="slides/simulated_cm_over_i_v2_sorted.png">
 						</div>
+							<aside class="notes">
+							<p>Again, looking at the number side by side we see a reduction in cache misses</p>
+						</aside>
+					</section>
+					<section data-auto-animate>
+						<h2>Measuring cache performance</h2>
+						<div class="r-stack">
+							<img src="slides/cycle_counts_v2_sorted.png">
+						</div>
+						<aside class="notes">
+							<p>And a faster program, overall</p>
+						</aside>
 					</section>
 				</section>
 
@@ -2385,6 +2549,9 @@ graph.remap(remapping);
 								<li>Cache performance has a non-trivial effect on any algorithm</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>Cache performance IS performance. Whether its high-frequency trading or a robot path planning, its the same sort of hardware so being conscious about our memory-sensitive choices matters.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Some final remarks</h2>
@@ -2394,6 +2561,9 @@ graph.remap(remapping);
 								<li>We can optimize the code for our search based planning (SBP) algorithms before even optimizing the algorithm itself and make an appreciable performance impact</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>I've shown that we can make a good dent in our performance numbers when implementing a search-based algorithm for path planning before we even make any algorithmic optimizations.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Some final remarks</h2>
@@ -2404,6 +2574,9 @@ graph.remap(remapping);
 								<li>We can use the STL to effectively implement a SBP algorithm</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>In doing so, we can make ample of the STL to drive these implementations.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Some final remarks</h2>
@@ -2415,6 +2588,9 @@ graph.remap(remapping);
 								<li>Memory ordering has a large impact (but we do not need to jump straight to writing allocators)</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>And we can use it effectively before even considering to write our own allocation strategies.</p>
+						</aside>
 					</section>
 					<section data-auto-animate>
 						<h2>Some final remarks</h2>
@@ -2427,11 +2603,15 @@ graph.remap(remapping);
 								<li>Cache pipelines are complex, so measurement is our best bet!</li>
 							</lu>
 						</div>
+						<aside class="notes">
+							<p>Lastly, our hardware is complex; our cache-pipelines are complex; so like many have said before me: measurement is you best bet for guiding optimization.</p>
+						</aside>
 					</section>
 
 
 				<!-- slide -->
 				<section>
+					<h2>Thanks!</h2>
 					<h3 style="color: white">https://github.com/briancairl/cppcon2023</h3>
 				<second>
 
