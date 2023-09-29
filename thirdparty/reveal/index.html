@@ -47,7 +47,7 @@
 							<p>This is my first live cppcon.</p>
 							<p>Last year I attended remotely, so I'm excited to be here in person.</p>
 							<p>I've programmed in C++ on a daily basis as a robotics software developer for the past 7 years.</p>
-							<p>Though, I've been a C++ programmer since 2012 or so.</p>
+							<p>Though, I've been programming in C++ since 2012 or so.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -71,7 +71,7 @@
 						</div>
 						<aside class="notes">
 							<p>I've worked on mostly mobile robot systems which operate in warehouses.</p>
-							<p>But as of a few months ago I started working at a robot agriculture company called Tortuga AgTech, so first time in 7 years, I'm finely getting some fresh air.</p>
+							<p>But as of a few months ago I started working at a robot agriculture company called Tortuga AgTech, so for the first time in 7 years, I'm finely getting some fresh air.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -749,7 +749,7 @@
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Search-based</h3>
 						<aside class="notes">
-							<p>Because we are coming to the table with some prior graph, the flavor of search algorithm we will focus on is the search based variety.</p>
+							<p>Because we are coming to the table with some prior graph, the flavor of path planning algorithm we will focus on is the search based variety.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2408,6 +2408,51 @@ Note:
 							<p>One last thing that I would like to show is that we can influence cache performance just by changing the overall ordering of vertices and vertex data within the graph</p>
 						</aside>
 					</section>
+
+					<section data-auto-animate data-markdown data-separator-notes="^Note:">
+						 <textarea data-template>
+```c++ [|2,9|10]
+#include <algorithm>  // std::for_each
+#include <ranges>     // std::ranges::subrange
+#include <vector>     // std::vector
+
+class Graph
+{
+private:
+  std::vector<VertexProperties> vertices_;
+  std::vector<std::ranges::subrange<const Edge*>> adjacencies_;
+  std::vector<Edge> edges_;
+
+public:
+  const VertexProperties& vertex(vertex_id_t q) const { return vertices_[q]; }
+
+  std::size_t vertex_count() const { return vertices_.size(); }
+
+  template<typename EdgeVisitorT>
+  void for_each_edge(vertex_id_t q, EdgeVisitorT&& visitor) const
+  {
+    std::for_each(
+      adjacencies_[q].begin(),
+      adjacencies_[q].end(),
+      [q, visitor](const auto& child_and_edge_weight) mutable
+      {
+        const auto& [succ, edge_weight] = child_and_edge_weight;
+        visitor(succ, edge_weight);
+      });
+  }
+};
+```
+
+Note:
+1. Before we do that, we need one more implementation variant for our graph
+2. In this variation we will be replacing our std::vector of vectors with  vector of subranges
+3. The subranges will be used to view sub-sequences within a single vector of edges.
+
+- Here have the same number of pointer indirections as our previous implementation
+- But we've collated all of our edge data into a single sequence. This way we don't have to rely on our allocator at all to guarantee that our Edge data is packed contiguously in memory
+- Wheres as the inner vector in our vector of vectors could have been placed anywhere in memory, since each vector had its own disjoint memory block
+						 </textarea>
+					</section>
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
@@ -2421,7 +2466,7 @@ Note:
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
 							<li>We can re-order vertices and their adjacencies with std::sort</li>
-							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
+							<li>If we can find a single sort-order which improves performance for most start and goal pairs, then its probably practical to do</li>
 						</lu>
 						<aside class="notes"/>
 							<p>If we can find a single vertex sort run just once after loading the grap from disk, then its probably a pretty practical thing to try</p>
@@ -2431,7 +2476,7 @@ Note:
 						<h2>Impact of ordering of the graph</h2>
 						<lu	align="left">
 							<li>We can re-order vertices and their adjacencies with std::sort</li>
-							<li>If we can find a single sort which works for many start and goal pairs, then its practical to do</li>
+							<li>If we can find a single sort-order which improves performance for most start and goal pairs, then its probably practical to do</li>
 							<li>We know that vertices which are close in space are more likely to be neighbors</li>
 						</lu>
 						<aside class="notes"/>
@@ -2507,7 +2552,7 @@ Note:
 ```
 
 Note:
-- Again, here are our data cache misses
+- Again, we've reduced our cache misses
 						</textarea>
 					</section>
 					<section data-auto-animate>
@@ -2516,7 +2561,7 @@ Note:
 							<img src="slides/simulated_cm_over_i_v2_sorted.png">
 						</div>
 							<aside class="notes">
-							<p>Again, looking at the numbers side by side we see another significant reduction in cache misses</p>
+							<p>Looking at the numbers side by side this was yea another significant reduction </p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2525,7 +2570,7 @@ Note:
 							<img src="slides/cycle_counts_v2_sorted.png">
 						</div>
 						<aside class="notes">
-							<p>And a faster program, overall, as well</p>
+							<p>To boot, the program is also significantly faster</p>
 						</aside>
 					</section>
 				</section>
@@ -2583,7 +2628,7 @@ Note:
 							</lu>
 						</div>
 						<aside class="notes">
-							<p>And we can use it effectively before even considering to write our own allocation strategies.</p>
+							<p>And we can use it effectively before we have to implement our own allocation strategies.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
