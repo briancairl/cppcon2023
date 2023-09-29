@@ -45,9 +45,9 @@
 						</div>
 						<aside class="notes">
 							<p>This is my first live cppcon.</p>
-							<p>Last year I attended remotely, so I'm excited to be here in person.</p>
-							<p>I've programmed in C++ on a daily basis as a robotics software developer for the past 7 years.</p>
-							<p>Though, I've been programming in C++ since 2012 or so.</p>
+							<p>Last year I attended for the first time, remotely, so I'm excited to be here in person.</p>
+							<p>I program in C++ on a daily basis as a robotics software developer, and have been for the past 7 years.</p>
+							<p>But I've been programming in C++ since 2012 or so.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -70,7 +70,7 @@
 							</div>
 						</div>
 						<aside class="notes">
-							<p>I've worked on mostly mobile robot systems which operate in warehouses.</p>
+							<p>I've mostly worked on  mobile robot systems which operate in warehouses.</p>
 							<p>But as of a few months ago I started working at a robot agriculture company called Tortuga AgTech, so for the first time in 7 years, I'm finely getting some fresh air.</p>
 						</aside>
 					</section>
@@ -93,8 +93,8 @@
 							</div>
 						</div>
 						<aside class="notes">
-							<p>I typically write broader robot systems code.</p>
-							<p>But I've focused on mostly algorithms and architecture around robot navigation and perception.</p>
+							<p>I typically write broader robot systems code</p>
+							<p>but have focused on architecture around robot navigation and perception.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -118,7 +118,7 @@
 						<aside class="notes">
 							<p>Besides coding in C++ for work, I also code for fun.</p>
 							<p>In 1000 years I'll finish a game engine.</p>
-							<p>And to procrastinate I tool around template meta-programming nonsense.</p>
+							<p>And to procrastinate from that I tool around with template meta-programming.</p>
 						</aside>
 					</section>
 				</section>
@@ -148,12 +148,12 @@
 							<img src="slides/robot_path_planning.png" width="500" height="auto">
 						</div>
 						<aside class="notes">
-							<p>Refers to how an (autonomous) agent figures out how to get from one location to another before actually moving.</p>
+							<p>This refers to how an (autonomous) agent figures out how to get from one location to another before actually moving.</p>
 							<p>Within robotics this extends to a variety of sub-domains.</p>
-							<p>We plan paths for 9-jointed robot arm end effectors moving car parts on and off of conveyor belts.</p>
-							<p>Just as we plan paths for our robot vacuum cleaners to make their way through our houses.</p>
+							<p>Just as 9-jointed robot arms plan paths to move car parts.</p>
+							<p>So do robot vacuum cleaners picking up cat hair in our houses.</p>
 							<p>But the concept of path planning, obviously, extends outside the domain of robotics.</p>
-							<p>Many of the same planning algorithms used in robots finds thier place in video games; online map services; even computer network packet routing</p>
+							<p>Many of the same planning algorithms used in robots find their place in video games; online map services; even computer network packet routing</p>
 						</aside>
 					</section>
 				</section>
@@ -164,7 +164,7 @@
 					<section data-auto-animate>
 						<h2>Cache-friendly design</h2>
 						<aside class="notes">
-							<p>So now we're onto the the slightly more philosophical, programming-focused part of the title: cache friendly design</p>
+							<p>So now we're onto the the slightly more philosophical, programming-focused part of the title which is: cache friendly design</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -173,7 +173,7 @@
 						Program design focused on optimizing code by avoiding pathological affects of memory access through the caching structure of a computer system.
 						</ul>
 						<aside class="notes">
-							<p>Cache friendly design refers to: program design guided by attempts to prevent the CPU from slowing down while accessing data in memory</p>
+							<p>Cache friendly design refers to: program design guided by attempts to prevent slower execution due to the way memory is accessed</p>
 							<p>And because most CPUs we actually use are faster than our memory hardware: we are accessing that data through some complex pipeline of connected cache levels which sit between the CPU and main memory.</p>
 						</aside>
 					</section>
@@ -185,7 +185,7 @@
 						</div>
 						<aside class="notes">
 							<p>And these are indeed complex and important</p>
-							<p>This guy said so</p>
+							<p>I found this guy on stack overflow who said so</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -197,7 +197,6 @@
 							<p>Robots have brains made of computers</p>
 							<p>Most of the robots I've ever worked on use the same CPU hardware that sits in most high-end laptops</p>
 							<p>So at least in the domain of mobile robotics I'm covering a lot of ground by claiming that, as far as hardware is concerned: the CPUs we use to execute high-level software like path-planners, generally isn't all that exotic</p>
-							<p>And we are optimizing for the same or similar targets that most people working in a non-embedded systems land are optimizing for.</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -206,11 +205,11 @@
 							<img src="slides/robot_program_architecture.png">
 						</div>
 						<aside class="notes">
-							<p>A typical robot system might have some high-level architecture that looks like this</p>
-							<p>Where we have a bunch of non-hard-real-time applications running together in user space</p>
+							<p>A typical mobile robot system might have some high-level architecture that looks like this</p>
+							<p>We have a bunch of non-hard-real-time applications running together in user space</p>
 							<p>And they are talking to each other with some inter-process message-passing protocol</p>
-							<p>A popular choice for this sort of structure is ROS (the Robot operating system), which is not actually an OS</p>
-							<p>And they are interfaced with some lower level, probably -- but not definitely -- real-time systems for actually getting the robot to move and; reacting safely and deterministically around critical things like human passersby</p>
+							<p>A popular choice for implementing this sort of structure is ROS (the Robot operating system), which is not actually an OS</p>
+							<p>And these programs are interfaced with some lower level, probably -- but not definitely -- real-time system for actually getting the robot to move. These are the systems which are usually also responsible for reacting in some safety-rated way around critical things like human passersby</p>
 							<p>At least we hope</p>
 						</aside>
 					</section>
@@ -220,9 +219,9 @@
 							<img src="slides/cache.png">
 						</div>
 						<aside class="notes">
-							<p>All that to say: at least for the most brain-like part of the system, we are running on a consumer-grade CPU</p>
+							<p>All that to say: at least for the most brain-like part of the robot system, we are running on a consumer-grade CPU</p>
 							<p>With a consumer-grade memory pipeline</p>
-							<p>That is probably organized something like what this probably-familiar diagram aims to show where: we have small, but fast caches close to our cores</p>
+							<p>That is probably organized something like what this familiar diagram aims to show where: we have small, but fast caches close to our cores</p>
 							<p>And some large, slower cache interfaced with main memory</p>
 						</aside>
 					</section>
@@ -232,7 +231,7 @@
 							<li>Accessing data means accessing memory through the cache</li>
 						</ul>
 						<aside class="notes">
-							<p>Any time one of our high-level programs reads or writes data to memory, it is doing so through the cache</p>
+							<p>Any time one of our high-level programs read or writes data to memory, they do so through the cache</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -242,7 +241,7 @@
 							<li>Running instructions means accessing memory through the cache</li>	
 						</ul>
 						<aside class="notes">
-							<p>Any time one of our high-level programs executes instructions, it is first reading them from the cache</p>
+							<p>Any time one of our high-level programs executes instructions, they do so by first reading those instructions from the cache</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -277,7 +276,7 @@
 							<li>Running instructions means accessing memory through the cache</li>
 							<li>Besides the data the CPU needs now, the cache is populated with data likely to be accessed soon (pre-fetching)</li>
 							<li>Programs may attempt to access data that is not in the cache or has been removed (evicted) from the cache</li>
-							<li>If a program attempts to access something that not in the cache, this is a <em style="color:red">cache miss</em></li>	
+							<li>If a program attempts to access something that not in the cache, this is a <em style="color:lightgreen">cache miss</em></li>	
 						</ul>
 						<aside class="notes">
 							<p>This is called a cache miss</p>
@@ -372,7 +371,7 @@
 					<section data-auto-animate>
 						<h2>High level goals of this talk</h2>
 						<aside class="notes">
-							<p>With all that background in mind: some high level goals of this talk</p>
+							<p>With all that background in mind: lets get into some high level goals of this talk</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -381,7 +380,7 @@
 							<li>Implement cache-friendly path planning code in C++</li>
 						</ul>
 						<aside class="notes">
-							<p>I'd like to show how to implement some path-planning code that could be used on a robot system, video game, etc. that is performant, and, for the sake of this talk, specifically cache-performant</p>
+							<p>I'd like to show how to implement some path-planning code that could be used on a robot system that is performant, and, for the sake of this talk, specifically cache-performant</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -403,7 +402,7 @@
 							<li>Try to keep our choices simple</li>
 						</ul>
 						<aside class="notes">
-							<p>And I will show that we can keep our choices relative simple</p>
+							<p>And I will show that we can keep our choices relatively simple</p>
 							<p>We can do alot have without having to do things like touch custom memory allocators</p>
 						</aside>
 					</section>
@@ -427,7 +426,7 @@
 					<section data-auto-animate>
 						<h2>The motivating problem</h2>
 						<aside class="notes">
-							<p>To kick off an implementation journey, lets focus on a motivating problem</p>
+							<p>To kick off our implementation journey, lets focus on a motivating problem</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -466,7 +465,7 @@
 							<li>Home robots: vacuums, etc.</li>
 						</ul>
 						<aside class="notes">
-							<p>Home robots moving around your house, moving from room to room optimally to conserve battery and maximize the amount of cat hair they pick up</p>
+							<p>Home robots moving around your house, moving from room to room, while optimally conserving battery</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -525,10 +524,10 @@
 							<p>A robot is initialized with some information about its environment, typically in the form of a map and/or a graph.</p>
 							<p>It gets commands to go somewhere else.</p>
 							<p>It comes up with some high-level reference plan all the way to its goal</p>
-							<p>We will refer to this as a global plan</p>
-							<p>And then it follows that global plan as a reference while it uses some other lower-level planner/optimizer/controller to make adjustments around obstacles</p>
-							<p>When the local control systems can't figure out how to react, the system will likely drop back to the global planner for a new global plan</p>
-							<p>And so on and so forth until the robot gets to its intended goal location</p>
+							<p>That we will refer to this as a global plan</p>
+							<p>And then it follows this global plan as a reference while it uses some other lower-level optimizer to make adjustments around obstacles</p>
+							<p>When the local control systems can't figure out how to react, the system will likely drop back to the global planner for a new plan</p>
+							<p>And this cycle continues until the robot reaches its intended final location</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -695,7 +694,7 @@
 							<p>And this changes the topology of the graph</p>
 							<p>Pre-computing every possible plan for every possible blockage would lead to a combinatorial explosion of a lookup table</p>
 							<p>So, practically speaking, we will need to run some kind of on-line search unless our graph is very small</p>
-							<p>As a sort of throw-away remark, we could still use precomputed paths as a heuristic to speed up our algorithms, but lets put that aside</p>
+							<!--<p>As a sort of throw-away remark, we could still use precomputed paths as a heuristic to speed up our algorithms, but lets put that aside</p>-->
 						</aside>
 					</section>
 				</section>
@@ -745,7 +744,7 @@
 					</section>
 
 
-					<section data-auto-animate>
+					<section data-auto-animate data-visibility="hidden">
 						<h2>Shortest-path search algorithms</h2>
 						<h3 style="color: white">Search-based</h3>
 						<aside class="notes">
@@ -754,7 +753,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 						</lu>
@@ -764,7 +763,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 							<li>A*</li>
@@ -775,7 +774,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 							<li>A*</li>
@@ -787,7 +786,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 							<li>A*</li>
@@ -800,7 +799,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li>Dijkstra's algorithm</li>
 							<li>A*</li>
@@ -813,7 +812,7 @@
 					</section>
 					<section data-auto-animate>
 						<h2>Shortest-path search algorithms</h2>
-						<h3>Search-based</h3>
+						<!--<h3>Search-based</h3>-->
 						<lu align="left">
 							<li style="color: cyan;">Dijkstra's algorithm</li>
 							<li style="color: darkcyan;">A*</li>
@@ -822,8 +821,8 @@
 							<li style="color: grey;">etc.</li>
 						</lu>
 						<aside class="notes">
-							<p>From this set, we will focus on is Dijkstra's algorithm.</p>
-							<p>The reason for this is that, anecdotally, is that it is a common go to for planning system where you can know the graph you are planning over ahead of time.</p>
+							<p>From this set, we will focus on Dijkstra's algorithm.</p>
+							<p>The reason for this is that, anecdotally, it is a common go to for path planning systems in settings where the robot can know the graph it is planning on ahead of time.</p>
 							<p>So it covers a lot of practical application ground.</p>
 							<p>Its a relatively simple algorithm to show as C++.</p>
 							<p>And it can definitely be implemented with the STL pretty effectively.</p>
@@ -881,9 +880,9 @@ Note:
 3. The algorithm will proceed until the queue is empty
 4. At each step, we will remove the vertex from the queue with the smallest total distance
 5. If we've visited that vertex, we'll ignore it; otherwise we'll record it as visited, taking note of how we got there
-6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal. In what I think is the more well-known version of Dijkstra's, we search from a start vertex to all other vertices in the graph. If we want optimal paths to all other vertices, we can just omit this line and the search will always run until the queue is empty.
-7. Otherwise, we will inspect each connected vertex that we haven't yet visited, and add those vertices to the queue with an updated total distance
-7. When we've found the goal, the algorithm will return a set of transitions that we can walk through from the goal to the start. The path we can recover by doing this be the shortest path.
+6. If the vertex is the goal, we will stop the search, since we only care about a path from the start to the goal. In what I think is the more well-known version of Dijkstra's, we search from a start vertex to all other vertices in the graph. If we want optimal paths to all other vertices, we can just omit this line and let the search proceed until the queue is empty.
+7. If the vertex is not the goal, we will inspect each connected vertex that we haven't yet visited, and add those vertices to the queue with an updated total distance
+8. When we've found the goal, the algorithm will return a set of transitions that we can walk through from the goal to the start. The path we can recover by doing this be the shortest path.
 					</textarea>
 				</section>
 
@@ -937,7 +936,7 @@ Note:
 
 - So I'm mentioning this much about A* because the first optimization one can make when implementing Dijkstra's is: just use A* and pick a good heuristic
 - But here we are interested in optimizing the work the CPU is doing in a somewhat orthogonal domain
-- I only mention A* because it is a better go-to for robot path planning, in most cases; but more importantly, any cache-guided optimizations we can make in a Dijkstra's implementation will easily carry over to A*
+- That said, since A* so similar, any cache-guided optimizations we can make in a Dijkstra's implementation will easily carry over to A*
 					</textarea>
 				</section>
 
@@ -947,7 +946,7 @@ Note:
 					<section data-auto-animate>
 						<h2>Implementation Goals</h2>
 						<aside class="notes">
-							<p>Getting back on topic, lets finally get to some C++</p>
+							<p>So lets get back on topic and recap some goal</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1053,7 +1052,7 @@ Note:
 1. Here is Dijkstra's implemented as a templated C++ function
 2. Its pretty much, verbatim, the pseudo code that we just looked at, so I wont go over it line by line
 3. One notable exception here is that I chose to implement the state we will be accessing during the search as an, opaque, context object of type `C` constrained by the concept `SearchContext`, and that's going to include our visited set and priority queue.
-   - This context bearing object will be an important customization point; and it will allow us to re-use some allocated memory between successive search attempts.
+   - This context bearing object will be an important customization point; and it will allow us to re-use some resources between successive search attempts.
    - Additionally, the graph object of type `G` constrained by the concept `SearchGraph`, will be our second key customization point
 4. To iterate over neighboring vertices in the graph, `G` will expose a method called `for_each_edge` which will invoke a lambda with some edge property information corresponding with each connected vertex.
 5. We should also notice that, in this implementation, edges not only bear a weight, but a validity flag that we will use in conjunction with the visited set to omit certain edges from the search. The purpose of this flag is to represent obstacles which would prevent the robot or agent from traversing said edge. We could imagine that our robot system might update the edges of the graph with this obstacle information right before we attempt to search.
@@ -1169,8 +1168,8 @@ concept SearchGraph =
 ```
 
 Note:
-- In `search`, I constrained the graph type `G` by some concept
-- Here is a simple concept to check that `G` implements a few requisite methods
+- In `search`, I constrained the graph type by some concept
+- Here is a simple concept to check that the graph type implements a few requisite methods
 					</textarea>
 				</section>
 
@@ -1201,7 +1200,7 @@ public:
 ```
 
 Note:
-1. And this is a full definition of our graph without any guts
+1. And this is a full declaration of our graph
 2. We have some definitions for our vertex and edge properties
 3. Accessors to query about vertex properties
 5. And a method for calling a visitor on each edge connected to some query vertex
@@ -1231,9 +1230,9 @@ Note:
 							<li>A container to hold visited vertices (and their relationships)</li>
 						</lu>
 						<aside class="notes">
-							<p>This object hold state about which vertices have already been evaluated</p>
-							<p>As well as information about which vertices we transition from to get there
-							<p>Keep in mind that we will need to recover our optimal path</p>
+							<p>This object holds state about which vertices have already been evaluated</p>
+							<p>As well as information about which vertices we transitioned from to get there
+							<p>Keep in mind that we will need not only need this object during the search, but afterwards to recover our optimal path</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1244,7 +1243,7 @@ Note:
 							<li>A min-sorted priority queue of vertices</li>
 						</lu>
 						<aside class="notes">
-							<p>The other big piece is our min-sorted priority queue</p>
+							<p>The last big piece is our min-sorted priority queue</p>
 						</aside>
 					</section>
 				</section>
@@ -1270,7 +1269,7 @@ concept SearchContext =
 ```
 
 Note:
-- Quickly, here is simple concept to check that `C` implements a few requisite methods
+- Quickly, here is simple concept to check that the context type implements a few requisite methods
 					</textarea>
 				</section>
 
@@ -1307,10 +1306,10 @@ public:
 ```
 
 Note:
-1. And this is a full definition of our search context without any guts. Its a bit more involved than the graph, but each method is fairly simple
+1. And, again, a declaration. Its a bit more involved than the graph, but each method is fairly simple
 2. We need a method to reset the state of the search. This will set our start/goal vertices; reset the queue; reset the visited set... and importantly we can use it to do any up-front allocation in the containers we chose for our underlying implementation before we actually execute the search.
 3. We have a way to check if a vertex is the goal vertex
-3. We have some methods to mutate and access state about the visited set
+3. We have some methods to mutate and access the visited set
 4. And lastly, we have a few methods to interact with the priority queue
 					</textarea>
 				</section>
@@ -1323,7 +1322,7 @@ Note:
 				<section>
 					<h1>Implementation 0</h1>
 					<aside class="notes">
-						<p>With algorithm implemented, we will have to fill out the guts of the graph and search context.</p>
+						<p>With the algorithm implemented, what remains are the details behind of the graph and search context.</p>
 						<p>So we've reduced the scope of what we actually need to make choices about</p>
 						<p>And more importantly, we've reduced the scope of what we will need to optimize</p>
 						<p>So lets start making some choices</p>
@@ -1361,7 +1360,7 @@ public:
       {
         std::apply(visitor, parent_and_edge.second);
       });
-  }
+  }nt is th
 };
 ```
 
@@ -1448,11 +1447,11 @@ public:
 
 Note:
 1. Ok, onto the `SearchContext` implementation
-2. This time we are going to use `std::map` again. But the other major element is the `std::priority_queue` container adapter. This will remain a constant through the implementations to follow because the STL doesn't really provide any other priority queue implementation besides this one. Underneath the hood this is using `std::push_heap` and `std::pop_heap` so we know that its a heap-based queue. And we will be using a `std::vector` to store this heap simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
+2. This time we are going to use `std::map` again. But the other major element we see here is `std::priority_queue`, which is a container adapter. This will remain a constant through the implementations to follow because the STL doesn't really provide any other priority queue implementation besides this one. Underneath the hood this is using `std::push_heap` and `std::pop_heap` so we know that its a heap-based queue. And we will be using a `std::vector` to store this heap simply because its the default underlying container used with a priority queue, and frankly probably the best we can do.
 3. Inside the class we will store our active, current goal, which is simply a vertex ID
-4. We have our min-sorted priority queue. Note here that we have to use `std::greater` as an extra comparator argument because, by default, `std::priority_queue` will sort elements from greatest to least, with greatest at the top, and this change will make it so our vertices with the least distance will appear the top of the queue to be evaluated next.
+4. We have our min-sorted priority queue. Note here that we have to use `std::greater` as an extra comparator argument because, by default, `std::priority_queue` will sort elements from greatest to least, with greatest at the top. With this change will make it so our vertices with the least distance will appear the top of the queue to be evaluated next.
 5. We will represent our visited set as an std::map which we will associate vertices, uniquely, to their predecessor vertices. The existence of a vertex in the map will signify that it has been visited.
-6. In our reset method we want to make sure that any stale state is cleared. This includes flushing our visited set and our queue. As a reminder, our aim is to re-use this context object, but in this implementation re-use doesn't really buy us anything because the containers we've chosen don't have some magic reserve method to pre-allocate memory up front. This will come into play later.
+6. In our reset method we want to make sure that any stale state is cleared. This includes flushing our visited set and our queue. As a reminder, our aim is to re-use this context object, but in this implementation re-use doesn't really buy us anything because the containers we've chosen don't have some magic reserve methods to pre-allocate memory up front. This will come into play later.
 7. Beyond that, the remaining methods are fairly straight-forward, and merely serve as wrappers around calls to methods of the underlying containers
 					</textarea>
 				</section>
@@ -1491,9 +1490,9 @@ Note:
 - Select some percentage of all vertices, N
 
 Note:
-- We can pretend that this behavior is like a request that the robot is making to a service that would compute one or more path plans at a time
+- We can pretend that this behavior is like a request that the robot is making to a service that would compute one or more paths at a time
 - Of course, to benchmark, we are running many more plans at a time than a robot would actually need
-- But lets suspend our disbelief a bit
+- But lets just suspend our disbelief
 						</textarea>
 					</section>
 					<section data-auto-animate data-markdown data-separator-notes="^Note:">
@@ -1507,7 +1506,6 @@ Note:
 Note:
 - This will give us a good idea of the performance of our search implementation over a mixture of short range and long range plans
 - Additionally, on the back-end, I've randomized how the vertices are arranged in the graph after they are loaded from a file to normalize the affects of lucky placement in memory
-- We aren't trying to have any hand-crafted control over memory placement and it would be good to avoid biasing our results with some lucky ordering the best we can
 						</textarea>
 					</section>
 					<section data-auto-animate>
@@ -1570,7 +1568,7 @@ Note:
 2. First off, we can look at the instruction cache simulation results. We notice a very large number of references to our instruction caches, but the actual number of instruction cache misses for both levels is very low. So low that we see a virtually a 0% miss rate. This is great. For this program, as well as the variants to follow, we wont really need to worry about our instruction cache much. What this tells us is that our program fits nicely within the L1 instruction cache and is basically never evicted.
 3. On the other hand, our data cache is a whole other story. We see that, our simulated last-level (LL) cache experienced virtually no misses, but our L1 cache -- the one closest to the CPU -- experienced a very large number of misses. In fact almost 10% of all L1 cache references resulted in a miss
 
-- Here, cache-grind has given us indication that our program is very likely to be bottlenecked by memory accessed through the cache
+- Here, cache-grind has given us indication that our program is very likely to be bottlenecked by memory access
 - To proceed, I like to use another tool to measure the actual performance of the program based on hardware performance counters.
 						</textarea>
 					</section>
@@ -1623,7 +1621,8 @@ Note:
 Note:
 - So, to look at the results that perf generates, we can use this nice program called `hotspot` which, among other things, will produce interactive flamegraphs of particular events to show us which calls contributed the most of a particular event
 - We will look at instruction counts
-- And cache miss counts of particular function calls to figure out exactly which functions need to be optimized the most
+- And cache miss counts of particular function calls
+- This will indicate to us which functions need to be optimized the most
 						</textarea>
 					</section>
 					<section data-auto-animate data-markdown data-visibility="hidden">
@@ -1732,8 +1731,8 @@ Note:
 							<p>And sort of a related big one: we want avoid memory allocations during execution of our hottest code paths.</p>
 							<p>I think that this is a pretty well known thing that the mechanisms of memory allocations can be relatively slow</p>
 							<p>This is because memory allocation, itself, is a non-trivial operation</p>
-							<p>But on top of that, successive calls to a general purpose memory allocator through the `new` operation -- which happen when we add elements to our STL containers -- might place those elements in non sequential areas of memory</p>
-							<p>So we at the mercy of malloc when it comes to placement unless we write our own container allocators</p>
+							<p>But on top of that, successive calls to a general purpose memory allocator -- which happen when we add elements to our STL containers -- might place those elements in non sequential areas of memory</p>
+							<p>So we are basically at the mercy of malloc when it comes to placement unless we write our own container allocators</p>
 							<p>But I'm claiming here that we can get pretty far without needing to do so</p>
 						</aside>
 					</section>
@@ -1743,7 +1742,7 @@ Note:
 						<h3 style="color: white">Does out first implementation do any of these things?</h3>
 						<aside class="notes">
 							<p>Looking back out our first pass at an implementation:</p>
-							<p>Does it achieve most or any of these guiding principals</p>
+							<p>Does it follow any of these guiding principals</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1764,7 +1763,7 @@ Note:
 						<h4>std::multimap</h4>
 						<aside class="notes">
 							<p>So lets take a closer look</p>
-							<p>When we looked at out results in hotspot, we noticed that a large contributer to the total cache misses in our program were method associated with std::multimap</p>
+							<p>When we looked at out results in hotspot, we noticed that a large contributer to the total cache misses in our program were methods associated with std::multimap</p>
 							<p>Why is this so?</p>
 						</aside>
 					</section>
@@ -1787,7 +1786,7 @@ Note:
 							<img src="slides/multimap_actual.png">
 						</div>
 						<aside class="notes">
-							<p>In actuality, as we could see in some of our `perf` outputs, std::multimap is actually implement as a red-block tree, at least in GCC and Clang</p>
+							<p>In actuality, as we could see in some of our `perf` outputs, std::multimap is actually implemented as a red-block tree, at least in GCC and Clang</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1800,7 +1799,7 @@ Note:
 							<p>The nodes of this tree are linked via pointers, and the nodes themselves are placed in memory by an allocator</p>
 							<p>Since we have no control over where these node are placed -- unless we write out own allocator -- they can be placed anywhere ... we have no know way of knowing</p>
 							<p>Sometimes this means, even when iterating through an adjacency list, we could be hopping around memory quite a bit</p>
-							<p>Its even possible that we are creating cache-misses every time we iterate to another element in the adjacency sequence, simply because adjacent nodes were placed in such a way that they never end up in the same cache-line</p>
+							<p>Its even possible that we are creating cache-misses every time we iterate to another element in the adjacency sequence, simply because associated container nodes were placed in such a way that they never end up in the same cache-line</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -1812,7 +1811,7 @@ Note:
 						<aside class="notes">
 							<p>In the case of std::multimap, however, the story is even a bit worse than that</p>
 							<p>Finding the values associated with a key in std::map or std::multimap involves walking the tree until we find a node with the matching key</p>
-							<p>std::multimap::equal_range is, as many of us know, guaranteed to be a O(log(n)) operation</p>
+							<p>std::multimap::equal_range is, as many of us know, implemented to be a O(log(n)) operation</p>
 							<p>This means that, even beyond iterating through our adjacencies, we are jumping between nodes just to find our adjacencies to begin with</p>
 							<p>Since our `search` naturally needs to query the std::multimap rather often, we find ourselves with a rather pathological case</p>
 						</aside>
@@ -1868,7 +1867,7 @@ public:
 
 Note:
 1. In this updated implementation, we will be replacing all instances of std::map and std::multimap with their "unordered" counterparts
-2. Because this is, functionally, a drop-in replacement, the structure of our implementation remains exactly the same as before
+2. Because this is functionally, a drop-in replacement, the structure of our implementation remains exactly the same as before
 					</textarea>
 				</section>
 
@@ -1974,8 +1973,8 @@ Note:
 ==132432== LL miss rate:             0.0% (          0.0%     +           0.1%  )
 ```
 Note:
-1. Measuring again with `cachegrind` we see that our D1 cache-miss rate has gone down rather significantly
-2. I also want to point out that on top of our cache miss rate, the total number of instructions executed during our program has decreased by about half. Most of this has to do with the fact that the data access complexity of std::unorder_map is much lower than that of std::map.
+1. Measuring again with `cachegrind` we see that our simulated L1 cache-miss rate has gone down rather significantly
+2. I also want to point out that on top of our cache miss rate, the total number of instructions executed during our program has decreased by about half. Most of this has to do with the fact that the data access complexity of std::unordered_map is much lower than that of std::map.
 						</textarea>
 					</section>
 					<section data-auto-animate>
@@ -1984,7 +1983,7 @@ Note:
 							<img src="slides/simulated_cm_over_i_v1.png">
 						</div>
 						<aside class="notes">
-							<p>Here is a graph showing our simulated D1 cache-miss counts normalized by the total number of instruction references encountered during the program between our previous implementation and this one, side by side</p>
+							<p>Here is a graph showing our simulated L1 cache-miss counts normalized by the total number of instruction references encountered during the program between our previous implementation and this one, side by side</p>
 							<p>We see that by making this very simple change, we've improved our data cache-performance significantly</p>
 						</aside>
 					</section>
@@ -2038,8 +2037,7 @@ Note:
 						</div>
 						<aside class="notes">
 							<p>We have definitely reduced the total number of indirections, and therefore potential cache-misses, during a call to `equal_range` by making this change</p>
-							<p>However, in ordered to find a vertex we must still follow the links between nodes in a linked list</p>
-							<p>Additionally, we will need to iterate over a linked list when traversing the adjacencies associated with a vertex</p>
+							<p>However, in ordered to find a vertex which results in a hash collision, we must still follow the links between nodes in a linked list</p>
 						</aside>
 					</section>
 				</section>
@@ -2117,7 +2115,7 @@ public:
 ```
 
 Note:
-- One simple change we can make is to ensure that each bucket only every contains data associated with a single vertex
+- One simple change we can make in this implementation is to ensure that each bucket only every contains data associated with a single vertex
 - To do so we can call reserve on our `std::unordered_map`s and `std::unordered_multimap`s to manually set the number of buckets.
 					</textarea>
 				</section>
@@ -2320,7 +2318,7 @@ public:
 
 Note:
 1. Likewise, in our search context implementation, we can change the visited set to be represented by a std::vector as well
-2. The only real functional difference here is that we need to represent an unvisited vertex in a slightly different way. Previously, we were checking for the existence of a key in an a map. But here we need to assign each unvisited vertex with some special value. Because the our vertex IDs span from 0 to N-1, we can just chose this value to be N, the total number of vertices in the graph
+2. The only real functional difference here is that we need to represent an unvisited vertex in a slightly different way. Previously, we were checking for the existence of a key in an a map. But here we need to assign each unvisited vertex with some special status. Since our vertex IDs span from 0 to N-1, we can just chose this value to be N, the total number of vertices in the graph
 3. This way when we go check to see if a vertex has been visited, all we have to do is check to see if its predecessor vertex ID has been set to to something other than N
 					</textarea>
 				</section>
@@ -2364,7 +2362,7 @@ Note:
 							<img src="slides/simulated_cm_over_i_v2.png">
 						</div>
 							<aside class="notes">
-							<p>When we look at the numbers side by side, we see we have made steady progress in reducing our D1 cache misses</p>
+							<p>When we look at the numbers side by side, we see we have made steady progress in reducing our simulated L1 cache misses</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2405,7 +2403,7 @@ Note:
 					<section data-auto-animate>
 						<h2>Impact of ordering of the graph</h2>
 						<aside class="notes"/>
-							<p>One last thing that I would like to show is that we can influence cache performance just by changing the overall ordering of vertices and vertex data within the graph</p>
+							<p>One last thing that I would like to show is that we can influence cache performance just by changing the overall ordering of vertices within the graph</p>
 						</aside>
 					</section>
 
@@ -2449,8 +2447,9 @@ Note:
 3. The subranges will be used to view sub-sequences within a single vector of edges.
 
 - Here have the same number of pointer indirections as our previous implementation
+- Our inner vector of our vector of vectors could have been placed anywhere in memory, since each vector had its own disjoint memory block
 - But we've collated all of our edge data into a single sequence. This way we don't have to rely on our allocator at all to guarantee that our Edge data is packed contiguously in memory
-- Wheres as the inner vector in our vector of vectors could have been placed anywhere in memory, since each vector had its own disjoint memory block
+- And now we can proceed with sorting
 						 </textarea>
 					</section>
 					<section data-auto-animate>
@@ -2469,7 +2468,7 @@ Note:
 							<li>If we can find a single sort-order which improves performance for most start and goal pairs, then its probably practical to do</li>
 						</lu>
 						<aside class="notes"/>
-							<p>If we can find a single vertex sort run just once after loading the grap from disk, then its probably a pretty practical thing to try</p>
+							<p>If we can find a single vertex sort to run just once after loading the grah from disk, then its probably a pretty practical thing to try</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2480,7 +2479,7 @@ Note:
 							<li>We know that vertices which are close in space are more likely to be neighbors</li>
 						</lu>
 						<aside class="notes"/>
-							<p>By looking at the graph, we notice that vertices which are closer together are more likely to be neighbors</p>
+							<p>By looking at the graph, we notice that vertices which are closer together in space are more likely to be neighbors</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2514,7 +2513,7 @@ graph.remap(remapping);
 ```
 
 Note:
-1. To do this, we can finally make use of our vertex property data, namely the position of each vertex in the map our environment
+1. To do this, we can finally make use of our vertex property data, namely the position of each vertex in space
 2. We create a sequence of indices that we can use to remap vertex data, as well as edge adjacency data
 3. And then sort these indices using a custom comparison operation which sensitive to the spatial location of each vertex
 4. Here, as an example, I've just sorted vertices based on their squared L2 distance from the map origin, which is sort of arbitrary, but seems to work fairly well
@@ -2561,7 +2560,7 @@ Note:
 							<img src="slides/simulated_cm_over_i_v2_sorted.png">
 						</div>
 							<aside class="notes">
-							<p>Looking at the numbers side by side this was yea another significant reduction </p>
+							<p>Looking at the numbers side by side this is a surprisingly significant given how similar it is in structure to our last implementation</p>
 						</aside>
 					</section>
 					<section data-auto-animate>
@@ -2570,7 +2569,7 @@ Note:
 							<img src="slides/cycle_counts_v2_sorted.png">
 						</div>
 						<aside class="notes">
-							<p>To boot, the program is also significantly faster</p>
+							<p>To boot, the program is actually even faster</p>
 						</aside>
 					</section>
 				</section>
